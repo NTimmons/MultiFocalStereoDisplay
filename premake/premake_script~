@@ -1,0 +1,18 @@
+
+-- A solution contains projects, and defines the available configurations
+solution "DisplaySoftware"
+   configurations { "Debug", "Release" }
+
+   -- A project defines one build target
+   project "DisplaySoftware"
+      kind "ConsoleApp"
+      language "C++"
+      files { "**.h", "**.cpp" }
+
+      configuration "Debug"
+         defines { "DEBUG" }
+         flags { "Symbols" }
+
+      configuration "Release"
+         defines { "NDEBUG" }
+         flags { "Optimize" }
