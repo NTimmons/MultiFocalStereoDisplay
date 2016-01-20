@@ -1,0 +1,5 @@
+*~
+*.swp
+./LinuxBuild/*
+./WindowsBuild/*
+

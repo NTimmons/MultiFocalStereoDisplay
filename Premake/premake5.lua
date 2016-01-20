@@ -4,6 +4,7 @@ solution "MultiFocalDisplay"
  
    -- A project defines one build target
    project "MultiFocalDisplay"
+
       kind "ConsoleApp"
       language "C++"
       files { "../src/**.h", "../src/**.cpp" }
@@ -13,9 +14,11 @@ solution "MultiFocalDisplay"
 	  objdir ("../obj")
 	  
 	  configuration "windows"
+	         location "../WindowsBuild"
 		 links { "glfw3", "glew32", "opengl32"}
  
 	  configuration "linux"
+	         location "../LinuxBuild"
 		 links { "glfw3", "glew32", "GL"}
  
       configuration "Debug"
