@@ -1,6 +1,8 @@
 #include "RenderScene.h"
 
 
+#include <iostream>
+
 void RenderScene::Initialise()
 {
 	m_PosX = 0;
@@ -81,48 +83,65 @@ void RenderScene::ClearFrameBuffers()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-ShaderProgram* RenderScene::CreateShaderProgramObject(char* _vertexFilename, char* _pixelFilename)
+ShaderProgram* RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::string& _pixelFilename)
 {
-	GLuint vertexShader 	= -1;
-	GLuint fragmentShader 	= -1;
-
+	std::cerr << "Creating shader from:" << _vertexFilename << "," << _pixelFilename << "\n";
+	
 	GLuint vertexShaderObject 		= glCreateShader(GL_VERTEX_SHADER);
 	GLuint fragmentShaderObject 	= glCreateShader(GL_FRAGMENT_SHADER);
 
+	std::cerr << "Created GL Shader Objects\n";
 
-	char* vShaderSource = 0;
+	std::string vShaderSource = 0;
 	int vLen 	= 0;
 
-	char* pShaderSource = 0;
+	std::string pShaderSource = 0;
 	int pLen 	= 0;
 
-	LoadShader(_vertexFilename,&vShaderSource, &vLen);
-	LoadShader(_pixelFilename,&pShaderSource, &pLen);
+	std::cerr << "Preparing to load vertex shader source code...\n";
+	LoadShader(_vertexFilename, vShaderSource, &vLen);
 
-	glShaderSource(vertexShaderObject	, 1, const_cast<const char**>(&vShaderSource), static_cast<GLint*>(&vLen) );
-	glShaderSource(fragmentShaderObject	, 1, const_cast<const char**>(&pShaderSource), static_cast<GLint*>(&pLen) );
+	std::cerr << "Preparing to load fragment shader source code...\n";
+	LoadShader(_pixelFilename, pShaderSource, &pLen);
+
+	const char* vSource = vShaderSource.c_str();
+	const char* pSource = pShaderSource.c_str();
+
+	std::cerr << "Applying shader source to shader object (vertex)...\n";
+	glShaderSource(vertexShaderObject	, 1, &vSource, static_cast<GLint*>(&vLen) );
+	std::cerr << "Applying shader source to shader object (fragment)...\n";
+	glShaderSource(fragmentShaderObject	, 1, &pSource, static_cast<GLint*>(&pLen) );
 
 
-	//C ompile
+	// Compile
+	std::cerr << "Compiling shader object (vertex)...\n";
 	glCompileShader(vertexShaderObject);	
 
 	if(!validateCompilation(vertexShaderObject))
 	{ return NULL;}
 
+	std::cerr << "Compiling shader object (fragment)...\n";
 	glCompileShader(fragmentShaderObject);
 	if(!validateCompilation(fragmentShaderObject))
 	{ return  NULL;}
 
 
 	// Link
+	std::cerr << "Creating shader program...\n";
 	GLuint ProgramObject = glCreateProgram();
 
+	std::cerr << "Attaching vertex shader to shader program...\n";
 	glAttachShader(ProgramObject, vertexShaderObject);
+	std::cerr << "Attaching fragment shader to shader program...\n";
 	glAttachShader(ProgramObject, fragmentShaderObject);
 
+
+	std::cerr << "Linking shader program...\n";
 	glLinkProgram(ProgramObject); 
 	if(!validateLinking(ProgramObject, vertexShaderObject,  fragmentShaderObject))
 	{ return  NULL;}
+
+	std::cerr << "Complete.\n";
 
 	ShaderProgram shaderObject = ShaderProgram( ProgramObject);
 	m_shaderList.push_back(shaderObject);
@@ -166,7 +185,7 @@ bool RenderScene::validateLinking(GLuint program, GLuint vertexShader, GLuint fr
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
 		//The maxLength includes the NULL character
-		std::vector<GLchar> infoLog(maxLength);
+		GLchar infoLog[maxLength];
 		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 	
 		//We don't need the program anymore.
@@ -200,37 +219,46 @@ int RenderScene::GetFileLength(std::ifstream& file)
 
 
 
-int RenderScene::LoadShader(char* filename, char** ShaderSource, int* len)
+int RenderScene::LoadShader(std::string& filename, std::string& ShaderSource, int* len)
 {
+	std::cerr << "\t Preparing to open: " << filename << ".";
+
 	std::ifstream file;
 	file.open(filename, std::ios::in); // opens as ASCII!
-	if(!file) 
+	if(!file)
+	{ 
+		std::cerr << "\t ...FAILED\n";
 		return -1;
+	}
+	
+	std::cerr << "\t ...Success\n";
 
+
+	std::cerr << "\t Getting file length...";
 	*len = GetFileLength(file);
 
 	if (len==0) 
-		return -2;   // Error: Empty File 
-    
-	*ShaderSource =  new char[*len+1];
-	if (*ShaderSource == 0) 
-		return -3;   // can't reserve memory
-
-	// len isn't always strlen cause some characters are stripped in ascii read...
-	// it is important to 0-terminate the real length later, len is just max possible value... 
-	*ShaderSource[*len] = 0; 
-
-	int i=0;
-	while (file.good())
 	{
-		*ShaderSource[i] = file.get();       // get character from file.
-		if (!file.eof())
-			i++;
+		std::cerr << "\t FAILED (Empty File)\n";
+		return -2;   // Error: Empty File 
 	}
 
-	*ShaderSource[i] = 0;  // 0-terminate it at the correct position
+	std::cerr << "\t Success (size:" << *len << ")\n";
+    
 
-	file.close();
+	std::string line;
+	if (file.is_open())
+	{
+		while ( getline (file,line) )
+		{
+		  	ShaderSource.append(line);
+			std::cerr << " ... ";	
+		}
+		std::cerr << "\n";
+		std::cerr << "\t Closing file.\n";
+		file.close();
+	}
+
 	  
 	return 0; // No Error
 }
@@ -276,10 +304,11 @@ void RenderScene::Render()
 
 void RenderScene::InitialiseScreenPositions()
 {
-	m_screenArray[0].m_pos = position(0.f     , 100.f, 0.f);
-	m_screenArray[1].m_pos = position(200.f   , 100.f, 0.f);
-	m_screenArray[2].m_pos = position(400.f   , 100.f, 0.f);
-	m_screenArray[3].m_pos = position(600.f   , 100.f, 0.f);
+	
+	m_screenArray[0].m_pos = Position(0.f     , 100.f, 0.f); 
+	m_screenArray[1].m_pos = Position(200.f   , 100.f, 0.f);
+	m_screenArray[2].m_pos = Position(400.f   , 100.f, 0.f);
+	m_screenArray[3].m_pos = Position(600.f   , 100.f, 0.f);
 
 	m_screenArray[0].m_size = size(100.f, 100.0f);
 	m_screenArray[1].m_size = size(100.f, 100.0f);
@@ -290,6 +319,18 @@ void RenderScene::InitialiseScreenPositions()
 	m_screenArray[1].m_colour = colour(0.f, 1.f, 0.f, 1.f);
 	m_screenArray[2].m_colour = colour(0.f, 0.f, 1.f, 1.f);
 	m_screenArray[3].m_colour = colour(1.f, 1.f, 0.f, 1.f);
+}
+
+void RenderScene::RenderQuad(Position& _pos, size& _size, colour& _col)
+{
+	glColor3f(_col.R(), _col.G(), _col.B());
+            glVertex3f(_pos.X()				, _pos.Y()				, 0);
+            glVertex3f(_pos.X()				,  _pos.Y() + _size.H()	, 0);
+            glVertex3f( _pos.X()+ _size.W()	,  _pos.Y() + _size.H()	, 0);
+
+            glVertex3f(_pos.X()				, _pos.Y()				, 0);
+            glVertex3f(_pos.X()+ _size.W()	, _pos.Y() + _size.H()	, 0);
+            glVertex3f(_pos.X()+ _size.W()  , _pos.Y()				, 0);
 }
 
 

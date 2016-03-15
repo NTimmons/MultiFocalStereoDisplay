@@ -12,13 +12,13 @@
 
 struct colour
 {
-	colour(float& _r, float& _g, float& _b, float& _a) : r(_r), g(_g), b(_b), a(_a){}
+	colour(float _r, float _g, float _b, float _a) : r(_r), g(_g), b(_b), a(_a){}
 	colour(): r(0.f), g(0.f), b(0.f), a(0.f){}
 
-	float R(){return r;} const
-	float G(){return g;} const
-	float B(){return b;} const
-	float A(){return a;} const
+	float R(){return r;} 
+	float G(){return g;} 
+	float B(){return b;} 
+	float A(){return a;} 
 
 	float r;
 	float g;
@@ -26,14 +26,14 @@ struct colour
 	float a;
 };
 
-struct position
+struct Position
 {
-	position(float& _x, float& _y, float& _z ) : x(_x), y(_y), z(_z){}
-	position( ): x(0.f), y(0.f), z(0.f){}
+	Position(float _x, float _y, float _z ) : x(_x), y(_y), z(_z){}
+	Position( ): x(0.f), y(0.f), z(0.f){}
 
-	float X(){return x;}const
-	float Y(){return y;}const
-	float Z(){return z;}const
+	float X(){return x;}
+	float Y(){return y;}
+	float Z(){return z;}
 
 	float x;
 	float y;
@@ -42,11 +42,11 @@ struct position
 
 struct size
 {
-	size(const float& _w,const float& _h): w(_w), h(_h){}
+	size(const float _w,const float _h): w(_w), h(_h){}
 	size(): w(0.f), h(0.f){}
 
-	float W(){return w;}const
-	float H(){return h;}const
+	float W(){return w;}
+	float H(){return h;}
 
 	float w;
 	float h;
@@ -67,9 +67,9 @@ struct FBO
 struct Screen
 {
 	Screen(){}
-	Screen(position _pos, size _size, colour _colour):m_pos(_pos), m_size(_size), m_colour(_colour){}
+	Screen(Position _pos, size _size, colour _colour):m_pos(_pos), m_size(_size), m_colour(_colour){}
 
-	position m_pos;
+	Position m_pos;
 	size 	 m_size;
 	colour   m_colour;
 };
@@ -93,28 +93,29 @@ public:
 
 	//Rendering
 	void Render();
+	void RenderQuad(Position& _pos, size& _size, colour& _col);
 
 	//Screen Control
 	void InitialiseScreenPositions();
 
 
 	// FBO Control
-	FBO  CreateFrameBuffer(int _width, int _height, GLenum _format);
-	void ApplySingleFrameBuffer(FBO _fbo);
-	void ApplyFourFrameBuffers(FBO _fbo0, FBO _fbo1,FBO _fbo2,FBO _fbo3);
-	void ClearFrameBuffers();
+	FBO  CreateFrameBuffer		(int _width, int _height, GLenum _format);
+	void ApplySingleFrameBuffer	(FBO _fbo);
+	void ApplyFourFrameBuffers	(FBO _fbo0, FBO _fbo1, FBO _fbo2, FBO _fbo3);
+	void ClearFrameBuffers		( );
 
 	// Shader Management
 	private:
-	int 			GetFileLength				(std::ifstream& file);
-	int 			LoadShader					(char* filename, char** ShaderSource, int* len);
-	int 			UnloadShader				(GLubyte** ShaderSource);
+	int 	GetFileLength		(std::ifstream& file);
+	int 	LoadShader			(std::string& filename, std::string& ShaderSource, int* len);
+	int 	UnloadShader		(GLubyte** ShaderSource);
 
-	bool 			validateCompilation			(GLuint _shader);
-	bool 			validateLinking				(GLuint program, GLuint vertexShader, GLuint fragmentShader);
+	bool	validateCompilation	(GLuint _shader);
+	bool	validateLinking		(GLuint program, GLuint vertexShader, GLuint fragmentShader);
 
 	public:
-	ShaderProgram* 	CreateShaderProgramObject	(char* _vertexFilename, char* _pixelFilename);
+	ShaderProgram* 	CreateShaderProgramObject	(std::string& _vertexFilename, std::string& _pixelFilename);
 
 	// Lists and lists and lists
 	std::vector<GLuint> 		m_frameBuffers;

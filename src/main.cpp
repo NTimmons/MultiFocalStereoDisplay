@@ -16,12 +16,6 @@
 
 #include "RenderScene.h"
 
-int gPosX = 0;
-int gPosY = 0;
-
-int gSizeX = 800;
-int gSizeY = 600;
-
 GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  /* Red diffuse light. */
 GLfloat light_position[] = {100.0, 100.0, 1.0, 0.0};  /* Infinite light location. */
 
@@ -97,11 +91,11 @@ void keyPressCallback(unsigned char key, int x, int y)
 		break;
     }	
 
-	float ratio = (float)gSizeX/(float)gSizeY;
+	//float ratio = (float)gSizeX/(float)gSizeY;
 
-    glutPositionWindow(gPosX, gPosY);
-    glutReshapeWindow((int)((float)gSizeY*ratio),gSizeY);
-	glutPostRedisplay ();
+    //glutPositionWindow(gPosX, gPosY);
+    //glutReshapeWindow((int)((float)gSizeY*ratio),gSizeY);
+	//glutPostRedisplay ();
 }
 
 //I miss windows.
@@ -149,17 +143,7 @@ void SpinningBoxMode()
 	glutPostRedisplay ();
 }
 
-void RenderQuad(position& _pos, size& _size, colour& _col)
-{
-	glColor3f(_col.R(), _col.G(), _col.B());
-            glVertex3f(_pos.X()				, _pos.Y()				, 0);
-            glVertex3f(_pos.X()				,  _pos.Y() + _size.H()	, 0);
-            glVertex3f( _pos.X()+ _size.W()	,  _pos.Y() + _size.H()	, 0);
 
-            glVertex3f(_pos.X()				, _pos.Y()				, 0);
-            glVertex3f(_pos.X()+ _size.W()	, _pos.Y() + _size.H()	, 0);
-            glVertex3f(_pos.X()+ _size.W()  , _pos.Y()				, 0);
-}
 
 void AlignmentMode()
 {
@@ -175,14 +159,13 @@ int main(int argc, char **argv)
 {
     std::cerr << "Starting" << std::endl;
 
+
+
 	RS.Initialise();
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
-    glutInitWindowSize(gSizeX, gSizeY);
-
-    gPosX = 0;
-    gPosY = 0;
+    glutInitWindowSize(RS.m_SizeX, RS.m_SizeY);
 
 	glutInitWindowSize(RS.m_SizeX, RS.m_SizeY);
     glutInitWindowPosition(RS.m_PosX, RS.m_PosY);
@@ -190,10 +173,53 @@ int main(int argc, char **argv)
 
     glutKeyboardFunc(keyPressCallback);
     glutDisplayFunc(draw);
+
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+	  /* Problem: glewInit failed, something is seriously wrong. */
+	  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+	}
+	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	
     initAllignment();
+
+    std::cerr << "About to load shaders..." << std::endl;
+
+	std::string vert = "../Shaders/vert.glsl";
+	std::string frag = "../Shaders/frag.glsl";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	ShaderProgram* shad = RS.CreateShaderProgramObject( vert, frag );
+
+	printf("Shader ID: %d", shad->programID);
+
+
+
+
+
+
+
+
+
+
+
+
 
     glutMainLoop();
 
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
