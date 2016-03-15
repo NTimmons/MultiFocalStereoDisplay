@@ -20,18 +20,18 @@ ifndef RESCOMP
 endif
 
 ifeq ($(config),debug)
-  OBJDIR     = ../obj/Debug
+  OBJDIR     = ../output/obj/Debug
   TARGETDIR  = ../output
-  TARGET     = $(TARGETDIR)/MultiFocalDisplay-d
+  TARGET     = $(TARGETDIR)/MultiFocalDisplayd
   DEFINES   += -DDEBUG
   INCLUDES  += -I../lib/glfw-3.1.2/include -I../include -I../lib/glfw-3.1.2/deps
   ALL_CPPFLAGS  += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g
+  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -std=c++11
   ALL_CXXFLAGS  += $(CXXFLAGS) $(ALL_CFLAGS)
   ALL_RESFLAGS  += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/GLEW/lib -L../lib/glfw-3.1.2/lib -L.
+  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/GLEW/lib -L../lib/glfw-3.1.2/lib -L../lib -L.
   LDDEPS    +=
-  LIBS      += $(LDDEPS) -lglfw3 -lglew32 -lGL
+  LIBS      += $(LDDEPS) -lGLEW -lGLU -lglut -lGL
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -42,18 +42,18 @@ ifeq ($(config),debug)
 endif
 
 ifeq ($(config),release)
-  OBJDIR     = ../obj/Release
+  OBJDIR     = ../output/obj/Release
   TARGETDIR  = ../output
   TARGET     = $(TARGETDIR)/MultiFocalDisplay
   DEFINES   += -DNDEBUG
   INCLUDES  += -I../lib/glfw-3.1.2/include -I../include -I../lib/glfw-3.1.2/deps
   ALL_CPPFLAGS  += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2
+  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -std=c++11
   ALL_CXXFLAGS  += $(CXXFLAGS) $(ALL_CFLAGS)
   ALL_RESFLAGS  += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/GLEW/lib -L../lib/glfw-3.1.2/lib -L. -s
+  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/GLEW/lib -L../lib/glfw-3.1.2/lib -L../lib -L. -s
   LDDEPS    +=
-  LIBS      += $(LDDEPS) -lglfw3 -lglew32 -lGL
+  LIBS      += $(LDDEPS) -lGLEW -lGLU -lglut -lGL
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -65,6 +65,7 @@ endif
 
 OBJECTS := \
 	$(OBJDIR)/main.o \
+	$(OBJDIR)/RenderScene.o \
 
 RESOURCES := \
 
@@ -125,6 +126,10 @@ $(GCH): $(PCH)
 endif
 
 $(OBJDIR)/main.o: ../src/main.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
+$(OBJDIR)/RenderScene.o: ../src/RenderScene.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 

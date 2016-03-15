@@ -8,21 +8,22 @@ solution "MultiFocalDisplay"
       kind "ConsoleApp"
       language "C++"
       files { "../src/**.h", "../src/**.cpp" }
-	  includedirs { "../lib/glfw-3.1.2/include", "../include/", "../lib/glfw-3.1.2/deps"}
-	  libdirs { "../lib/GLEW/lib", "../lib/glfw-3.1.2/lib" }
+	  libdirs { "../lib/GLEW/lib", "../lib/glfw-3.1.2/lib", "../lib" }
+	  buildoptions {"-std=c++11"}
 	  targetdir ("../output")
-	  objdir ("../obj")
+	  objdir ("../output/obj")
+	  includedirs { "../lib/glfw-3.1.2/include", "../include/", "../lib/glfw-3.1.2/deps"}
 	  
 	  configuration "windows"
 	         location "../WindowsBuild"
-		 links { "glfw3", "glew32", "opengl32"}
+		 links { "glut", "glew32", "opengl32"}
  
 	  configuration "linux"
 	         location "../LinuxBuild"
-		 links { "glfw3", "glew32", "GL"}
+		 links { "GLEW", "GLU", "glut", "GL"}
  
       configuration "Debug"
-		 targetsuffix "-d"
+		 targetsuffix "d"
          defines { "DEBUG" }
          flags { "Symbols" }
  
