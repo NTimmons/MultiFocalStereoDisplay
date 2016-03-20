@@ -1,36 +1,44 @@
-// Programmer: Mihalis Tsoukalos
-// Date: Wednesday 04 June 2014
-//
-// A simple OpenGL program that draws a triangle.
-
 
 #include <GL/glew.h>
 #include "GL/freeglut.h"
-
-#include <iostream>
 
 #include <chrono>
 #include <math.h>
 
 #include <sys/time.h>
 
+
+#include <iostream>
 #include "RenderScene.h"
 
-GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  /* Red diffuse light. */
-GLfloat light_position[] = {100.0, 100.0, 1.0, 0.0};  /* Infinite light location. */
 
-GLfloat light_diffuse1[] = {1.0, 1.0, 0.0, 1.0};  /* Red diffuse light. */
-GLfloat light_position1[] = {-100.0, -100.0, -100.0, 0.0};  /* Infinite light location. */
 
-GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
+//http://stackoverflow.com/questions/31579243/segmentation-fault-before-main-when-using-glut-and-stdstring
+#include <pthread.h> 
+
+void* simpleFunc(void*) { return NULL; } 
+void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
+
+
+
+GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  // Red diffuse light.
+GLfloat light_position[] = {100.0, 100.0, 1.0, 0.0};  // Infinite light location. 
+
+GLfloat light_diffuse1[] = {1.0, 1.0, 0.0, 1.0};  // Red diffuse light. 
+GLfloat light_position1[] = {-100.0, -100.0, -100.0, 0.0};  // Infinite light location.
+
+GLfloat n[6][3] = {  // Normals for the 6 faces of a cube. 
   {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
   {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
-GLint faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
+GLint faces[6][4] = {  // Vertex indices for the 6 faces of a cube.
   {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
   {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
-GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertices. */
+GLfloat v[8][3];  // Will be filled in with X,Y,Z vertices. 
+
 
 RenderScene RS;
+
+
 
 void initAllignment()
 {
@@ -39,12 +47,14 @@ void initAllignment()
   glDisable(GL_DEPTH_TEST);
 }
 
+
+
 void initBox(void)
 {
   glEnable(GL_CULL_FACE);
   glCullFace(GL_FRONT);
 
-  /* Setup cube vertex data. */
+  // Setup cube vertex data. 
   v[0][0] = v[1][0] = v[2][0] = v[3][0] = -10;
   v[4][0] = v[5][0] = v[6][0] = v[7][0] =  10;
   v[0][1] = v[1][1] = v[4][1] = v[5][1] = -10;
@@ -52,7 +62,7 @@ void initBox(void)
   v[0][2] = v[3][2] = v[4][2] = v[7][2] =  10;
   v[1][2] = v[2][2] = v[5][2] = v[6][2] = -10;
 
-  /* Enable a single OpenGL light. */
+  // Enable a single OpenGL light. 
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
   glLightfv(GL_LIGHT0, GL_POSITION, light_position);
   glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
@@ -60,26 +70,33 @@ void initBox(void)
   glEnable(GL_LIGHT0);
   glEnable(GL_LIGHTING);
 
-  /* Use depth buffering for hidden surface elimination. */
+  // Use depth buffering for hidden surface elimination. 
   glEnable(GL_DEPTH_TEST);
 
-  /* Setup the view of the cube. */
+  // Setup the view of the cube. 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
-  gluPerspective( /* field of view in degree */ 40.0,
-    		  /* aspect ratio */ 1.0,
-		  /* Z near */ 0.1, /* Z far */ 100.0);
+  gluPerspective( 40.0,//field of view in degree 
+    		  1.0, // aspect ratio 
+		   0.1, 100.0);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(	0.0, 0.0, 15.0,  /* eye is at (0,0,5) */
-    			0.0, 0.0, 0.0,      /* center is at (0,0,0) */
-				0.0, 1.0, 0.);      /* up is in positive Y direction */
+  gluLookAt(	0.0, 0.0, 15.0,  // eye is at (0,0,5) 
+    			0.0, 0.0, 0.0,      // center is at (0,0,0) 
+				0.0, 1.0, 0.);      // up is in positive Y direction 
 }
+
+
 
 void keyPressCallback(unsigned char key, int x, int y)
 {
+
+	(void)x;
+	(void)y;
+
+
     std::cerr << "SCREEN KEYPRESS: " << key << std::endl;	    
     switch(key)
     {
@@ -98,6 +115,7 @@ void keyPressCallback(unsigned char key, int x, int y)
 	//glutPostRedisplay ();
 }
 
+/*
 //I miss windows.
 unsigned long GetTickCount()
 {
@@ -117,10 +135,10 @@ void SpinningBoxMode()
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(	0.0, 0.0, 15.0,  	/* eye is at (0,0,5) */
-    			0.0, 0.0, 0.0,      /* center is at (0,0,0) */
-				0.0, 1.0, 0.);      /* up is in positive Y direction */
-	/* Adjust cube position to be asthetic angle. */
+	gluLookAt(	0.0, 0.0, 15.0,  	// eye is at (0,0,5) 
+    			0.0, 0.0, 0.0,      // center is at (0,0,0) 
+				0.0, 1.0, 0.);      // up is in positive Y direction 
+	// Adjust cube position to be asthetic angle. 
 	glTranslatef	( 0.0, 0.0, -30.0);
 	glRotatef	( 60.f * sin((double)GetTickCount()/600.0) , 1.0,  0.0, 0.0);
 	glRotatef	(-20 , 0.0,  0.0, 1.0);
@@ -143,31 +161,27 @@ void SpinningBoxMode()
 	glutPostRedisplay ();
 }
 
+*/
 
-
-void AlignmentMode()
-{
-	RS.Render();
-}
 
 void draw()
 {
-	AlignmentMode();
+	//std::cout << ".";
+	RS.Render();
+	glutPostRedisplay();
 }
+
 
 int main(int argc, char **argv)
 {
-    std::cerr << "Starting" << std::endl;
-
-
+    std::cerr << "Main() Entry" << std::endl;
 
 	RS.Initialise();
-
     glutInit(&argc, argv);
+
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(RS.m_SizeX, RS.m_SizeY);
 
-	glutInitWindowSize(RS.m_SizeX, RS.m_SizeY);
     glutInitWindowPosition(RS.m_PosX, RS.m_PosY);
 	glutCreateWindow("Multifocal Rendering.");
 
@@ -177,32 +191,24 @@ int main(int argc, char **argv)
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
-	  /* Problem: glewInit failed, something is seriously wrong. */
+	  // Problem: glewInit failed, something is seriously wrong.
 	  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 	}
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 	
+
     initAllignment();
 
     std::cerr << "About to load shaders..." << std::endl;
 
 	std::string vert = "../Shaders/vert.glsl";
 	std::string frag = "../Shaders/frag.glsl";
+	std::string name = "TestShader";
     std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	ShaderProgram* shad = RS.CreateShaderProgramObject( vert, frag );
+	bool pass = RS.CreateShaderProgramObject( vert, frag, name );
+	(void)pass;
 
-	printf("Shader ID: %d", shad->programID);
-
-
-
-
-
-
-
-
-
-
-
+	RS.InitialiseRenderObjects();
 
 
     glutMainLoop();

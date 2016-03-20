@@ -6,9 +6,12 @@
 #include <GL/glew.h>
 #include "GL/freeglut.h"
 
-#include <string>
 #include <fstream>
+#include <iostream>
+#include <map>
 
+
+#define TESTGL 	TestGLError(__FILE__, __LINE__)
 
 struct colour
 {
@@ -28,8 +31,8 @@ struct colour
 
 struct Position
 {
-	Position(float _x, float _y, float _z ) : x(_x), y(_y), z(_z){}
-	Position( ): x(0.f), y(0.f), z(0.f){}
+	Position(float _x, float _y, float _z ) : x(_x), y(_y), z(_z), w(0.f){}
+	Position( ): x(0.f), y(0.f), z(0.f), w(0.f){}
 
 	float X(){return x;}
 	float Y(){return y;}
@@ -38,6 +41,7 @@ struct Position
 	float x;
 	float y;
 	float z;
+	float w;
 };
 
 struct size
@@ -50,6 +54,16 @@ struct size
 
 	float w;
 	float h;
+};
+
+struct texCoord
+{
+	texCoord():u(0.f), v(0.f){}
+	texCoord(float _u, float _v): u(_u), v(_v){}
+
+	float u;
+	float v;
+
 };
 
 struct FBO
@@ -74,13 +88,52 @@ struct Screen
 	colour   m_colour;
 };
 
-struct ShaderProgram
+class ShaderProgram
 {
-	ShaderProgram(GLuint _id): programID(_id){}
-
-	//std::string someString;
-
+	public:
+	ShaderProgram(GLuint _id): programID(_id), name("Unnamed"){}
+	ShaderProgram(GLuint _id, std::string& _name): programID(_id), name(_name){}
+	
 	GLuint programID;
+	std::string name;
+};
+
+// 4 + 4 + 2 + 2 = 48byte vertex. 
+struct QuadVertex
+{
+	Position m_pos;
+	colour	 m_col;
+	size	 m_size;
+	texCoord m_uv;
+};
+
+class Mesh
+{
+public:
+
+	virtual void Draw() = 0;
+
+	GLuint vertexBufferObject;
+	GLuint elementBufferObject;
+};
+
+#ifndef offsetof
+#define offsetof(type,member) ((std::size_t) &(((type*)0)->member))
+#endif
+
+class QuadMesh : public Mesh
+{
+public:
+
+	QuadMesh()
+	{
+	}
+
+	void Initialise();
+	void Draw();
+
+	QuadVertex 		vertices[4];
+	unsigned int	indicies[6];
 };
 
 class RenderScene
@@ -90,6 +143,8 @@ public:
 
 	//Setup
 	void Initialise();
+	void InitialiseRenderObjects();
+
 
 	//Rendering
 	void Render();
@@ -115,16 +170,19 @@ public:
 	bool	validateLinking		(GLuint program, GLuint vertexShader, GLuint fragmentShader);
 
 	public:
-	ShaderProgram* 	CreateShaderProgramObject	(std::string& _vertexFilename, std::string& _pixelFilename);
+	bool 	CreateShaderProgramObject	(std::string& _vertexFilename, std::string& _pixelFilename, std::string _name);
 
 	// Lists and lists and lists
 	std::vector<GLuint> 		m_frameBuffers;
 	std::vector<GLuint> 		m_renderTextures;
 	std::vector<GLuint> 		m_depthRenderTextures;
 	std::vector<FBO> 			m_FBOList;
-	std::vector<ShaderProgram> 	m_shaderList;
+	
+	std::map<std::string, ShaderProgram> m_shaderMap;
 
 	Screen						m_screenArray[4];
+
+	QuadMesh					m_genericUnitQuad;
 
 	//Window Controls
 	int m_PosX;
@@ -132,6 +190,7 @@ public:
 
 	int m_SizeX;
 	int m_SizeY;
+
 
 };
 

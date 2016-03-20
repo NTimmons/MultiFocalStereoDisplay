@@ -3,6 +3,117 @@
 
 #include <iostream>
 
+
+void TestGLError(const char* _file, int _line)
+{
+	GLenum id = glGetError();
+
+	if(GL_NO_ERROR == id)
+		return;
+	else
+		std::cerr << "OpenGL Error: (" << _file << ", " << _line << ")-> " << id << "\n";
+}
+
+void QuadMesh::Draw()
+{
+	static bool firstDraw = true;
+	if(firstDraw)
+	{
+		std::cerr << "Drawing QUAD\n";
+		firstDraw = false;
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+
+	// Draw the triangles !
+	/*glDrawElements	( GL_TRIANGLES,      // mode
+					  6,    // count
+					  GL_UNSIGNED_INT,   // type
+					  (void*)0           // element array buffer offset
+					);
+*/
+	glDrawArrays( GL_TRIANGLE_FAN, 0, 4);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void QuadMesh::Initialise()
+{
+	std::cerr << "Initialising QuadMesh\n";
+
+	std::cerr << "\tInitialising vertex data...\n";
+
+	vertices[0].m_pos = Position(0.f, 0.f, 0.f);
+	vertices[1].m_pos = Position(0.f, 1.f, 0.f);
+	vertices[2].m_pos = Position(1.f, 1.f, 0.f);
+	vertices[3].m_pos = Position(1.f, 0.f, 0.f);
+
+	
+	vertices[0].m_col = colour(0.f, 0.f, 0.f, 1.f);
+	vertices[1].m_col = colour(0.f, 1.f, 0.f, 1.f);
+	vertices[2].m_col = colour(1.f, 1.f, 0.f, 1.f);
+	vertices[3].m_col = colour(1.f, 0.f, 0.f, 1.f);
+
+	vertices[0].m_size = size(0.f, 0.f);
+	vertices[1].m_size = size(0.f, 1.f);
+	vertices[2].m_size = size(1.f, 0.f);
+	vertices[3].m_size = size(1.f, 1.f);
+
+	vertices[0].m_uv = texCoord(0.f, 0.f);
+	vertices[1].m_uv = texCoord(0.f, 1.f);
+	vertices[2].m_uv = texCoord(1.f, 0.f);
+	vertices[3].m_uv = texCoord(1.f, 1.f);
+	
+
+/*
+	std::cerr << "\tInitialising index data...\n";
+	indicies[0] = 0;
+	indicies[1] = 1;
+	indicies[2] = 3;
+	indicies[3] = 0;
+	indicies[4] = 3;
+	indicies[5] = 1;
+
+	std::cerr << "\tCreating index buffer object...\n";
+	//Index Buffer Objects
+	glGenBuffers(1, &elementBufferObject);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), &indicies[0], GL_STATIC_DRAW);
+	std::cerr << "\tCreated index buffer object at id: " << elementBufferObject << "\n";*/
+
+	//Vertex Buffer Objects
+	glGenBuffers(1, &vertexBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(QuadVertex)*4, &vertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);  // Vertex position.
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (void*)0);
+
+	glEnableVertexAttribArray(1);  // Vertex color.
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (void*)16);
+
+	glEnableVertexAttribArray(2);  // Vertex size.
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (void*)32);
+
+	glEnableVertexAttribArray(3);  // Vertex uv.
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (void*)40);
+
+	std::cerr << "\tCreated vertex buffer object at id: " << vertexBufferObject << "\n";
+
+	//Cleanup
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
+
+
+void RenderScene::InitialiseRenderObjects()
+{
+	m_genericUnitQuad.Initialise();
+}
+
 void RenderScene::Initialise()
 {
 	m_PosX = 0;
@@ -11,11 +122,16 @@ void RenderScene::Initialise()
 	m_SizeX = 800;
 	m_SizeY = 600;
 
+	glViewport(0,0,1,1);
+
 	InitialiseScreenPositions();
 }
 
 FBO RenderScene::CreateFrameBuffer(int _width, int _height, GLenum _format)
 {
+	(void)_format;
+
+
 	GLuint framebufferName = 0;
 	glGenFramebuffers(1, &framebufferName);
  	glBindFramebuffer(GL_FRAMEBUFFER, framebufferName);
@@ -38,9 +154,9 @@ FBO RenderScene::CreateFrameBuffer(int _width, int _height, GLenum _format)
  	GLuint depthrenderbuffer;
 	glGenRenderbuffers(1, &depthrenderbuffer);
 
- 	glBindRenderbuffer			(GL_RENDERBUFFER, depthrenderbuffer);
-	glRenderbufferStorage		(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _width, _height);
- 	glFramebufferRenderbuffer	(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+ 	glBindRenderbuffer				(GL_RENDERBUFFER, depthrenderbuffer);
+	glRenderbufferStorage			(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _width, _height);
+ 	glFramebufferRenderbuffer		(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
 
 	m_frameBuffers.push_back		(framebufferName);
 	m_renderTextures.push_back		(renderedTexture);
@@ -75,6 +191,12 @@ void RenderScene::ApplyFourFrameBuffers(FBO _fbo0, FBO _fbo1,FBO _fbo2,FBO _fbo3
 
  	glBindFramebuffer(GL_FRAMEBUFFER, _fbo0.m_frameBufferIndex);
 	glViewport(0,0,_fbo0.m_width,_fbo0.m_height);
+
+	//TODO OTHER FRAME BUFFERS.
+	(void)_fbo1;
+	(void)_fbo2;
+	(void)_fbo3;
+
 }
 
 void RenderScene::ClearFrameBuffers()
@@ -83,7 +205,7 @@ void RenderScene::ClearFrameBuffers()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-ShaderProgram* RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::string& _pixelFilename)
+bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::string& _pixelFilename, std::string _name)
 {
 	std::cerr << "Creating shader from:" << _vertexFilename << "," << _pixelFilename << "\n";
 	
@@ -92,25 +214,34 @@ ShaderProgram* RenderScene::CreateShaderProgramObject(std::string& _vertexFilena
 
 	std::cerr << "Created GL Shader Objects\n";
 
-	std::string vShaderSource = 0;
-	int vLen 	= 0;
+	std::string vShaderSource = "";
+	GLint vLen 	= 0;
 
-	std::string pShaderSource = 0;
-	int pLen 	= 0;
+	std::string pShaderSource = "";
+	GLint pLen 	= 0;
 
 	std::cerr << "Preparing to load vertex shader source code...\n";
 	LoadShader(_vertexFilename, vShaderSource, &vLen);
 
+
 	std::cerr << "Preparing to load fragment shader source code...\n";
 	LoadShader(_pixelFilename, pShaderSource, &pLen);
+	
+
 
 	const char* vSource = vShaderSource.c_str();
 	const char* pSource = pShaderSource.c_str();
+	//std::cerr << vSource << "\n";
+	//std::cerr << pSource << "\n";
+
+
+	vLen = vShaderSource.length();
+	pLen = pShaderSource.length();
 
 	std::cerr << "Applying shader source to shader object (vertex)...\n";
-	glShaderSource(vertexShaderObject	, 1, &vSource, static_cast<GLint*>(&vLen) );
+	glShaderSource(vertexShaderObject	, 1, &vSource, (&vLen) );
 	std::cerr << "Applying shader source to shader object (fragment)...\n";
-	glShaderSource(fragmentShaderObject	, 1, &pSource, static_cast<GLint*>(&pLen) );
+	glShaderSource(fragmentShaderObject	, 1, &pSource, (&pLen) );
 
 
 	// Compile
@@ -118,12 +249,12 @@ ShaderProgram* RenderScene::CreateShaderProgramObject(std::string& _vertexFilena
 	glCompileShader(vertexShaderObject);	
 
 	if(!validateCompilation(vertexShaderObject))
-	{ return NULL;}
+	{ return false;}
 
 	std::cerr << "Compiling shader object (fragment)...\n";
 	glCompileShader(fragmentShaderObject);
 	if(!validateCompilation(fragmentShaderObject))
-	{ return  NULL;}
+	{ return  false;}
 
 
 	// Link
@@ -138,15 +269,24 @@ ShaderProgram* RenderScene::CreateShaderProgramObject(std::string& _vertexFilena
 
 	std::cerr << "Linking shader program...\n";
 	glLinkProgram(ProgramObject); 
-	if(!validateLinking(ProgramObject, vertexShaderObject,  fragmentShaderObject))
-	{ return  NULL;}
+	std::cerr << "Validating linked program: " << ProgramObject << ".\n";
+	bool linkSuccess = validateLinking(ProgramObject, vertexShaderObject,  fragmentShaderObject);
 
-	std::cerr << "Complete.\n";
+	if(!linkSuccess)
+	{ 
+		std::cerr << "Complete:FAILED";
+		return  false;
+	}
 
-	ShaderProgram shaderObject = ShaderProgram( ProgramObject);
-	m_shaderList.push_back(shaderObject);
+	std::cerr << "Complete:";
 
-	return &m_shaderList[m_shaderList.size()-1];
+	//ShaderProgram shaderObject = ;
+
+	m_shaderMap.insert(std::make_pair(_name,  ShaderProgram( ProgramObject, _name) ) );
+
+	std::cerr << "SUCCESS.\n";
+
+	return true;
 }
 
 bool RenderScene::validateCompilation(GLuint _shader)
@@ -155,21 +295,30 @@ bool RenderScene::validateCompilation(GLuint _shader)
 	glGetShaderiv(_shader, GL_COMPILE_STATUS, &isCompiled);
 	if(isCompiled == GL_FALSE)
 	{
+		std::cerr << "\tLinking Failed. Getting error information.\n";
+
+		std::cerr << "\tFetching infolog length...";
 		GLint maxLength = 0;
 		glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &maxLength);
+		std::cerr << maxLength << "\n";
 
-		//The maxLength includes the NULL character
-		std::vector<GLchar> infoLog(maxLength);
+		std::cerr << "\tFetching infolog...\n";	
+		GLchar infoLog[maxLength];
 		glGetShaderInfoLog(_shader, maxLength, &maxLength, &infoLog[0]);
+		std::cerr << ""<< infoLog << "\n";
 	
 		//We don't need the shader anymore.
+		std::cerr << "\tRemoving Shader: " << _shader << "\n";	
 		glDeleteShader(_shader);
 
 		//Use the infoLog as you see fit.
 	
 		//In this simple program, we'll just leave
+		std::cerr << "\tCompiling Failed\n";
 		return false;
 	}
+
+	std::cerr << "\tCompiled: " << _shader << " successfully\n";
 
 	return true;
 
@@ -181,34 +330,48 @@ bool RenderScene::validateLinking(GLuint program, GLuint vertexShader, GLuint fr
 	glGetProgramiv(program, GL_LINK_STATUS, (int *)&isLinked);
 	if(isLinked == GL_FALSE)
 	{
+		std::cerr << "\tLinking Failed. Getting error information.\n";
+
+		std::cerr << "\tFetching infolog length...";
 		GLint maxLength = 0;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
+		std::cerr << maxLength << "\n";
 
 		//The maxLength includes the NULL character
+		std::cerr << "\tFetching infolog...\n";
 		GLchar infoLog[maxLength];
 		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
-	
+		std::cerr << ""<< infoLog << "\n";
+
+
+		std::cerr << "\tRemoving program and compiled shaders.\n";
 		//We don't need the program anymore.
+		std::cerr << "\tRemoving Program: " << program << "\n";
 		glDeleteProgram(program);
+
+		std::cerr << "\tRemoving Shader: " << vertexShader << "\n";
 		//Don't leak shaders either.
 		glDeleteShader(vertexShader);
+
+		std::cerr << "\tRemoving Shader: " << fragmentShader << "\n";
 		glDeleteShader(fragmentShader);
 
 		//Use the infoLog as you see fit.
 	
 		//In this simple program, we'll just leave
+
+		std::cerr << "\tLinking Failed\n";
 		return false;
 	}
 
 	return true;
 }
 
-
 int RenderScene::GetFileLength(std::ifstream& file)
 {
     if(!file.good()) return 0;
     
-    unsigned int pos=file.tellg();
+    //unsigned int pos=file.tellg();
     file.seekg(0,std::ios::end);
     unsigned int len = file.tellg();
     file.seekg(std::ios::beg);
@@ -216,15 +379,13 @@ int RenderScene::GetFileLength(std::ifstream& file)
     return len;
 }
 
-
-
-
 int RenderScene::LoadShader(std::string& filename, std::string& ShaderSource, int* len)
 {
+
 	std::cerr << "\t Preparing to open: " << filename << ".";
 
 	std::ifstream file;
-	file.open(filename, std::ios::in); // opens as ASCII!
+	file.open(filename.c_str(), std::ios::in); // opens as ASCII!
 	if(!file)
 	{ 
 		std::cerr << "\t ...FAILED\n";
@@ -235,7 +396,7 @@ int RenderScene::LoadShader(std::string& filename, std::string& ShaderSource, in
 
 
 	std::cerr << "\t Getting file length...";
-	*len = GetFileLength(file);
+	*len = 0;//GetFileLength(file);
 
 	if (len==0) 
 	{
@@ -243,23 +404,26 @@ int RenderScene::LoadShader(std::string& filename, std::string& ShaderSource, in
 		return -2;   // Error: Empty File 
 	}
 
+
 	std::cerr << "\t Success (size:" << *len << ")\n";
-    
 
 	std::string line;
 	if (file.is_open())
 	{
+
 		while ( getline (file,line) )
 		{
+		  	ShaderSource.append("\n");
 		  	ShaderSource.append(line);
 			std::cerr << " ... ";	
 		}
 		std::cerr << "\n";
 		std::cerr << "\t Closing file.\n";
 		file.close();
+
 	}
 
-	  
+	//std::cerr << ShaderSource << "\n";
 	return 0; // No Error
 }
 
@@ -269,10 +433,17 @@ int RenderScene::UnloadShader(GLubyte** ShaderSource)
 	if (*ShaderSource != 0)
 		delete[] *ShaderSource;
 	*ShaderSource = 0;
+
+	return 0;
 }
 
 void RenderScene::Render()
 {
+
+    glClearColor(0.3, 0.4, 0.8, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+/*
 	glMatrixMode(GL_PROJECTION);
 
     glLoadIdentity();
@@ -285,8 +456,13 @@ void RenderScene::Render()
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+
+
+*/
     glCullFace(GL_NONE);	
+
     {
+/*
         glBegin(GL_TRIANGLES);
 
 		RenderQuad(m_screenArray[0].m_pos, m_screenArray[0].m_size, m_screenArray[0].m_colour);
@@ -295,6 +471,28 @@ void RenderScene::Render()
 		RenderQuad(m_screenArray[3].m_pos, m_screenArray[3].m_size, m_screenArray[3].m_colour);  
 
         glEnd();
+*/
+
+		glUseProgram(m_shaderMap.find(std::string("TestShader"))->second.programID);
+		//size newSize = size(500.f, 500.0f);
+
+		//Set texture
+		/*
+		{
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, textures[0]);
+		}
+		*/
+
+
+        //glBegin(GL_TRIANGLES);
+			m_genericUnitQuad.Draw();
+		//glEnd();
+
+		glUseProgram(0);
+
+
     }
 
     glFlush();

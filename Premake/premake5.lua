@@ -9,7 +9,8 @@ solution "MultiFocalDisplay"
       language "C++"
       files { "../src/**.h", "../src/**.cpp" }
 	  libdirs { "../lib/GLEW/lib", "../lib/glfw-3.1.2/lib", "../lib" }
-	  buildoptions {"-std=c++11"}
+	  flags{ "ExtraWarnings"}
+	  buildoptions {"-std=c++11 -ggdb -pthread"}
 	  targetdir ("../output")
 	  objdir ("../output/obj")
 	  includedirs { "../lib/glfw-3.1.2/include", "../include/", "../lib/glfw-3.1.2/deps"}
@@ -20,7 +21,7 @@ solution "MultiFocalDisplay"
  
 	  configuration "linux"
 	         location "../LinuxBuild"
-		 links { "GLEW", "GLU", "glut", "GL"}
+		 links { "GLEW", "pthread", "glut", "GL", "GLU"}
  
       configuration "Debug"
 		 targetsuffix "d"
