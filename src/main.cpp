@@ -163,14 +163,12 @@ void SpinningBoxMode()
 
 */
 
-
 void draw()
 {
 	//std::cout << ".";
 	RS.Render();
-	glutPostRedisplay();
+	//glutPostRedisplay();
 }
-
 
 int main(int argc, char **argv)
 {
@@ -179,7 +177,7 @@ int main(int argc, char **argv)
 	RS.Initialise();
     glutInit(&argc, argv);
 
-    glutInitDisplayMode(GLUT_SINGLE);
+    glutInitDisplayMode(GLUT_DOUBLE);
     glutInitWindowSize(RS.m_SizeX, RS.m_SizeY);
 
     glutInitWindowPosition(RS.m_PosX, RS.m_PosY);
@@ -206,7 +204,21 @@ int main(int argc, char **argv)
 	std::string name = "TestShader";
     std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 	bool pass = RS.CreateShaderProgramObject( vert, frag, name );
+
+	vert = "../Shaders/vert_tex.glsl";
+	frag = "../Shaders/frag_tex.glsl";
+	name = "TestShader_Tex";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	pass = RS.CreateShaderProgramObject( vert, frag, name );
+
+
+	vert = "../Shaders/vert_MRT.glsl";
+	frag = "../Shaders/frag_MRT.glsl";
+	name = "TestShader_MRT";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	pass = RS.CreateShaderProgramObject( vert, frag, name );
 	(void)pass;
+
 
 	RS.InitialiseRenderObjects();
 

@@ -11,7 +11,9 @@
 #include <map>
 
 
-#define TESTGL 	TestGLError(__FILE__, __LINE__)
+#define TESTGL 	RenderScene::TestGLError(__FILE__, __LINE__)
+
+
 
 struct colour
 {
@@ -31,17 +33,28 @@ struct colour
 
 struct Position
 {
-	Position(float _x, float _y, float _z ) : x(_x), y(_y), z(_z), w(0.f){}
-	Position( ): x(0.f), y(0.f), z(0.f), w(0.f){}
+	Position(float _x, float _y, float _z )
+	{
+		pos[0] = _x;
+		pos[1] = _y;
+		pos[2] = _z;
+		pos[3] = 0.0f;
+	}
+	Position( ) 
+	{
+		pos[0] = 0.f;
+		pos[1] = 0.f;
+		pos[2] = 0.f;
+		pos[3] = 0.f;
+	}
 
-	float X(){return x;}
-	float Y(){return y;}
-	float Z(){return z;}
+	float* GetPtr(){return &pos[0];}
+	float X(){return pos[0];}
+	float Y(){return pos[1];}
+	float Z(){return pos[2];}
 
-	float x;
-	float y;
-	float z;
-	float w;
+	float pos[4];
+
 };
 
 struct size
@@ -66,14 +79,36 @@ struct texCoord
 
 };
 
+
+struct FBOMulti
+{
+	FBOMulti()
+	:	m_frameBufferIndex(-1), 
+		m_renderTextureIndex0(-1), m_renderTextureIndex1(-1), m_renderTextureIndex2(-1), m_renderTextureIndex3(-1),
+		 m_depthRenderIndex(-1), m_width(0), m_height(0){}
+	FBOMulti(GLuint _fbi, GLuint _rti0, GLuint _rti1,GLuint _rti2,GLuint _rti3,GLuint _dri, int _width, int _height)
+	: 	m_frameBufferIndex(_fbi),
+		m_renderTextureIndex0(_rti0), m_renderTextureIndex1(_rti1), m_renderTextureIndex2(_rti2), m_renderTextureIndex3(_rti3),
+		m_depthRenderIndex(_dri), m_width(_width), m_height(_height){}
+
+	GLuint  m_frameBufferIndex;
+	GLuint  m_renderTextureIndex0;
+	GLuint  m_renderTextureIndex1;
+	GLuint  m_renderTextureIndex2;
+	GLuint  m_renderTextureIndex3;
+	GLuint  m_depthRenderIndex;
+	int 	m_width;
+	int 	m_height;
+};
+
 struct FBO
 {
 	FBO():m_frameBufferIndex(-1), m_renderTextureIndex(-1), m_depthRenderIndex(-1), m_width(0), m_height(0){}
 	FBO(GLuint _fbi, GLuint _rti, GLuint _dri, int _width, int _height): m_frameBufferIndex(_fbi), m_renderTextureIndex(_rti), m_depthRenderIndex(_dri), m_width(_width), m_height(_height){}
 
-	GLuint m_frameBufferIndex;
-	GLuint m_renderTextureIndex;
-	GLuint m_depthRenderIndex;
+	GLuint  m_frameBufferIndex;
+	GLuint  m_renderTextureIndex;
+	GLuint  m_depthRenderIndex;
 	int 	m_width;
 	int 	m_height;
 };
@@ -93,7 +128,21 @@ class ShaderProgram
 	public:
 	ShaderProgram(GLuint _id): programID(_id), name("Unnamed"){}
 	ShaderProgram(GLuint _id, std::string& _name): programID(_id), name(_name){}
-	
+
+	GLint FetchUniformValue(std::string _name);
+
+
+	void SetUniform1UI(std::string _name, GLuint _val);
+	void SetUniform1F(std::string _name, float _val);
+	void SetUniform2F(std::string _name, float _val0, float _val1);
+	void SetUniform3F(std::string _name, float _val0, float _val1, float _val2);
+	void SetUniform4F(std::string _name, float _val0, float _val1, float _val2, float _val3);
+
+	void SetUniform2FP(std::string _name, float* _val);
+	void SetUniform3FP(std::string _name, float* _val);
+	void SetUniform4FP(std::string _name, float* _val);
+
+	std::map<std::string, GLint> m_uniformMap;	
 	GLuint programID;
 	std::string name;
 };
@@ -145,19 +194,27 @@ public:
 	void Initialise();
 	void InitialiseRenderObjects();
 
+	static void TestGLError(const char* _file, int _line);
+
 
 	//Rendering
 	void Render();
+	void Render_CopyToViews();
+	void Render_Scene();
+
 	void RenderQuad(Position& _pos, size& _size, colour& _col);
+	void RenderScreenQuadAtOffset(Position& _offset, size& _size);
 
 	//Screen Control
 	void InitialiseScreenPositions();
 
 
 	// FBO Control
-	FBO  CreateFrameBuffer		(int _width, int _height, GLenum _format);
-	void ApplySingleFrameBuffer	(FBO _fbo);
-	void ApplyFourFrameBuffers	(FBO _fbo0, FBO _fbo1, FBO _fbo2, FBO _fbo3);
+	FBO 	 CreateSingleFrameBuffer(int _width, int _height, GLenum _format);
+	FBOMulti CreateFourFrameBuffer(int _width, int _height, GLenum _format);
+	
+	void ApplySingleFrameBuffer	(FBO& _fbo);
+	void ApplyFourFrameBuffers(FBOMulti _fbo);
 	void ClearFrameBuffers		( );
 
 	// Shader Management
@@ -177,6 +234,7 @@ public:
 	std::vector<GLuint> 		m_renderTextures;
 	std::vector<GLuint> 		m_depthRenderTextures;
 	std::vector<FBO> 			m_FBOList;
+	std::vector<FBOMulti> 		m_FBOMultiList;
 	
 	std::map<std::string, ShaderProgram> m_shaderMap;
 
