@@ -131,15 +131,28 @@ void  ShaderProgram::SetUniform4FP(std::string _name, float* _val)
 	glUniform4fv(uniLoc, 1,_val);
 }
 
+void ShaderProgram::SetMatrix4FV(std::string _name, const GLfloat* _val)
+{
+	GLint uniLoc = FetchUniformValue(_name);	
+	if(uniLoc == -1)
+	{
+		return;
+	}
+		 
+	glUseProgram(programID);
+	glUniformMatrix4fv(uniLoc, 1,GL_FALSE, _val);
+
+}
+
 
 bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::string& _pixelFilename, std::string _name)
 {
-	std::cerr << "Creating shader from:" << _vertexFilename << "," << _pixelFilename << "\n";
+	std::cerr << "Creating shader '" << _name << "' from:" << _vertexFilename << "," << _pixelFilename << "\n";
 	
 	GLuint vertexShaderObject 		= glCreateShader(GL_VERTEX_SHADER);
 	GLuint fragmentShaderObject 	= glCreateShader(GL_FRAGMENT_SHADER);
 
-	std::cerr << "Created GL Shader Objects\n";
+	std::cerr << _name << ": Created GL Shader Objects\n";
 
 	std::string vShaderSource = "";
 	GLint vLen 	= 0;
@@ -147,11 +160,11 @@ bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::s
 	std::string pShaderSource = "";
 	GLint pLen 	= 0;
 
-	std::cerr << "Preparing to load vertex shader source code...\n";
+	std::cerr << _name << ": Preparing to load vertex shader source code...\n";
 	LoadShader(_vertexFilename, vShaderSource, &vLen);
 
 
-	std::cerr << "Preparing to load fragment shader source code...\n";
+	std::cerr << _name << ": Preparing to load fragment shader source code...\n";
 	LoadShader(_pixelFilename, pShaderSource, &pLen);
 	
 	const char* vSource = vShaderSource.c_str();
@@ -163,47 +176,46 @@ bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::s
 	vLen = vShaderSource.length();
 	pLen = pShaderSource.length();
 
-	std::cerr << "Applying shader source to shader object (vertex)...\n";
+	std::cerr << _name << ": Applying shader source to shader object (vertex)...\n";
 	glShaderSource(vertexShaderObject	, 1, &vSource, (&vLen) );
-	std::cerr << "Applying shader source to shader object (fragment)...\n";
+	std::cerr << _name << ": Applying shader source to shader object (fragment)...\n";
 	glShaderSource(fragmentShaderObject	, 1, &pSource, (&pLen) );
 
 
 	// Compile
-	std::cerr << "Compiling shader object (vertex)...\n";
+	std::cerr << _name << ": Compiling shader object (vertex)...\n";
 	glCompileShader(vertexShaderObject);	
 
 	if(!validateCompilation(vertexShaderObject))
 	{ return false;}
 
-	std::cerr << "Compiling shader object (fragment)...\n";
+	std::cerr << _name << ": Compiling shader object (fragment)...\n";
 	glCompileShader(fragmentShaderObject);
 	if(!validateCompilation(fragmentShaderObject))
 	{ return  false;}
 
 
 	// Link
-	std::cerr << "Creating shader program...\n";
+	std::cerr << _name << ": Creating shader program...\n";
 	GLuint ProgramObject = glCreateProgram();
 
-	std::cerr << "Attaching vertex shader to shader program...\n";
+	std::cerr << _name << ": Attaching vertex shader to shader program...\n";
 	glAttachShader(ProgramObject, vertexShaderObject);
-	std::cerr << "Attaching fragment shader to shader program...\n";
+	std::cerr << _name << ": Attaching fragment shader to shader program...\n";
 	glAttachShader(ProgramObject, fragmentShaderObject);
 
-
-	std::cerr << "Linking shader program...\n";
+	std::cerr << _name << ": Linking shader program...\n";
 	glLinkProgram(ProgramObject); 
-	std::cerr << "Validating linked program: " << ProgramObject << ".\n";
+	std::cerr << _name << ": Validating linked program: " << ProgramObject << ".\n";
 	bool linkSuccess = validateLinking(ProgramObject, vertexShaderObject,  fragmentShaderObject);
 
 	if(!linkSuccess)
 	{ 
-		std::cerr << "Complete:FAILED";
+		std::cerr << _name << ": Complete:FAILED";
 		return  false;
 	}
 
-	std::cerr << "Complete:";
+	std::cerr << _name << ": Complete:";
 
 	//ShaderProgram shaderObject = ;
 
@@ -321,7 +333,7 @@ int RenderScene::LoadShader(std::string& filename, std::string& ShaderSource, in
 
 
 	std::cerr << "\t Getting file length...";
-	*len = 0;//GetFileLength(file);
+	*len = GetFileLength(file);
 
 	if (len==0) 
 	{
@@ -335,12 +347,12 @@ int RenderScene::LoadShader(std::string& filename, std::string& ShaderSource, in
 	std::string line;
 	if (file.is_open())
 	{
-
+		std::cerr << "\t Reading>";
 		while ( getline (file,line) )
 		{
 		  	ShaderSource.append("\n");
 		  	ShaderSource.append(line);
-			std::cerr << " ... ";	
+			std::cerr << "-";	
 		}
 		std::cerr << "\n";
 		std::cerr << "\t Closing file.\n";

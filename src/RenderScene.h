@@ -10,6 +10,13 @@
 #include <iostream>
 #include <map>
 
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp> 
+
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 
 #define TESTGL 	RenderScene::TestGLError(__FILE__, __LINE__)
 
@@ -84,18 +91,16 @@ struct FBOMulti
 {
 	FBOMulti()
 	:	m_frameBufferIndex(-1), 
-		m_renderTextureIndex0(-1), m_renderTextureIndex1(-1), m_renderTextureIndex2(-1), m_renderTextureIndex3(-1),
+		m_renderTextureIndex0(-1), m_renderTextureIndex1(-1),
 		 m_depthRenderIndex(-1), m_width(0), m_height(0){}
-	FBOMulti(GLuint _fbi, GLuint _rti0, GLuint _rti1,GLuint _rti2,GLuint _rti3,GLuint _dri, int _width, int _height)
+	FBOMulti(GLuint _fbi, GLuint _rti0, GLuint _rti1,GLuint _dri, int _width, int _height)
 	: 	m_frameBufferIndex(_fbi),
-		m_renderTextureIndex0(_rti0), m_renderTextureIndex1(_rti1), m_renderTextureIndex2(_rti2), m_renderTextureIndex3(_rti3),
+		m_renderTextureIndex0(_rti0), m_renderTextureIndex1(_rti1),
 		m_depthRenderIndex(_dri), m_width(_width), m_height(_height){}
 
 	GLuint  m_frameBufferIndex;
 	GLuint  m_renderTextureIndex0;
 	GLuint  m_renderTextureIndex1;
-	GLuint  m_renderTextureIndex2;
-	GLuint  m_renderTextureIndex3;
 	GLuint  m_depthRenderIndex;
 	int 	m_width;
 	int 	m_height;
@@ -158,6 +163,8 @@ class ShaderProgram
 	void SetUniform3FP(std::string _name, float* _val);
 	void SetUniform4FP(std::string _name, float* _val);
 
+	void SetMatrix4FV(std::string _name, const GLfloat* _val);
+
 	std::map<std::string, GLint> m_uniformMap;	
 	GLuint programID;
 	std::string name;
@@ -172,6 +179,14 @@ struct QuadVertex
 	texCoord m_uv;
 };
 
+struct GenericVertex
+{
+	Position m_pos;
+	Position m_nor;
+	texCoord m_uv;
+	texCoord m_uv1;
+};
+
 class Mesh
 {
 public:
@@ -181,6 +196,33 @@ public:
 	GLuint vertexBufferObject;
 	GLuint elementBufferObject;
 };
+
+
+struct VBOIBO
+{
+	VBOIBO(GLuint _vbo, GLuint _ibo, unsigned int _count)
+	: vertexBufferObject(_vbo), elementBufferObject(_ibo), elementCount(_count){}
+
+	GLuint 		 vertexBufferObject;
+	GLuint 		 elementBufferObject;
+	unsigned int elementCount;
+};
+
+class AIMesh : public Mesh
+{
+public:
+
+	AIMesh()
+	{
+	}
+
+	void Initialise	(std::string& _path);
+	void Draw		();
+
+	std::vector<VBOIBO> m_vertexObjects;
+};
+
+
 
 #ifndef offsetof
 #define offsetof(type,member) ((std::size_t) &(((type*)0)->member))
@@ -201,6 +243,25 @@ public:
 	unsigned int	indicies[6];
 };
 
+
+class Camera
+{
+	public:
+	Camera(){}
+
+	void Init 			( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up,
+	 						float _fov	, float _aspect	, float _near	, float _far);
+
+	void InitView		( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up	);
+	void InitProj		( 	float _fov	, float _aspect	, float _near	, float _far);
+	
+	glm::mat4 GetMVP	( 	glm::mat4& _model);
+
+	glm::mat4 m_view;
+	glm::mat4 m_proj;
+};
+
+
 class RenderScene
 {
 public:
@@ -218,6 +279,8 @@ public:
 	void Render_CopyToViews();
 	void Render_Scene();
 
+	void SceneBody();
+
 	void RenderQuad(Position& _pos, size& _size, colour& _col);
 	void RenderScreenQuadAtOffset(Position& _offset, size& _size);
 
@@ -228,10 +291,10 @@ public:
 
 	// FBO Control
 	FBO 	 CreateSingleFrameBuffer(int _width, int _height, GLenum _format);
-	FBOMulti CreateFourFrameBuffer(int _width, int _height, GLenum _format);
+	FBOMulti CreateTwoFrameBuffer(int _width, int _height, GLenum _format);
 	
 	void ApplySingleFrameBuffer	(FBO& _fbo);
-	void ApplyFourFrameBuffers(FBOMulti _fbo);
+	void ApplyTwoFrameBuffers(FBOMulti _fbo);
 	void ClearFrameBuffers		( );
 
 	// Shader Management
@@ -258,6 +321,10 @@ public:
 	ScreenLayout				m_layoutControl;
 
 	QuadMesh					m_genericUnitQuad;
+	AIMesh						m_boxMesh;
+
+	//Render Settings
+	Camera 						m_camera[2];
 
 	//Window Controls
 	int m_PosX;

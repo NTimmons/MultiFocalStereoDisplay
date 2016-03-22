@@ -171,6 +171,13 @@ void draw()
 	//glutPostRedisplay();
 }
 
+
+void timerCB(int millisec)
+{
+	glutTimerFunc(millisec, timerCB, millisec);
+	glutPostRedisplay();
+}
+
 int main(int argc, char **argv)
 {
     std::cerr << "Main() Entry" << std::endl;
@@ -187,6 +194,8 @@ int main(int argc, char **argv)
     glutKeyboardFunc(keyPressCallback);
     glutDisplayFunc(draw);
 
+	glutTimerFunc(25, timerCB, 25); // draw every 50 ms
+
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
@@ -194,7 +203,6 @@ int main(int argc, char **argv)
 	  fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 	}
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-	
 
     initAllignment();
 
@@ -216,6 +224,12 @@ int main(int argc, char **argv)
 	vert = "../Shaders/vert_MRT.glsl";
 	frag = "../Shaders/frag_MRT.glsl";
 	name = "TestShader_MRT";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	pass = RS.CreateShaderProgramObject( vert, frag, name );
+
+	vert = "../Shaders/vert_persp_MRT.glsl";
+	frag = "../Shaders/frag_persp_MRT.glsl";
+	name = "TestShader_persp_MRT";
     std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 	pass = RS.CreateShaderProgramObject( vert, frag, name );
 	(void)pass;
