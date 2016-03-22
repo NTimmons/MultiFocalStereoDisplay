@@ -11,6 +11,37 @@ void RenderScene::TestGLError(const char* _file, int _line)
 		std::cerr << "OpenGL Error: (" << _file << ", " << _line << ")-> " << id << "\n";
 }
 
+void RenderScene::HandleInput( unsigned char _key)
+{
+
+	//Which screen to move;
+	if		( _key == '0')
+		m_activeScreen = 0;
+	else if	( _key == '1' )
+		m_activeScreen = 1;
+	else if ( _key == '2' )
+		m_activeScreen = 2;
+	else if ( _key == '3' )
+		m_activeScreen = 3;
+
+	else if	( _key == 'w' )
+		m_layoutControl.AdjustScreenPos(Position(0.f, 0.01f, 0.f), m_activeScreen);
+	else if	( _key == 's' )
+		m_layoutControl.AdjustScreenPos(Position(0.f, -0.01f, 0.f), m_activeScreen);
+	else if ( _key == 'a' )
+		m_layoutControl.AdjustScreenPos(Position(-0.01f, 0.0f, 0.f), m_activeScreen);
+	else if ( _key == 'd' )
+		m_layoutControl.AdjustScreenPos(Position(0.01f, 0.0f, 0.f), m_activeScreen);
+
+	else if ( _key == 'e' )
+		m_layoutControl.AdjustScreenSize(size(0.01f, 0.01f), m_activeScreen);
+	else if ( _key == 'q' )
+		m_layoutControl.AdjustScreenSize(size(-0.01f, -0.01f), m_activeScreen);
+
+}
+
+
+
 void RenderScene::InitialiseRenderObjects()
 {
 	m_genericUnitQuad.Initialise();
@@ -54,27 +85,43 @@ void RenderScene::Render_Scene()
 
 void RenderScene::Render_CopyToViews()
 {
-		glUseProgram(m_shaderMap.find(std::string("TestShader_Tex"))->second.programID);
+	glUseProgram(m_shaderMap.find(std::string("TestShader_Tex"))->second.programID);
 
-		m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1UI("tex", 0);
-		m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1F("testVal", 1.0f);
+	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1UI("tex", 0);
+	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1F("testVal", 1.0f);
+
+/*
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_FBOMultiList[0].m_renderTextureIndex0);
+	Position p0(-0.5f, 0.f, 0.f);
+	size 	 s0(0.25f, 0.25f);
+	RenderScreenQuadAtOffset(p0,s0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_FBOMultiList[0].m_renderTextureIndex1);
+	Position p1(0.5f, 0.5f, 0.f);
+	size 	 s1(0.25f, 0.25f);
+	RenderScreenQuadAtOffset(p1,s1);*/
+
+	GLuint textureArray[4] =  {	m_FBOMultiList[0].m_renderTextureIndex0,
+								m_FBOMultiList[0].m_renderTextureIndex1,
+								m_FBOMultiList[0].m_renderTextureIndex2,
+								m_FBOMultiList[0].m_renderTextureIndex3
+							  };
 
 
+	for(unsigned int i = 0; i < 4; i++)
+	{
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_FBOMultiList[0].m_renderTextureIndex0);
-		Position p0(-0.5f, 0.f, 0.f);
-		size 	 s0(0.25f, 0.25f);
-		RenderScreenQuadAtOffset(p0,s0);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_FBOMultiList[0].m_renderTextureIndex1);
-		Position p1(0.5f, 0.5f, 0.f);
-		size 	 s1(0.25f, 0.25f);
-		RenderScreenQuadAtOffset(p1,s1);
+		glBindTexture(GL_TEXTURE_2D, textureArray[i]);
+		Position p = m_layoutControl.GetScreenPos(i);
+		size 	 s = m_layoutControl.GetScreenSize(i);
+		RenderScreenQuadAtOffset(p,s);
+	}
 
 
-		glUseProgram(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void RenderScene::Render()
@@ -107,6 +154,7 @@ void RenderScene::RenderScreenQuadAtOffset(Position& _offset, size& _size)
 
 void RenderScene::InitialiseScreenPositions()
 {
+/*
 	m_screenArray[0].m_pos = Position(0.f     , 100.f, 0.f); 
 	m_screenArray[1].m_pos = Position(200.f   , 100.f, 0.f);
 	m_screenArray[2].m_pos = Position(400.f   , 100.f, 0.f);
@@ -121,6 +169,7 @@ void RenderScene::InitialiseScreenPositions()
 	m_screenArray[1].m_colour = colour(0.f, 1.f, 0.f, 1.f);
 	m_screenArray[2].m_colour = colour(0.f, 0.f, 1.f, 1.f);
 	m_screenArray[3].m_colour = colour(1.f, 1.f, 0.f, 1.f);
+*/
 }
 
 void RenderScene::RenderQuad(Position& _pos, size& _size, colour& _col)

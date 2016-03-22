@@ -96,6 +96,7 @@ void keyPressCallback(unsigned char key, int x, int y)
 	(void)x;
 	(void)y;
 
+	RS.HandleInput(key);
 
     std::cerr << "SCREEN KEYPRESS: " << key << std::endl;	    
     switch(key)
@@ -112,7 +113,7 @@ void keyPressCallback(unsigned char key, int x, int y)
 
     //glutPositionWindow(gPosX, gPosY);
     //glutReshapeWindow((int)((float)gSizeY*ratio),gSizeY);
-	//glutPostRedisplay ();
+	glutPostRedisplay ();
 }
 
 /*

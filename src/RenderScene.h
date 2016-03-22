@@ -123,6 +123,22 @@ struct Screen
 	colour   m_colour;
 };
 
+class ScreenLayout
+{
+	public:
+	ScreenLayout();
+	
+	Position 	GetScreenPos	( unsigned int _index);
+	size     	GetScreenSize	( unsigned int _index);
+
+	void 		AdjustScreenPos	( Position 	_offset, unsigned int _index);
+	void 		AdjustScreenSize( size 		_offset, unsigned int _index);
+
+	private:
+	Screen		m_screenArray[4];
+
+};
+
 class ShaderProgram
 {
 	public:
@@ -188,7 +204,7 @@ public:
 class RenderScene
 {
 public:
-	RenderScene(){}
+	RenderScene(){ m_activeScreen = 0;}
 
 	//Setup
 	void Initialise();
@@ -207,6 +223,7 @@ public:
 
 	//Screen Control
 	void InitialiseScreenPositions();
+	void HandleInput( unsigned char _key);
 
 
 	// FBO Control
@@ -238,7 +255,7 @@ public:
 	
 	std::map<std::string, ShaderProgram> m_shaderMap;
 
-	Screen						m_screenArray[4];
+	ScreenLayout				m_layoutControl;
 
 	QuadMesh					m_genericUnitQuad;
 
@@ -248,7 +265,8 @@ public:
 
 	int m_SizeX;
 	int m_SizeY;
-
+	
+	int m_activeScreen;
 
 };
 
