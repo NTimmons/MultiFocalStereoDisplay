@@ -38,6 +38,8 @@ void 		ScreenLayout::AdjustScreenPos	( Position _offset, unsigned int _index)
 
 void 		ScreenLayout::AdjustScreenSize	( size 	_offset, unsigned int _index)
 {
+	std::cerr << "Adjusting size by: " << _offset.w << "-" << _offset.h << "\n";
 	m_screenArray[_index].m_size.w += _offset.w;
 	m_screenArray[_index].m_size.h += _offset.h;
+	std::cerr << "New size : " << m_screenArray[_index].m_size.w << "-" << m_screenArray[_index].m_size.h << "\n";
 }

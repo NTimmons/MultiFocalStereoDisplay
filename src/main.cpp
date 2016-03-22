@@ -102,17 +102,13 @@ void keyPressCallback(unsigned char key, int x, int y)
     switch(key)
     {
 		case 'q':
-			initAllignment();
+			//initAllignment();
 		break;
 		case 'e':
-			initBox();
+			//initBox();
 		break;
     }	
 
-	//float ratio = (float)gSizeX/(float)gSizeY;
-
-    //glutPositionWindow(gPosX, gPosY);
-    //glutReshapeWindow((int)((float)gSizeY*ratio),gSizeY);
 	glutPostRedisplay ();
 }
 
