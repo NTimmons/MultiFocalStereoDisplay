@@ -9,7 +9,7 @@ void QuadMesh::Draw()
 	if(firstDraw)
 	{
 		std::cerr << "Drawing QUAD\n";
-		firstDraw = true;
+		firstDraw = false;
 	}
 
 TESTGL;

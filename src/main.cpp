@@ -98,7 +98,7 @@ void keyPressCallback(unsigned char key, int x, int y)
 
 	RS.HandleInput(key);
 
-    std::cerr << "SCREEN KEYPRESS: " << key << std::endl;	    
+    std::cerr << "(" << key << ")";	    
     switch(key)
     {
 		case 'q':

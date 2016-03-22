@@ -34,8 +34,6 @@ size     	ScreenLayout::GetScreenSize		( unsigned int _index)
 
 void 		ScreenLayout::AdjustScreenPos	( Position _offset, unsigned int _index)
 {
-	std::cerr << "Adjusting Screen Position \n";
-
 	m_screenArray[_index].m_pos.pos[0] += _offset.pos[0];
 	m_screenArray[_index].m_pos.pos[1] += _offset.pos[1];
 	m_screenArray[_index].m_pos.pos[2] += _offset.pos[2];
