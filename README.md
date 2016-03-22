@@ -11,9 +11,7 @@ Use the premake file to generate the build files for your system using the provi
 
 ##TODO
 
-- **Add model loading**
 - **Add more camera controls**
-- **Configure left and right eye setup using current camera work**
 - **Write some basic lighting shaders**
 - **Add some type of light support**
 - **Write near and far plane clipping/blending shaders for each eye**
