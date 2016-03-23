@@ -10,7 +10,7 @@ Uses GLM and Premake. Inlcluded in repo.
 Use the premake file to generate the build files for your system using the provided .bat or .sh files.
 
 ##TODO
-
+- **Add screen size config entry**
 - **Add more camera controls**
 - **Write some basic lighting shaders**
 - **Add some type of light support**
