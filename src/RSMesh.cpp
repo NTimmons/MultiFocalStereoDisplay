@@ -111,11 +111,13 @@ void AIMesh::Initialise(std::string& _path)
 			unsigned int i1 = faces[ii].mIndices[1];
 			unsigned int i2 = faces[ii].mIndices[2];
 
-			vecIndices.push_back(faces[ii].mIndices[0]);
-			vecIndices.push_back(faces[ii].mIndices[1]);
-			vecIndices.push_back(faces[ii].mIndices[2]);
+			vecIndices.push_back(i0);
+			vecIndices.push_back(i1);
+			vecIndices.push_back(i2);
 		}
 
+
+		/*
 		for(unsigned int ii = 0; ii < vecIndices.size(); ii++)
 		{
 			std::cerr << "\tIndex: " << vecIndices[ii] << "\n";
@@ -130,6 +132,7 @@ void AIMesh::Initialise(std::string& _path)
 
 		std::cerr << "Index Count: " << vecIndices.size() << "\n";
 		std::cerr << "Vertex Count: " << vecVertex.size() << "\n";
+		*/
 		
 		//Build VBOIBO
 		GLuint elementBufferObject = -1;
@@ -164,6 +167,10 @@ void AIMesh::Initialise(std::string& _path)
 
 		m_vertexObjects.push_back( VBOIBO(  vertexBufferObject, elementBufferObject, vecIndices.size() ) );
 	}
+	
+	if(scene)
+		aiReleaseImport(scene);
+
 }
 
 void QuadMesh::Draw()

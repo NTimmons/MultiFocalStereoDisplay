@@ -17,10 +17,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
 #define TESTGL 	RenderScene::TestGLError(__FILE__, __LINE__)
 
-
+//TODO NEEDS REFACTORING
 
 struct colour
 {
@@ -84,6 +83,18 @@ struct texCoord
 	float u;
 	float v;
 
+};
+
+class Texture
+{
+public:
+	Texture(): m_texture(-1){}
+
+	void Init(std::string& _path);
+	
+	GLuint Get(){ return m_texture; }
+
+	GLuint m_texture;
 };
 
 
@@ -273,7 +284,6 @@ public:
 
 	static void TestGLError(const char* _file, int _line);
 
-
 	//Rendering
 	void Render();
 	void Render_CopyToViews();
@@ -322,6 +332,7 @@ public:
 
 	QuadMesh					m_genericUnitQuad;
 	AIMesh						m_boxMesh;
+	Texture						m_testTexture;
 
 	//Render Settings
 	Camera 						m_camera[2];

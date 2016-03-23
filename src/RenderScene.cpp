@@ -28,6 +28,9 @@ void RenderScene::InitialiseRenderObjects()
 	std::string path = "path";
 	m_boxMesh.Initialise(path);
 
+	std::string img = "../Images/testimage.png";
+	m_testTexture.Init(img);
+
 	m_genericUnitQuad.Initialise();
 
 	FBO newFBO = CreateSingleFrameBuffer(1024,1024,0);
@@ -105,7 +108,7 @@ void RenderScene::Render_CopyToViews()
 	GLuint textureArray[4] =  {	m_FBOMultiList[0].m_renderTextureIndex0,
 								m_FBOMultiList[0].m_renderTextureIndex1,
 								m_FBOMultiList[1].m_renderTextureIndex0,
-								m_FBOMultiList[1].m_renderTextureIndex1
+								m_testTexture.Get()//m_FBOMultiList[1].m_renderTextureIndex1
 							  };
 
 	for(unsigned int i = 0; i < 4; i++)
