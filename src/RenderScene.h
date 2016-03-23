@@ -85,6 +85,8 @@ struct texCoord
 
 };
 
+
+
 class Texture
 {
 public:
@@ -144,16 +146,23 @@ class ScreenLayout
 	public:
 	ScreenLayout();
 	
-	Position 	GetScreenPos	( unsigned int _index);
-	size     	GetScreenSize	( unsigned int _index);
+	Position 	GetScreenPos					( unsigned int _index);
+	size     	GetScreenSize					( unsigned int _index);
 
-	void 		AdjustScreenPos	( Position 	_offset, unsigned int _index);
-	void 		AdjustScreenSize( size 		_offset, unsigned int _index);
+	void 		AdjustScreenPos					( Position 	_offset, unsigned int _index);
+	void 		AdjustScreenSize				( size 		_offset, unsigned int _index);
+
+	void 		SetScreenPos		( unsigned int _index, Position& _pos);
+	void     	SetScreenSize		( unsigned int _index, size& _size);
+
+
+
 
 	private:
 	Screen		m_screenArray[4];
 
 };
+
 
 class ShaderProgram
 {
@@ -297,6 +306,9 @@ public:
 	//Screen Control
 	void InitialiseScreenPositions();
 	void HandleInput( unsigned char _key);
+
+	bool ScreenLoadFromFile	(std::string _path, ScreenLayout* _screen);
+	void ScreenWriteToFile	(std::string _path, ScreenLayout* _screen);
 
 
 	// FBO Control

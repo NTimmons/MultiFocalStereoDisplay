@@ -4,6 +4,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <sys/time.h>
 
+#include <sstream>
+
 unsigned long GetTickCount()
 {
 	struct timeval tv;
@@ -12,6 +14,29 @@ unsigned long GetTickCount()
 
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
+
+std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) 
+{
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) 
+	{
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+
+std::vector<std::string> split(const std::string &s, char delim) 
+{
+    std::vector<std::string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
+//------------------------------------------------------------------------///
+
+
 
 void RenderScene::TestGLError(const char* _file, int _line)
 {
@@ -23,8 +48,113 @@ void RenderScene::TestGLError(const char* _file, int _line)
 		std::cerr << "OpenGL Error: (" << _file << ", " << _line << ")-> " << id << "\n";
 }
 
+
+void RenderScene::ScreenWriteToFile	(std::string _path, ScreenLayout* _screen)
+{
+	std::ofstream file;
+	file.open(_path.c_str(), std::ios::out);
+	if(!file)
+	{ 
+		std::cerr << "\t Failed to open screen config file: " << _path << "\n";
+		return;
+	}
+
+	if (file.is_open())
+	{
+		for(unsigned int i = 0; i < 4; i++)
+		{
+			std::stringstream ssP;
+			std::stringstream ssS;
+			unsigned int index = i;	
+
+			Position 	pos 	= _screen->GetScreenPos(i);
+			size		size 	= _screen->GetScreenSize(i);
+			
+			ssP << index << ":" << "P" << ":" << pos.X() << ":" << pos.Y() << ":" << pos.Z() << ":0\n";
+			ssP << index << ":" << "S" << ":" << size.W() << ":" << size.H() << ":0"<< ":0\n";
+
+			file << ssP.str();
+			file << ssS.str();
+
+		}
+
+		file.close();
+	}	
+}
+
+bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
+{
+	std::ifstream file;
+	file.open(_path.c_str(), std::ios::in);
+	if(!file)
+	{ 
+		std::cerr << "\t Failed to open screen config file: " << _path << "\n";
+		return false;
+	}
+	
+	std::string line;
+	if (file.is_open())
+	{
+		std::cerr << "\t Reading Config file>\n";
+		while ( getline (file,line) )
+		{
+			std::vector<std::string> sData = split(line, ':');
+			std::cerr << line << "\n";
+			if(sData.size() != 0 && sData.size() != 6)
+			{
+				std::cerr << "Invalid Config File\n";
+			}
+			else if (sData.size() > 0 )
+			{
+
+				unsigned int 	index 	= atoi(sData[0].c_str());
+				unsigned char 	type 	= sData[1].c_str()[0];
+				float 			val0	= (float)atof(sData[2].c_str());
+				float 			val1	= (float)atof(sData[3].c_str());
+				float 			val2	= (float)atof(sData[4].c_str());
+				float 			val3	= (float)atof(sData[5].c_str());
+
+				std::cerr << "Index: " << index <<
+							 " type: " << type <<
+							 " val0: " << val0 <<
+							 " val1: " << val1 <<
+							 " val2: " << val2 <<
+							 " val3: " << val3 << "\n";
+
+
+				std::cerr << "Type is: " << type << " \n";
+				if(type == 'P')
+				{	
+					Position p(val0, val1, val2);
+					_layout->SetScreenPos(index, p);
+				}
+				else if(type == 'S')
+				{	
+					size s(val0, val1);
+					_layout->SetScreenSize(index, s);
+				}
+			}
+
+			std::cerr << "-";	
+		}
+		std::cerr << "\n";
+		std::cerr << "\t Closing file.\n";
+		file.close();
+		return true;
+
+	}
+
+	return false;
+}
+
+
 void RenderScene::InitialiseRenderObjects()
 {
+	//Load Screen Data
+	std::string configFile = "../Config/layout.data";
+	ScreenLoadFromFile(configFile, &m_layoutControl);
+
+
 	std::string path = "path";
 	m_boxMesh.Initialise(path);
 
@@ -108,7 +238,7 @@ void RenderScene::Render_CopyToViews()
 	GLuint textureArray[4] =  {	m_FBOMultiList[0].m_renderTextureIndex0,
 								m_FBOMultiList[0].m_renderTextureIndex1,
 								m_FBOMultiList[1].m_renderTextureIndex0,
-								m_testTexture.Get()//m_FBOMultiList[1].m_renderTextureIndex1
+								m_FBOMultiList[1].m_renderTextureIndex1
 							  };
 
 	for(unsigned int i = 0; i < 4; i++)
@@ -207,6 +337,11 @@ void RenderScene::HandleInput( unsigned char _key)
 	else if ( _key == 'q' )
 		m_layoutControl.AdjustScreenSize(size(-0.01f, -0.01f), m_activeScreen);
 
+	else if ( _key == 'p')
+	{
+			std::string configFile = "../Config/layout.data";
+			ScreenWriteToFile(configFile, &m_layoutControl);
+	}
 }
 
 

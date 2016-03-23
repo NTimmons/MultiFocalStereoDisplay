@@ -21,6 +21,7 @@ ScreenLayout::ScreenLayout()
 	
 Position 	ScreenLayout::GetScreenPos		( unsigned int _index)
 {
+
 	return m_screenArray[_index].m_pos;
 }
 
@@ -28,6 +29,18 @@ size     	ScreenLayout::GetScreenSize		( unsigned int _index)
 {
 	return m_screenArray[_index].m_size;
 }
+
+void 	ScreenLayout::SetScreenPos		( unsigned int _index, Position& _pos)
+{
+	std::cerr << "Setting Screen Pos";
+	 m_screenArray[_index].m_pos = _pos;
+}
+
+void     	ScreenLayout::SetScreenSize		( unsigned int _index, size& _size)
+{
+	m_screenArray[_index].m_size = _size;
+}
+
 
 void 		ScreenLayout::AdjustScreenPos	( Position _offset, unsigned int _index)
 {
