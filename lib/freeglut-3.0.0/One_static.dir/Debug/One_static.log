@@ -1,0 +1,11 @@
+﻿Build started 24/03/2016 17:04:35.
+     1>Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\One_static.vcxproj" on node 5 (Build target(s)).
+     1>Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\bin\Debug\One_staticd.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib glu32.lib opengl32.lib winmm.lib lib\Debug\freeglut_staticd.lib opengl32.lib winmm.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/bin/Debug/One_staticd.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/lib/Debug/One_staticd.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug One_static.dir\Debug\one.res
+         One_static.dir\Debug\one.obj
+         One_static.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\bin\Debug\One_staticd.exe
+     1>Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\One_static.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.15

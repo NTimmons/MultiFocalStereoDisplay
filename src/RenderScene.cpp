@@ -2,10 +2,15 @@
 #include <iostream>
 
 #include <glm/gtc/type_ptr.hpp>
+
+#ifndef _WIN32
 #include <sys/time.h>
+#endif
 
 #include <sstream>
 
+
+#ifndef _WIN32
 unsigned long GetTickCount()
 {
 	struct timeval tv;
@@ -14,6 +19,7 @@ unsigned long GetTickCount()
 
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
+#endif
 
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) 
 {

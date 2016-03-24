@@ -5,21 +5,24 @@
 #include <chrono>
 #include <math.h>
 
+#ifndef _WIN32
 #include <sys/time.h>
-
+#endif
 
 #include <iostream>
 #include "RenderScene.h"
 
 
 
+#ifndef _WIN32
 //http://stackoverflow.com/questions/31579243/segmentation-fault-before-main-when-using-glut-and-stdstring
 #include <pthread.h> 
+
 
 void* simpleFunc(void*) { return NULL; } 
 void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, NULL); }
 
-
+#endif
 
 GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  // Red diffuse light.
 GLfloat light_position[] = {100.0, 100.0, 1.0, 0.0};  // Infinite light location. 
@@ -38,15 +41,12 @@ GLfloat v[8][3];  // Will be filled in with X,Y,Z vertices.
 
 RenderScene RS;
 
-
-
 void initAllignment()
 {
   glDisable(GL_LIGHT0);
   glDisable(GL_LIGHTING);
   glDisable(GL_DEPTH_TEST);
 }
-
 
 
 void initBox(void)
@@ -87,8 +87,6 @@ void initBox(void)
     			0.0, 0.0, 0.0,      // center is at (0,0,0) 
 				0.0, 1.0, 0.);      // up is in positive Y direction 
 }
-
-
 
 void keyPressCallback(unsigned char key, int x, int y)
 {

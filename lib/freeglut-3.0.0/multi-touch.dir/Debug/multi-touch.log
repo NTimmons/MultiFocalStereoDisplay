@@ -1,0 +1,10 @@
+﻿Build started 24/03/2016 17:04:35.
+     1>Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\multi-touch.vcxproj" on node 4 (Build target(s)).
+     1>Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\bin\Debug\multi-touchd.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib glu32.lib opengl32.lib winmm.lib lib\Debug\freeglutd.lib opengl32.lib winmm.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/bin/Debug/multi-touchd.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/lib/Debug/multi-touchd.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug "multi-touch.dir\Debug\multi-touch.obj"
+     1>LINK : fatal error LNK1104: cannot open file 'lib\Debug\freeglutd.lib'
+     1>Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\multi-touch.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.09

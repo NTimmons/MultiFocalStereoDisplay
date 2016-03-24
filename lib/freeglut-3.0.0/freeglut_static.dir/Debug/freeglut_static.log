@@ -1,0 +1,48 @@
+﻿Build started 24/03/2016 17:04:35.
+     1>Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\freeglut_static.vcxproj" on node 3 (Build target(s)).
+     1>Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\Lib.exe /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\lib\Debug\freeglut_staticd.lib" /NOLOGO  /machine:X86 freeglut_static.dir\Debug\freeglut.res
+         freeglut_static.dir\Debug\fg_callbacks.obj
+         freeglut_static.dir\Debug\fg_cursor.obj
+         freeglut_static.dir\Debug\fg_display.obj
+         freeglut_static.dir\Debug\fg_ext.obj
+         freeglut_static.dir\Debug\fg_font_data.obj
+         freeglut_static.dir\Debug\fg_gamemode.obj
+         freeglut_static.dir\Debug\fg_geometry.obj
+         freeglut_static.dir\Debug\fg_gl2.obj
+         freeglut_static.dir\Debug\fg_init.obj
+         freeglut_static.dir\Debug\fg_input_devices.obj
+         freeglut_static.dir\Debug\fg_joystick.obj
+         freeglut_static.dir\Debug\fg_main.obj
+         freeglut_static.dir\Debug\fg_misc.obj
+         freeglut_static.dir\Debug\fg_overlay.obj
+         freeglut_static.dir\Debug\fg_spaceball.obj
+         freeglut_static.dir\Debug\fg_state.obj
+         freeglut_static.dir\Debug\fg_stroke_mono_roman.obj
+         freeglut_static.dir\Debug\fg_stroke_roman.obj
+         freeglut_static.dir\Debug\fg_structure.obj
+         freeglut_static.dir\Debug\fg_teapot.obj
+         freeglut_static.dir\Debug\fg_videoresize.obj
+         freeglut_static.dir\Debug\fg_window.obj
+         freeglut_static.dir\Debug\fg_font.obj
+         freeglut_static.dir\Debug\fg_menu.obj
+         freeglut_static.dir\Debug\fg_cursor_mswin.obj
+         freeglut_static.dir\Debug\fg_display_mswin.obj
+         freeglut_static.dir\Debug\fg_ext_mswin.obj
+         freeglut_static.dir\Debug\fg_gamemode_mswin.obj
+         freeglut_static.dir\Debug\fg_init_mswin.obj
+         freeglut_static.dir\Debug\fg_input_devices_mswin.obj
+         freeglut_static.dir\Debug\fg_joystick_mswin.obj
+         freeglut_static.dir\Debug\fg_main_mswin.obj
+         freeglut_static.dir\Debug\fg_menu_mswin.obj
+         freeglut_static.dir\Debug\fg_spaceball_mswin.obj
+         freeglut_static.dir\Debug\fg_state_mswin.obj
+         freeglut_static.dir\Debug\fg_structure_mswin.obj
+         freeglut_static.dir\Debug\fg_window_mswin.obj
+         freeglut_static.dir\Debug\xparsegeometry_repl.obj
+         freeglut_static.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\lib\Debug\freeglut_staticd.lib
+     1>Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\freeglut_static.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.20

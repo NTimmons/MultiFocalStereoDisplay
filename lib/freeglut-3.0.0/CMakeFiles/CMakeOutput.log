@@ -1,0 +1,526 @@
+The system is: Windows - 6.3.9600 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler:  
+Build flags: 
+Id flags: 
+
+The output was:
+0
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:19.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\3.4.0\CompilerIdC\CompilerIdC.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "Debug\".
+  Creating directory "Debug\CompilerIdC.tlog\".
+InitializeBuildStatus:
+  Creating "Debug\CompilerIdC.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /nologo /W0 /WX- /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue CMakeCCompilerId.c
+  CMakeCCompilerId.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdC.lib" /MACHINE:X86 /SAFESEH Debug\CMakeCCompilerId.obj
+  CompilerIdC.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\3.4.0\CompilerIdC\.\CompilerIdC.exe
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_C_COMPILER=C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\cl.exe
+FinalizeBuildStatus:
+  Deleting file "Debug\CompilerIdC.tlog\unsuccessfulbuild".
+  Touching "Debug\CompilerIdC.tlog\CompilerIdC.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\3.4.0\CompilerIdC\CompilerIdC.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.45
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+
+The C compiler identification is MSVC, found in "C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/3.4.0/CompilerIdC/CompilerIdC.exe"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler:  
+Build flags: 
+Id flags: 
+
+The output was:
+0
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:19.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\3.4.0\CompilerIdCXX\CompilerIdCXX.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "Debug\".
+  Creating directory "Debug\CompilerIdCXX.tlog\".
+InitializeBuildStatus:
+  Creating "Debug\CompilerIdCXX.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /nologo /W0 /WX- /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:queue CMakeCXXCompilerId.cpp
+  CMakeCXXCompilerId.cpp
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdCXX.lib" /MACHINE:X86 /SAFESEH Debug\CMakeCXXCompilerId.obj
+  CompilerIdCXX.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\3.4.0\CompilerIdCXX\.\CompilerIdCXX.exe
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_CXX_COMPILER=C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\cl.exe
+FinalizeBuildStatus:
+  Deleting file "Debug\CompilerIdCXX.tlog\unsuccessfulbuild".
+  Touching "Debug\CompilerIdCXX.tlog\CompilerIdCXX.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\3.4.0\CompilerIdCXX\CompilerIdCXX.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.32
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+
+The CXX compiler identification is MSVC, found in "C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/3.4.0/CompilerIdCXX/CompilerIdCXX.exe"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_b2cbf.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:20.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_b2cbf.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_b2cbf.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_b2cbf.dir\Debug\cmTC_b2cbf.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_b2cbf.dir\Debug\cmTC_b2cbf.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b2cbf.dir\Debug\\" /Fd"cmTC_b2cbf.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\testCCompiler.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b2cbf.dir\Debug\\" /Fd"cmTC_b2cbf.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\testCCompiler.c"
+  
+  testCCompiler.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_b2cbf.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_b2cbf.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_b2cbf.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_b2cbf.dir\Debug\testCCompiler.obj
+  cmTC_b2cbf.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_b2cbf.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_b2cbf.dir\Debug\cmTC_b2cbf.tlog\unsuccessfulbuild".
+  Touching "cmTC_b2cbf.dir\Debug\cmTC_b2cbf.tlog\cmTC_b2cbf.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_b2cbf.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.67
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_41e9c.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:21.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_41e9c.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_41e9c.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_41e9c.dir\Debug\cmTC_41e9c.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_41e9c.dir\Debug\cmTC_41e9c.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_41e9c.dir\Debug\\" /Fd"cmTC_41e9c.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeCCompilerABI.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_41e9c.dir\Debug\\" /Fd"cmTC_41e9c.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeCCompilerABI.c"
+  
+  CMakeCCompilerABI.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_41e9c.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_41e9c.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_41e9c.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_41e9c.dir\Debug\CMakeCCompilerABI.obj
+  cmTC_41e9c.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_41e9c.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_41e9c.dir\Debug\cmTC_41e9c.tlog\unsuccessfulbuild".
+  Touching "cmTC_41e9c.dir\Debug\cmTC_41e9c.tlog\cmTC_41e9c.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_41e9c.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.42
+
+
+Determining if the CXX compiler works passed with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_4a7ac.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:21.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_4a7ac.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_4a7ac.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_4a7ac.dir\Debug\cmTC_4a7ac.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_4a7ac.dir\Debug\cmTC_4a7ac.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_4a7ac.dir\Debug\\" /Fd"cmTC_4a7ac.dir\Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_4a7ac.dir\Debug\\" /Fd"cmTC_4a7ac.dir\Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\testCXXCompiler.cxx"
+  
+  testCXXCompiler.cxx
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_4a7ac.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_4a7ac.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_4a7ac.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_4a7ac.dir\Debug\testCXXCompiler.obj
+  cmTC_4a7ac.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_4a7ac.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_4a7ac.dir\Debug\cmTC_4a7ac.tlog\unsuccessfulbuild".
+  Touching "cmTC_4a7ac.dir\Debug\cmTC_4a7ac.tlog\cmTC_4a7ac.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_4a7ac.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.40
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_7e783.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:22.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_7e783.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_7e783.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_7e783.dir\Debug\cmTC_7e783.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_7e783.dir\Debug\cmTC_7e783.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_7e783.dir\Debug\\" /Fd"cmTC_7e783.dir\Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeCXXCompilerABI.cpp"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_7e783.dir\Debug\\" /Fd"cmTC_7e783.dir\Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Program Files (x86)\CMake\share\cmake-3.4\Modules\CMakeCXXCompilerABI.cpp"
+  
+  CMakeCXXCompilerABI.cpp
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_7e783.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_7e783.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_7e783.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_7e783.dir\Debug\CMakeCXXCompilerABI.obj
+  cmTC_7e783.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_7e783.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_7e783.dir\Debug\cmTC_7e783.tlog\unsuccessfulbuild".
+  Touching "cmTC_7e783.dir\Debug\cmTC_7e783.tlog\cmTC_7e783.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_7e783.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.42
+
+
+
+
+Detecting CXX [] compiler features compiled with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_859f2.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:22.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_859f2.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_859f2.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_859f2.dir\Debug\cmTC_859f2.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_859f2.dir\Debug\cmTC_859f2.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_859f2.dir\Debug\\" /Fd"cmTC_859f2.dir\Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\feature_tests.cxx"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_859f2.dir\Debug\\" /Fd"cmTC_859f2.dir\Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\feature_tests.cxx"
+  
+  feature_tests.cxx
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_859f2.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_859f2.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_859f2.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_859f2.dir\Debug\feature_tests.obj
+  cmTC_859f2.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_859f2.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_859f2.dir\Debug\cmTC_859f2.tlog\unsuccessfulbuild".
+  Touching "cmTC_859f2.dir\Debug\cmTC_859f2.tlog\cmTC_859f2.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_859f2.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.42
+
+
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+Determining if files sys/types.h exist passed with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_f67cb.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:23.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_f67cb.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_f67cb.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_f67cb.dir\Debug\cmTC_f67cb.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_f67cb.dir\Debug\cmTC_f67cb.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f67cb.dir\Debug\\" /Fd"cmTC_f67cb.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f67cb.dir\Debug\\" /Fd"cmTC_f67cb.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  
+  CheckIncludeFiles.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_f67cb.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_f67cb.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_f67cb.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_f67cb.dir\Debug\CheckIncludeFiles.obj
+  cmTC_f67cb.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_f67cb.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_f67cb.dir\Debug\cmTC_f67cb.tlog\unsuccessfulbuild".
+  Touching "cmTC_f67cb.dir\Debug\cmTC_f67cb.tlog\cmTC_f67cb.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_f67cb.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.41
+
+
+Determining if files stdbool.h exist passed with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_20a5c.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:24.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_20a5c.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_20a5c.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_20a5c.dir\Debug\cmTC_20a5c.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_20a5c.dir\Debug\cmTC_20a5c.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_20a5c.dir\Debug\\" /Fd"cmTC_20a5c.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_20a5c.dir\Debug\\" /Fd"cmTC_20a5c.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  
+  CheckIncludeFiles.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_20a5c.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_20a5c.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_20a5c.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_20a5c.dir\Debug\CheckIncludeFiles.obj
+  cmTC_20a5c.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_20a5c.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_20a5c.dir\Debug\cmTC_20a5c.tlog\unsuccessfulbuild".
+  Touching "cmTC_20a5c.dir\Debug\cmTC_20a5c.tlog\cmTC_20a5c.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_20a5c.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.42
+
+
+Determining if files fcntl.h exist passed with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_f3360.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:25.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_f3360.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_f3360.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_f3360.dir\Debug\cmTC_f3360.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_f3360.dir\Debug\cmTC_f3360.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f3360.dir\Debug\\" /Fd"cmTC_f3360.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_f3360.dir\Debug\\" /Fd"cmTC_f3360.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  
+  CheckIncludeFiles.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_f3360.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_f3360.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_f3360.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_f3360.dir\Debug\CheckIncludeFiles.obj
+  cmTC_f3360.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_f3360.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_f3360.dir\Debug\cmTC_f3360.tlog\unsuccessfulbuild".
+  Touching "cmTC_f3360.dir\Debug\cmTC_f3360.tlog\cmTC_f3360.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_f3360.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.37
+
+
+Determining if files stdint.h exist passed with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_1cceb.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:27.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_1cceb.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_1cceb.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_1cceb.dir\Debug\cmTC_1cceb.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_1cceb.dir\Debug\cmTC_1cceb.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_1cceb.dir\Debug\\" /Fd"cmTC_1cceb.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_1cceb.dir\Debug\\" /Fd"cmTC_1cceb.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  
+  CheckIncludeFiles.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_1cceb.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_1cceb.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_1cceb.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_1cceb.dir\Debug\CheckIncludeFiles.obj
+  cmTC_1cceb.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_1cceb.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_1cceb.dir\Debug\cmTC_1cceb.tlog\unsuccessfulbuild".
+  Touching "cmTC_1cceb.dir\Debug\cmTC_1cceb.tlog\cmTC_1cceb.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_1cceb.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.41
+
+
+Determining if files inttypes.h exist passed with the following output:
+Change Dir: C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe" "cmTC_22d1a.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=14.0"
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 24/03/2016 16:48:27.
+Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_22d1a.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_22d1a.dir\Debug\".
+  Creating directory "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_22d1a.dir\Debug\cmTC_22d1a.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_22d1a.dir\Debug\cmTC_22d1a.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_22d1a.dir\Debug\\" /Fd"cmTC_22d1a.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.00.23026 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_22d1a.dir\Debug\\" /Fd"cmTC_22d1a.dir\Debug\vc140.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\CheckIncludeFiles.c"
+  
+  CheckIncludeFiles.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:QUEUE /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_22d1a.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_22d1a.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeFiles/CMakeTmp/Debug/cmTC_22d1a.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug cmTC_22d1a.dir\Debug\CheckIncludeFiles.obj
+  cmTC_22d1a.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\Debug\cmTC_22d1a.exe
+FinalizeBuildStatus:
+  Deleting file "cmTC_22d1a.dir\Debug\cmTC_22d1a.tlog\unsuccessfulbuild".
+  Touching "cmTC_22d1a.dir\Debug\cmTC_22d1a.tlog\cmTC_22d1a.lastbuildstate".
+Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\CMakeTmp\cmTC_22d1a.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.40
+
+

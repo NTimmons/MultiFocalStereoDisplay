@@ -240,7 +240,8 @@ bool RenderScene::validateCompilation(GLuint _shader)
 		std::cerr << maxLength << "\n";
 
 		std::cerr << "\tFetching infolog...\n";	
-		GLchar infoLog[maxLength];
+		GLchar* infoLog = new GLchar[maxLength];
+
 		glGetShaderInfoLog(_shader, maxLength, &maxLength, &infoLog[0]);
 		std::cerr << ""<< infoLog << "\n";
 	
@@ -252,6 +253,9 @@ bool RenderScene::validateCompilation(GLuint _shader)
 	
 		//In this simple program, we'll just leave
 		std::cerr << "\tCompiling Failed\n";
+
+		delete infoLog;
+
 		return false;
 	}
 
@@ -276,7 +280,7 @@ bool RenderScene::validateLinking(GLuint program, GLuint vertexShader, GLuint fr
 
 		//The maxLength includes the NULL character
 		std::cerr << "\tFetching infolog...\n";
-		GLchar infoLog[maxLength];
+		GLchar* infoLog = new GLchar[maxLength];
 		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 		std::cerr << ""<< infoLog << "\n";
 
@@ -298,6 +302,9 @@ bool RenderScene::validateLinking(GLuint program, GLuint vertexShader, GLuint fr
 		//In this simple program, we'll just leave
 
 		std::cerr << "\tLinking Failed\n";
+
+		delete infoLog;
+
 		return false;
 	}
 

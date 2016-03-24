@@ -1,0 +1,98 @@
+﻿Build started 24/03/2016 17:01:50.
+     1>Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\freeglut.vcxproj" on node 2 (Build target(s)).
+     1>CustomBuild:
+         Building Custom Rule C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/CMakeLists.txt
+         CMake does not need to re-run because C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src" /I"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\include" /I"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0" /nologo /W3 /WX- /O2 /Ob2 /Oy- /D WIN32 /D _WINDOWS /D NDEBUG /D FREEGLUT_EXPORTS /D _CRT_SECURE_NO_WARNINGS /D _WIN32_WINNT=0x0500 /D WINVER=0x0500 /D HAVE_CONFIG_H /D "CMAKE_INTDIR=\"Release\"" /D freeglut_EXPORTS /D _WINDLL /D _MBCS /Gm- /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"freeglut.dir\Release\\" /Fd"freeglut.dir\Release\vc140.pdb" /Gd /TC /analyze- /errorReport:prompt "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_callbacks.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_cursor.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_display.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_ext.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_font_data.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_gamemode.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_geometry.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_gl2.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_init.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_input_devices.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_joystick.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_main.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_misc.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_overlay.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_spaceball.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_state.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_stroke_mono_roman.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_stroke_roman.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_structure.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_teapot.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_videoresize.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_window.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_font.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\fg_menu.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_cursor_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_display_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_ext_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_gamemode_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_init_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_input_devices_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_joystick_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_main_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_menu_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_spaceball_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_state_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_structure_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\mswin\fg_window_mswin.c" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src\util\xparsegeometry_repl.c"
+         fg_callbacks.c
+         fg_cursor.c
+         fg_display.c
+         fg_ext.c
+         fg_font_data.c
+         fg_gamemode.c
+         fg_geometry.c
+         fg_gl2.c
+         fg_init.c
+         fg_input_devices.c
+         fg_joystick.c
+         fg_main.c
+         fg_misc.c
+         fg_overlay.c
+         fg_spaceball.c
+         fg_state.c
+         fg_stroke_mono_roman.c
+         fg_stroke_roman.c
+         fg_structure.c
+         fg_teapot.c
+         Generating Code...
+         Compiling...
+         fg_videoresize.c
+         fg_window.c
+         fg_font.c
+         fg_menu.c
+         fg_cursor_mswin.c
+         fg_display_mswin.c
+         fg_ext_mswin.c
+         fg_gamemode_mswin.c
+         fg_init_mswin.c
+         fg_input_devices_mswin.c
+         fg_joystick_mswin.c
+         fg_main_mswin.c
+         fg_menu_mswin.c
+         fg_spaceball_mswin.c
+         fg_state_mswin.c
+         fg_structure_mswin.c
+         fg_window_mswin.c
+         fgSetupPixelFormat(): there is still some work to do here!
+         xparsegeometry_repl.c
+         Generating Code...
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D WIN32 /D _WINDOWS /D NDEBUG /D FREEGLUT_EXPORTS /D _CRT_SECURE_NO_WARNINGS /D _WIN32_WINNT=0x0500 /D WINVER=0x0500 /D HAVE_CONFIG_H /D "CMAKE_INTDIR=\\\"Release\\\"" /D freeglut_EXPORTS /l"0x0409" /I"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\src" /I"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\include" /I"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0" /nologo /fo"freeglut.dir\Release\freeglut.res" "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\freeglut.rc" 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\bin\Release\freeglut.dll" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib opengl32.lib winmm.lib /DEF:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/freeglutdll.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/bin/Release/freeglut.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/lib/Release/freeglut.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /DLL freeglut.dir\Release\freeglut.res
+         freeglut.dir\Release\fg_callbacks.obj
+         freeglut.dir\Release\fg_cursor.obj
+         freeglut.dir\Release\fg_display.obj
+         freeglut.dir\Release\fg_ext.obj
+         freeglut.dir\Release\fg_font_data.obj
+         freeglut.dir\Release\fg_gamemode.obj
+         freeglut.dir\Release\fg_geometry.obj
+         freeglut.dir\Release\fg_gl2.obj
+         freeglut.dir\Release\fg_init.obj
+         freeglut.dir\Release\fg_input_devices.obj
+         freeglut.dir\Release\fg_joystick.obj
+         freeglut.dir\Release\fg_main.obj
+         freeglut.dir\Release\fg_misc.obj
+         freeglut.dir\Release\fg_overlay.obj
+         freeglut.dir\Release\fg_spaceball.obj
+         freeglut.dir\Release\fg_state.obj
+         freeglut.dir\Release\fg_stroke_mono_roman.obj
+         freeglut.dir\Release\fg_stroke_roman.obj
+         freeglut.dir\Release\fg_structure.obj
+         freeglut.dir\Release\fg_teapot.obj
+         freeglut.dir\Release\fg_videoresize.obj
+         freeglut.dir\Release\fg_window.obj
+         freeglut.dir\Release\fg_font.obj
+         freeglut.dir\Release\fg_menu.obj
+         freeglut.dir\Release\fg_cursor_mswin.obj
+         freeglut.dir\Release\fg_display_mswin.obj
+         freeglut.dir\Release\fg_ext_mswin.obj
+         freeglut.dir\Release\fg_gamemode_mswin.obj
+         freeglut.dir\Release\fg_init_mswin.obj
+         freeglut.dir\Release\fg_input_devices_mswin.obj
+         freeglut.dir\Release\fg_joystick_mswin.obj
+         freeglut.dir\Release\fg_main_mswin.obj
+         freeglut.dir\Release\fg_menu_mswin.obj
+         freeglut.dir\Release\fg_spaceball_mswin.obj
+         freeglut.dir\Release\fg_state_mswin.obj
+         freeglut.dir\Release\fg_structure_mswin.obj
+         freeglut.dir\Release\fg_window_mswin.obj
+         freeglut.dir\Release\xparsegeometry_repl.obj
+            Creating library C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/lib/Release/freeglut.lib and object C:/Users/Nicholas/Desktop/MPhil Project/MultiFocalStereoDisplay/lib/freeglut-3.0.0/lib/Release/freeglut.exp
+         freeglut.vcxproj -> C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\bin\Release\freeglut.dll
+     1>Done Building Project "C:\Users\Nicholas\Desktop\MPhil Project\MultiFocalStereoDisplay\lib\freeglut-3.0.0\freeglut.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:06.35

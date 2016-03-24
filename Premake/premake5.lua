@@ -8,16 +8,16 @@ solution "MultiFocalDisplay"
       kind "ConsoleApp"
       language "C++"
       files { "../src/**.h", "../src/**.cpp" }
-	  libdirs { "../lib/GLEW/lib", "../lib/assimp-3.1.1/lib","../lib/glfw-3.1.2/lib", "../lib" }
+	  libdirs { "../lib/glew-1.13.0/lib", "../lib/assimp-3.1.1/lib", "../lib/freeglut-3.0.0/lib", "../lib/glfw-3.1.2/lib", "../lib" }
 	  flags{ "ExtraWarnings"}
 	  buildoptions {"-std=c++11 -ggdb -pthread"}
 	  targetdir ("../output")
 	  objdir ("../output/obj")
-	  includedirs { "../lib/glfw-3.1.2/include",  "../include/", "../lib/glfw-3.1.2/deps"}
+	  includedirs { "../lib/assimp-3.1.1/include", "../lib/glfw-3.1.2/include",  "../include/", "../lib/glfw-3.1.2/deps"}
 	  
 	  configuration "windows"
 	         location "../WindowsBuild"
-		 links { "glut", "glew32", "opengl32"}
+		 links { "freeglut", "glew32", "opengl32", "assimp"}
  
 	  configuration "linux"
 	         location "../LinuxBuild"
