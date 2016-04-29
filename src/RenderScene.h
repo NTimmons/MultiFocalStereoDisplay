@@ -155,9 +155,6 @@ class ScreenLayout
 	void 		SetScreenPos		( unsigned int _index, Position& _pos);
 	void     	SetScreenSize		( unsigned int _index, size& _size);
 
-
-
-
 	private:
 	Screen		m_screenArray[4];
 
@@ -171,7 +168,6 @@ class ShaderProgram
 	ShaderProgram(GLuint _id, std::string& _name): programID(_id), name(_name){}
 
 	GLint FetchUniformValue(std::string _name);
-
 
 	void SetUniform1UI(std::string _name, GLuint _val);
 	void SetUniform1F(std::string _name, float _val);
@@ -241,8 +237,6 @@ public:
 
 	std::vector<VBOIBO> m_vertexObjects;
 };
-
-
 
 #ifndef offsetof
 #define offsetof(type,member) ((std::size_t) &(((type*)0)->member))

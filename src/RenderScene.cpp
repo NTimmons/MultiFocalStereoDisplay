@@ -120,15 +120,16 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 				float 			val2	= (float)atof(sData[4].c_str());
 				float 			val3	= (float)atof(sData[5].c_str());
 
+				/*
 				std::cerr << "Index: " << index <<
 							 " type: " << type <<
 							 " val0: " << val0 <<
 							 " val1: " << val1 <<
 							 " val2: " << val2 <<
 							 " val3: " << val3 << "\n";
+				*/
 
-
-				std::cerr << "Type is: " << type << " \n";
+				//std::cerr << "Type is: " << type << " \n";
 				if(type == 'P')
 				{	
 					Position p(val0, val1, val2);
@@ -141,7 +142,7 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 				}
 			}
 
-			std::cerr << "-";	
+			//std::cerr << "-";	
 		}
 		std::cerr << "\n";
 		std::cerr << "\t Closing file.\n";
@@ -177,10 +178,10 @@ void RenderScene::InitialiseRenderObjects()
 	m_FBOMultiList.push_back(newFBOMulti0);
 	m_FBOMultiList.push_back(newFBOMulti1);
 
-	m_camera[0].Init( glm::vec3(-1.f, 10.f, -30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
+	m_camera[0].Init( glm::vec3(-30.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
 					50.f, 1.0f, 0.01f, 200.f); 
 
-	m_camera[1].Init( glm::vec3(1.f, 10.f, -30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
+	m_camera[1].Init( glm::vec3(0.f, 0.f, 30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
 					50.f, 1.0f, 0.01f, 200.f); 
 }
 

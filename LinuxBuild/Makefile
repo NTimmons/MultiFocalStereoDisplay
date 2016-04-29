@@ -24,14 +24,14 @@ ifeq ($(config),debug)
   TARGETDIR  = ../output
   TARGET     = $(TARGETDIR)/MultiFocalDisplayd
   DEFINES   += -DDEBUG
-  INCLUDES  += -I../lib/glfw-3.1.2/include -I../include -I../lib/glfw-3.1.2/deps
+  INCLUDES  += -I../lib/assimp-3.1.1/include -I../lib/glfw-3.1.2/include -I../include -I../lib/glfw-3.1.2/deps
   ALL_CPPFLAGS  += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -g -std=c++11
+  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -Wall -Wextra -g -std=c++11 -ggdb -pthread
   ALL_CXXFLAGS  += $(CXXFLAGS) $(ALL_CFLAGS)
   ALL_RESFLAGS  += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/GLEW/lib -L../lib/glfw-3.1.2/lib -L../lib -L.
+  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/glew-1.13.0/lib -L../lib/assimp-3.1.1/lib -L../lib/freeglut-3.0.0/lib -L../lib/glfw-3.1.2/lib -L../lib -L.
   LDDEPS    +=
-  LIBS      += $(LDDEPS) -lGLEW -lGLU -lglut -lGL
+  LIBS      += $(LDDEPS) -lGLEW -lpthread -lassimp -lglut -lGL -lGLU
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -46,14 +46,14 @@ ifeq ($(config),release)
   TARGETDIR  = ../output
   TARGET     = $(TARGETDIR)/MultiFocalDisplay
   DEFINES   += -DNDEBUG
-  INCLUDES  += -I../lib/glfw-3.1.2/include -I../include -I../lib/glfw-3.1.2/deps
+  INCLUDES  += -I../lib/assimp-3.1.1/include -I../lib/glfw-3.1.2/include -I../include -I../lib/glfw-3.1.2/deps
   ALL_CPPFLAGS  += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
-  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -O2 -std=c++11
+  ALL_CFLAGS    += $(CFLAGS) $(ALL_CPPFLAGS) $(ARCH) -Wall -Wextra -O2 -std=c++11 -ggdb -pthread
   ALL_CXXFLAGS  += $(CXXFLAGS) $(ALL_CFLAGS)
   ALL_RESFLAGS  += $(RESFLAGS) $(DEFINES) $(INCLUDES)
-  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/GLEW/lib -L../lib/glfw-3.1.2/lib -L../lib -L. -s
+  ALL_LDFLAGS   += $(LDFLAGS) -L../lib/glew-1.13.0/lib -L../lib/assimp-3.1.1/lib -L../lib/freeglut-3.0.0/lib -L../lib/glfw-3.1.2/lib -L../lib -L. -s
   LDDEPS    +=
-  LIBS      += $(LDDEPS) -lGLEW -lGLU -lglut -lGL
+  LIBS      += $(LDDEPS) -lGLEW -lpthread -lassimp -lglut -lGL -lGLU
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -65,7 +65,13 @@ endif
 
 OBJECTS := \
 	$(OBJDIR)/main.o \
+	$(OBJDIR)/RSShader.o \
 	$(OBJDIR)/RenderScene.o \
+	$(OBJDIR)/RSScreenLayout.o \
+	$(OBJDIR)/RSMesh.o \
+	$(OBJDIR)/RSFrameBufferObjects.o \
+	$(OBJDIR)/RSCamera.o \
+	$(OBJDIR)/RSTexture.o \
 
 RESOURCES := \
 
@@ -129,7 +135,31 @@ $(OBJDIR)/main.o: ../src/main.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 
+$(OBJDIR)/RSShader.o: ../src/RSShader.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
 $(OBJDIR)/RenderScene.o: ../src/RenderScene.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
+$(OBJDIR)/RSScreenLayout.o: ../src/RSScreenLayout.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
+$(OBJDIR)/RSMesh.o: ../src/RSMesh.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
+$(OBJDIR)/RSFrameBufferObjects.o: ../src/RSFrameBufferObjects.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
+$(OBJDIR)/RSCamera.o: ../src/RSCamera.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+
+$(OBJDIR)/RSTexture.o: ../src/RSTexture.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 

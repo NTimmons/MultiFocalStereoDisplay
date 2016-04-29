@@ -152,7 +152,7 @@ bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::s
 	GLuint vertexShaderObject 		= glCreateShader(GL_VERTEX_SHADER);
 	GLuint fragmentShaderObject 	= glCreateShader(GL_FRAGMENT_SHADER);
 
-	std::cerr << _name << ": Created GL Shader Objects\n";
+	//std::cerr << _name << ": Created GL Shader Objects\n";
 
 	std::string vShaderSource = "";
 	GLint vLen 	= 0;
@@ -160,11 +160,11 @@ bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::s
 	std::string pShaderSource = "";
 	GLint pLen 	= 0;
 
-	std::cerr << _name << ": Preparing to load vertex shader source code...\n";
+	//std::cerr << _name << ": Preparing to load vertex shader source code...\n";
 	LoadShader(_vertexFilename, vShaderSource, &vLen);
 
 
-	std::cerr << _name << ": Preparing to load fragment shader source code...\n";
+	//std::cerr << _name << ": Preparing to load fragment shader source code...\n";
 	LoadShader(_pixelFilename, pShaderSource, &pLen);
 	
 	const char* vSource = vShaderSource.c_str();
@@ -176,37 +176,37 @@ bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::s
 	vLen = vShaderSource.length();
 	pLen = pShaderSource.length();
 
-	std::cerr << _name << ": Applying shader source to shader object (vertex)...\n";
+	//std::cerr << _name << ": Applying shader source to shader object (vertex)...\n";
 	glShaderSource(vertexShaderObject	, 1, &vSource, (&vLen) );
-	std::cerr << _name << ": Applying shader source to shader object (fragment)...\n";
+	//std::cerr << _name << ": Applying shader source to shader object (fragment)...\n";
 	glShaderSource(fragmentShaderObject	, 1, &pSource, (&pLen) );
 
 
 	// Compile
-	std::cerr << _name << ": Compiling shader object (vertex)...\n";
+	//std::cerr << _name << ": Compiling shader object (vertex)...\n";
 	glCompileShader(vertexShaderObject);	
 
 	if(!validateCompilation(vertexShaderObject))
 	{ return false;}
 
-	std::cerr << _name << ": Compiling shader object (fragment)...\n";
+	//std::cerr << _name << ": Compiling shader object (fragment)...\n";
 	glCompileShader(fragmentShaderObject);
 	if(!validateCompilation(fragmentShaderObject))
 	{ return  false;}
 
 
 	// Link
-	std::cerr << _name << ": Creating shader program...\n";
+	//std::cerr << _name << ": Creating shader program...\n";
 	GLuint ProgramObject = glCreateProgram();
 
-	std::cerr << _name << ": Attaching vertex shader to shader program...\n";
+	//std::cerr << _name << ": Attaching vertex shader to shader program...\n";
 	glAttachShader(ProgramObject, vertexShaderObject);
-	std::cerr << _name << ": Attaching fragment shader to shader program...\n";
+	//std::cerr << _name << ": Attaching fragment shader to shader program...\n";
 	glAttachShader(ProgramObject, fragmentShaderObject);
 
-	std::cerr << _name << ": Linking shader program...\n";
+	//std::cerr << _name << ": Linking shader program...\n";
 	glLinkProgram(ProgramObject); 
-	std::cerr << _name << ": Validating linked program: " << ProgramObject << ".\n";
+	//std::cerr << _name << ": Validating linked program: " << ProgramObject << ".\n";
 	bool linkSuccess = validateLinking(ProgramObject, vertexShaderObject,  fragmentShaderObject);
 
 	if(!linkSuccess)
@@ -234,7 +234,7 @@ bool RenderScene::validateCompilation(GLuint _shader)
 	{
 		std::cerr << "\tLinking Failed. Getting error information.\n";
 
-		std::cerr << "\tFetching infolog length...";
+		//std::cerr << "\tFetching infolog length...";
 		GLint maxLength = 0;
 		glGetShaderiv(_shader, GL_INFO_LOG_LENGTH, &maxLength);
 		std::cerr << maxLength << "\n";
@@ -243,10 +243,10 @@ bool RenderScene::validateCompilation(GLuint _shader)
 		GLchar* infoLog = new GLchar[maxLength];
 
 		glGetShaderInfoLog(_shader, maxLength, &maxLength, &infoLog[0]);
-		std::cerr << ""<< infoLog << "\n";
+		std::cerr << "Shader Error:>"<< infoLog << "\n";
 	
 		//We don't need the shader anymore.
-		std::cerr << "\tRemoving Shader: " << _shader << "\n";	
+		//std::cerr << "\tRemoving Shader: " << _shader << "\n";	
 		glDeleteShader(_shader);
 
 		//Use the infoLog as you see fit.
@@ -259,7 +259,7 @@ bool RenderScene::validateCompilation(GLuint _shader)
 		return false;
 	}
 
-	std::cerr << "\tCompiled: " << _shader << " successfully\n";
+	//std::cerr << "\tCompiled: " << _shader << " successfully\n";
 
 	return true;
 
@@ -273,7 +273,7 @@ bool RenderScene::validateLinking(GLuint program, GLuint vertexShader, GLuint fr
 	{
 		std::cerr << "\tLinking Failed. Getting error information.\n";
 
-		std::cerr << "\tFetching infolog length...";
+		//std::cerr << "\tFetching infolog length...";
 		GLint maxLength = 0;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 		std::cerr << maxLength << "\n";
@@ -282,19 +282,19 @@ bool RenderScene::validateLinking(GLuint program, GLuint vertexShader, GLuint fr
 		std::cerr << "\tFetching infolog...\n";
 		GLchar* infoLog = new GLchar[maxLength];
 		glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
-		std::cerr << ""<< infoLog << "\n";
+		std::cerr << "Shader Errors:>"<< infoLog << "\n";
 
 
-		std::cerr << "\tRemoving program and compiled shaders.\n";
+		//std::cerr << "\tRemoving program and compiled shaders.\n";
 		//We don't need the program anymore.
-		std::cerr << "\tRemoving Program: " << program << "\n";
+		//std::cerr << "\tRemoving Program: " << program << "\n";
 		glDeleteProgram(program);
 
-		std::cerr << "\tRemoving Shader: " << vertexShader << "\n";
+		//std::cerr << "\tRemoving Shader: " << vertexShader << "\n";
 		//Don't leak shaders either.
 		glDeleteShader(vertexShader);
 
-		std::cerr << "\tRemoving Shader: " << fragmentShader << "\n";
+		//std::cerr << "\tRemoving Shader: " << fragmentShader << "\n";
 		glDeleteShader(fragmentShader);
 
 		//Use the infoLog as you see fit.
@@ -326,43 +326,43 @@ int RenderScene::GetFileLength(std::ifstream& file)
 int RenderScene::LoadShader(std::string& filename, std::string& ShaderSource, int* len)
 {
 
-	std::cerr << "\t Preparing to open: " << filename << ".";
+	//std::cerr << "\t Preparing to open: " << filename << ".";
 
 	std::ifstream file;
 	file.open(filename.c_str(), std::ios::in); // opens as ASCII!
 	if(!file)
 	{ 
-		std::cerr << "\t ...FAILED\n";
+		//std::cerr << "\t ...FAILED\n";
 		return -1;
 	}
 	
-	std::cerr << "\t ...Success\n";
+	//std::cerr << "\t ...Success\n";
 
 
-	std::cerr << "\t Getting file length...";
+	//std::cerr << "\t Getting file length...";
 	*len = GetFileLength(file);
 
 	if (len==0) 
 	{
-		std::cerr << "\t FAILED (Empty File)\n";
+		//std::cerr << "\t FAILED (Empty File)\n";
 		return -2;   // Error: Empty File 
 	}
 
 
-	std::cerr << "\t Success (size:" << *len << ")\n";
+	//std::cerr << "\t Success (size:" << *len << ")\n";
 
 	std::string line;
 	if (file.is_open())
 	{
-		std::cerr << "\t Reading>";
+		//std::cerr << "\t Reading>";
 		while ( getline (file,line) )
 		{
 		  	ShaderSource.append("\n");
 		  	ShaderSource.append(line);
-			std::cerr << "-";	
+			//std::cerr << "-";	
 		}
-		std::cerr << "\n";
-		std::cerr << "\t Closing file.\n";
+		//std::cerr << "\n";
+		//std::cerr << "\t Closing file.\n";
 		file.close();
 
 	}

@@ -24,6 +24,9 @@ void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, N
 
 #endif
 
+GLint windowL = 0;
+GLint windowR = 0;
+
 GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  // Red diffuse light.
 GLfloat light_position[] = {100.0, 100.0, 1.0, 0.0};  // Infinite light location. 
 
@@ -39,7 +42,8 @@ GLint faces[6][4] = {  // Vertex indices for the 6 faces of a cube.
 GLfloat v[8][3];  // Will be filled in with X,Y,Z vertices. 
 
 
-RenderScene RS;
+RenderScene RS_L;
+RenderScene RS_R;
 
 void initAllignment()
 {
@@ -94,7 +98,8 @@ void keyPressCallback(unsigned char key, int x, int y)
 	(void)x;
 	(void)y;
 
-	RS.HandleInput(key);
+	RS_L.HandleInput(key);
+	RS_R.HandleInput(key);
 
     std::cerr << "(" << key << ")";	    
     switch(key)
@@ -120,48 +125,21 @@ unsigned long GetTickCount()
 
 	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
-
-void SpinningBoxMode()
-{
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-  	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	static float rot = 60.f;
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(	0.0, 0.0, 15.0,  	// eye is at (0,0,5) 
-    			0.0, 0.0, 0.0,      // center is at (0,0,0) 
-				0.0, 1.0, 0.);      // up is in positive Y direction 
-	// Adjust cube position to be asthetic angle. 
-	glTranslatef	( 0.0, 0.0, -30.0);
-	glRotatef	( 60.f * sin((double)GetTickCount()/600.0) , 1.0,  0.0, 0.0);
-	glRotatef	(-20 , 0.0,  0.0, 1.0);
-
-	rot+= 0.01f;
-
-	for (int i = 0; i < 6; i++) 
-	{
-		glBegin(GL_QUADS);
-    	glNormal3fv(&n[i][0]);
-    	glVertex3fv(&v[faces[i][0]][0]);
-    	glVertex3fv(&v[faces[i][1]][0]);
-    	glVertex3fv(&v[faces[i][2]][0]);
-    	glVertex3fv(&v[faces[i][3]][0]);
-    	glEnd();
-  	}
-
-	glFlush();
-	glutSwapBuffers();  
-	glutPostRedisplay ();
-}
-
 */
 
-void draw()
+void drawLeft()
 {
-	//std::cout << ".";
-	RS.Render();
+	glutSetWindow(windowL);
+	//std::cout << "Drawing Left.\n";
+	RS_L.Render();
+	//glutPostRedisplay();
+}
+
+void drawRight()
+{
+	glutSetWindow(windowR);
+	//std::cout << "Drawing Right.\n";
+	RS_R.Render();
 	//glutPostRedisplay();
 }
 
@@ -169,24 +147,37 @@ void draw()
 void timerCB(int millisec)
 {
 	glutTimerFunc(millisec, timerCB, millisec);
+
+
+	glutSetWindow(windowL);
 	glutPostRedisplay();
+
+
+	glutSetWindow(windowR);
+	glutPostRedisplay();
+
 }
 
 int main(int argc, char **argv)
 {
     std::cerr << "Main() Entry" << std::endl;
 
-	RS.Initialise();
+	RS_L.Initialise();
+	RS_R.Initialise();
+
+	putenv("DISPLAY=:0.0"); //display 1
+
     glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_DOUBLE);
-    glutInitWindowSize(RS.m_SizeX, RS.m_SizeY);
+    glutInitWindowSize(RS_L.m_SizeX, RS_L.m_SizeY);
+    glutInitWindowPosition(RS_L.m_PosX, RS_L.m_PosY);
 
-    glutInitWindowPosition(RS.m_PosX, RS.m_PosY);
-	glutCreateWindow("Multifocal Rendering.");
 
+
+	windowL = glutCreateWindow("Multifocal Rendering L.");
     glutKeyboardFunc(keyPressCallback);
-    glutDisplayFunc(draw);
+    glutDisplayFunc(drawLeft);
 
 	glutTimerFunc(25, timerCB, 25); // draw every 50 ms
 
@@ -206,33 +197,79 @@ int main(int argc, char **argv)
 	std::string frag = "../Shaders/frag.glsl";
 	std::string name = "TestShader";
     std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	bool pass = RS.CreateShaderProgramObject( vert, frag, name );
+	bool pass = RS_L.CreateShaderProgramObject( vert, frag, name );
 
 	vert = "../Shaders/vert_tex.glsl";
 	frag = "../Shaders/frag_tex.glsl";
 	name = "TestShader_Tex";
     std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS.CreateShaderProgramObject( vert, frag, name );
+	pass = RS_L.CreateShaderProgramObject( vert, frag, name );
 
 
 	vert = "../Shaders/vert_MRT.glsl";
 	frag = "../Shaders/frag_MRT.glsl";
 	name = "TestShader_MRT";
     std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS.CreateShaderProgramObject( vert, frag, name );
+	pass = RS_L.CreateShaderProgramObject( vert, frag, name );
 
 	vert = "../Shaders/vert_persp_MRT.glsl";
 	frag = "../Shaders/frag_persp_MRT.glsl";
 	name = "TestShader_persp_MRT";
     std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS.CreateShaderProgramObject( vert, frag, name );
+	pass = RS_L.CreateShaderProgramObject( vert, frag, name );
 	(void)pass;
 
 
-	RS.InitialiseRenderObjects();
+	RS_L.InitialiseRenderObjects();
+
+	//--
+	//--
+	//--
+	//--
+	//--
+	//--
+	//Right
+
+	putenv("DISPLAY=:0.1");
+	windowR = glutCreateWindow("Multifocal Rendering R.");
+    glutKeyboardFunc(keyPressCallback);
+    glutDisplayFunc(drawRight);
+
+    std::cerr << "About to load shaders..." << std::endl;
+
+	vert = "../Shaders/vert.glsl";
+	frag = "../Shaders/frag.glsl";
+	name = "TestShader";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
+
+	vert = "../Shaders/vert_tex.glsl";
+	frag = "../Shaders/frag_tex.glsl";
+	name = "TestShader_Tex";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
 
 
+	vert = "../Shaders/vert_MRT.glsl";
+	frag = "../Shaders/frag_MRT.glsl";
+	name = "TestShader_MRT";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
+
+	vert = "../Shaders/vert_persp_MRT.glsl";
+	frag = "../Shaders/frag_persp_MRT.glsl";
+	name = "TestShader_persp_MRT";
+    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
+	(void)pass;
+
+	RS_R.InitialiseRenderObjects();
+
+
+	//glutFullScreen(); 
     glutMainLoop();
+
+	
 
     return 0;
 }
