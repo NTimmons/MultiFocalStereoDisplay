@@ -1,6 +1,10 @@
 
 #include <GL/glew.h>
-#include "GL/freeglut.h"
+//#include "GL/freeglut.h"
+
+#include<X11/X.h>
+#include<X11/Xlib.h>
+#include<GL/glx.h>
 
 #include <chrono>
 #include <math.h>
@@ -11,6 +15,62 @@
 
 #include <iostream>
 #include "RenderScene.h"
+
+#include <unistd.h>
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <linux/input.h>
+
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/select.h>
+#include <termios.h>
+
+struct termios orig_termios;
+
+void reset_terminal_mode()
+{
+    tcsetattr(0, TCSANOW, &orig_termios);
+}
+
+void set_conio_terminal_mode()
+{
+    struct termios new_termios;
+
+    /* take two copies - one for now, one for later */
+    tcgetattr(0, &orig_termios);
+    memcpy(&new_termios, &orig_termios, sizeof(new_termios));
+
+    /* register cleanup handler, and set the new terminal mode */
+    atexit(reset_terminal_mode);
+    cfmakeraw(&new_termios);
+    tcsetattr(0, TCSANOW, &new_termios);
+}
+
+int kbhit()
+{
+    struct timeval tv = { 0L, 0L };
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(0, &fds);
+    return select(1, &fds, NULL, NULL, &tv);
+}
+
+int getch()
+{
+    int r;
+    unsigned char c;
+    if ((r = read(0, &c, sizeof(c))) < 0) {
+        return r;
+    } else {
+        return c;
+    }
+}
 
 
 
@@ -27,92 +87,75 @@ void forcePThreadLink() { pthread_t t1; pthread_create(&t1, NULL, &simpleFunc, N
 GLint windowL = 0;
 GLint windowR = 0;
 
-GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};  // Red diffuse light.
-GLfloat light_position[] = {100.0, 100.0, 1.0, 0.0};  // Infinite light location. 
+struct WindowData
+{
+	WindowData()
+	{
+		att[0]= GLX_RGBA;
+		att[1]= GLX_DEPTH_SIZE;
+		att[2]= 24;
+		att[3]= GLX_DOUBLEBUFFER;
+		att[4]= None;
+	}
 
-GLfloat light_diffuse1[] = {1.0, 1.0, 0.0, 1.0};  // Red diffuse light. 
-GLfloat light_position1[] = {-100.0, -100.0, -100.0, 0.0};  // Infinite light location.
+	Display                 *dpy;
+	Window                  root;
+	GLint                   att[5] ;
+	XVisualInfo             *vi;
+	Colormap                cmap;
+	XSetWindowAttributes    swa;
+	Window                  win;
+	GLXContext              glc;
+	XWindowAttributes       gwa;
+};
 
-GLfloat n[6][3] = {  // Normals for the 6 faces of a cube. 
-  {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
-  {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
-GLint faces[6][4] = {  // Vertex indices for the 6 faces of a cube.
-  {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
-  {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
-GLfloat v[8][3];  // Will be filled in with X,Y,Z vertices. 
 
-
-RenderScene RS_L;
 RenderScene RS_R;
 
-void initAllignment()
+
+void keyPressCallback(int _key, RenderScene* _rs)
 {
-  glDisable(GL_LIGHT0);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_DEPTH_TEST);
-}
+	_rs->HandleInput(_key);
 
 
-void initBox(void)
-{
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_FRONT);
-
-  // Setup cube vertex data. 
-  v[0][0] = v[1][0] = v[2][0] = v[3][0] = -10;
-  v[4][0] = v[5][0] = v[6][0] = v[7][0] =  10;
-  v[0][1] = v[1][1] = v[4][1] = v[5][1] = -10;
-  v[2][1] = v[3][1] = v[6][1] = v[7][1] =  10;
-  v[0][2] = v[3][2] = v[4][2] = v[7][2] =  10;
-  v[1][2] = v[2][2] = v[5][2] = v[6][2] = -10;
-
-  // Enable a single OpenGL light. 
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-  glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse1);
-  glLightfv(GL_LIGHT1, GL_POSITION, light_position1);
-  glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHTING);
-
-  // Use depth buffering for hidden surface elimination. 
-  glEnable(GL_DEPTH_TEST);
-
-  // Setup the view of the cube. 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  gluPerspective( 40.0,//field of view in degree 
-    		  1.0, // aspect ratio 
-		   0.1, 100.0);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt(	0.0, 0.0, 15.0,  // eye is at (0,0,5) 
-    			0.0, 0.0, 0.0,      // center is at (0,0,0) 
-				0.0, 1.0, 0.);      // up is in positive Y direction 
-}
-
-void keyPressCallback(unsigned char key, int x, int y)
-{
-
-	(void)x;
-	(void)y;
-
-	RS_L.HandleInput(key);
-	RS_R.HandleInput(key);
-
-    std::cerr << "(" << key << ")";	    
-    switch(key)
-    {
+	std::cerr << "(" << _key << ")";	    
+	switch(_key)
+	{
 		case 'q':
-			//initAllignment();
 		break;
-		case 'e':
-			//initBox();
-		break;
-    }	
+	}	
+}
 
-	glutPostRedisplay ();
+
+
+#define KEYCODE XK_Down
+
+// Function to create a keyboard event
+XKeyEvent createKeyEvent(Display *display, Window &win,
+                           Window &winRoot, bool press,
+                           int keycode, int modifiers)
+{
+   XKeyEvent event;
+
+   event.display     = display;
+   event.window      = win;
+   event.root        = winRoot;
+   event.subwindow   = None;
+   event.time        = CurrentTime;
+   event.x           = 1;
+   event.y           = 1;
+   event.x_root      = 1;
+   event.y_root      = 1;
+   event.same_screen = True;
+   event.keycode     = XKeysymToKeycode(display, keycode);
+   event.state       = modifiers;
+
+   if(press)
+      event.type = KeyPress;
+   else
+      event.type = KeyRelease;
+
+   return event;
 }
 
 /*
@@ -127,60 +170,121 @@ unsigned long GetTickCount()
 }
 */
 
-void drawLeft()
+void draw(RenderScene* _rs)
 {
-	glutSetWindow(windowL);
+	
+	//glutSetWindow(windowL);
 	//std::cout << "Drawing Left.\n";
-	RS_L.Render();
+	_rs->Render();
 	//glutPostRedisplay();
 }
-
-void drawRight()
-{
-	glutSetWindow(windowR);
-	//std::cout << "Drawing Right.\n";
-	RS_R.Render();
-	//glutPostRedisplay();
-}
-
 
 void timerCB(int millisec)
 {
-	glutTimerFunc(millisec, timerCB, millisec);
+	//glutTimerFunc(millisec, timerCB, millisec);
+
+	//glutSetWindow(windowL);
+	//glutPostRedisplay();
+}
+
+void InitialiseWindow( WindowData* _win, int _window, RenderScene* _RS)
+{
+	_win->dpy = XOpenDisplay(NULL); //
+ 
+ 	if(_win->dpy == NULL) 
+	{
+ 		printf("\n\tcannot connect to X server\n\n");
+        exit(0);
+	}
+        
+	//int cou = ScreenCount(_win->dpy);
+	//std::cerr << "Screen Count: " << cou << "\n" ;
+
+ 	_win->root = XRootWindow(_win->dpy, _window);
+	std::cerr << "Created a default root\n";
+
+ 	_win->vi = glXChooseVisual(_win->dpy, _window, _win->att);
+	std::cerr << "Visual Chosen\n";
+
+ 	if(_win->vi == NULL) 
+	{
+		printf("\n\tno appropriate visual found\n\n");
+        exit(0);
+ 	} 
+ 	else
+	{
+		printf("\n\tvisual %p selected\n", (void *)_win->vi->visualid); /* %p creates hexadecimal output like in glxinfo */
+ 	}
 
 
-	glutSetWindow(windowL);
-	glutPostRedisplay();
+ 	_win->cmap = XCreateColormap(_win->dpy, _win->root, _win->vi->visual, AllocNone);
+	std::cerr << "Colour map created\n";
+
+ 	_win->swa.colormap = _win->cmap;
+ 	_win->swa.event_mask = ExposureMask | KeyPressMask;
+ 
+ 	_win->win = XCreateWindow(_win->dpy, _win->root, 0, 0, _RS->m_SizeX, _RS->m_SizeY, 0, _win->vi->depth, InputOutput, _win->vi->visual, CWColormap | CWEventMask, &(_win->swa));
+
+	std::cerr << "Window created\n";
+
+ 	XMapWindow(_win->dpy, _win->win);
+ 	XStoreName(_win->dpy, _win->win, "VERY SIMPLE APPLICATION");
+	std::cerr << "name stored\n"; 
 
 
-	glutSetWindow(windowR);
-	glutPostRedisplay();
+ 	_win->glc = glXCreateContext(_win->dpy, _win->vi, NULL, GL_TRUE);
+	std::cerr << "Created context\n"; 
+
+ 	glXMakeCurrent(_win->dpy, _win->win, _win->glc);
+ 	std::cerr << "Selected context\n"; 
+
 
 }
+
+
+
 
 int main(int argc, char **argv)
 {
     std::cerr << "Main() Entry" << std::endl;
 
-	RS_L.Initialise();
-	RS_R.Initialise();
+	//Render Scene Controllers (One per context)
+	RenderScene RS[4];
 
-	putenv("DISPLAY=:0.0"); //display 1
+	Camera camera_left;
+	camera_left.Init( glm::vec3(-30.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	50.f, 1.0f, 0.01f, 200.f); 
+	
+	Camera camera_right;
+	camera_right.Init( glm::vec3(0.f, 0.f, 30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	50.f, 1.0f, 0.01f, 200.f); 
+	
+	RS[0].Initialise();
+	RS[1].Initialise();
+	RS[2].Initialise();
+	RS[3].Initialise();
 
-    glutInit(&argc, argv);
+	RS[0].SetCamera(camera_right);
+	RS[1].SetCamera(camera_right);
+	RS[2].SetCamera(camera_left);
+	RS[3].SetCamera(camera_left);
 
-    glutInitDisplayMode(GLUT_DOUBLE);
-    glutInitWindowSize(RS_L.m_SizeX, RS_L.m_SizeY);
-    glutInitWindowPosition(RS_L.m_PosX, RS_L.m_PosY);
+	RS[0].SetLeftRight(false);
+	RS[1].SetLeftRight(false);
+	RS[2].SetLeftRight(true);
+	RS[3].SetLeftRight(true);
+	
+
+	//Windows
+	WindowData win[4];
+
+	InitialiseWindow(&win[0],1, &RS[0]);
+	InitialiseWindow(&win[1],2, &RS[1]);
+	InitialiseWindow(&win[2],3, &RS[2]);
+	InitialiseWindow(&win[3],4, &RS[3]);
 
 
 
-	windowL = glutCreateWindow("Multifocal Rendering L.");
-    glutKeyboardFunc(keyPressCallback);
-    glutDisplayFunc(drawLeft);
 
-	glutTimerFunc(25, timerCB, 25); // draw every 50 ms
-
+	//Glew initialisation
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
@@ -189,87 +293,104 @@ int main(int argc, char **argv)
 	}
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 
-    initAllignment();
 
-    std::cerr << "About to load shaders..." << std::endl;
+	//Data loading for Scenes
 
-	std::string vert = "../Shaders/vert.glsl";
-	std::string frag = "../Shaders/frag.glsl";
-	std::string name = "TestShader";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	bool pass = RS_L.CreateShaderProgramObject( vert, frag, name );
+	for(unsigned int i = 0; i < 4; i++)
+	{
+   	    glXMakeCurrent( win[i].dpy, win[i].win, win[i].glc );
 
-	vert = "../Shaders/vert_tex.glsl";
-	frag = "../Shaders/frag_tex.glsl";
-	name = "TestShader_Tex";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS_L.CreateShaderProgramObject( vert, frag, name );
+		std::cerr << "About to load shaders..." << std::endl;
 
+		std::string vert = "../Shaders/vert.glsl";
+		std::string frag = "../Shaders/frag.glsl";
+		std::string name = "TestShader";
+		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+		bool pass = RS[i].CreateShaderProgramObject( vert, frag, name );
 
-	vert = "../Shaders/vert_MRT.glsl";
-	frag = "../Shaders/frag_MRT.glsl";
-	name = "TestShader_MRT";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS_L.CreateShaderProgramObject( vert, frag, name );
+		vert = "../Shaders/vert_tex.glsl";
+		frag = "../Shaders/frag_tex.glsl";
+		name = "TestShader_Tex";
+		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
 
-	vert = "../Shaders/vert_persp_MRT.glsl";
-	frag = "../Shaders/frag_persp_MRT.glsl";
-	name = "TestShader_persp_MRT";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS_L.CreateShaderProgramObject( vert, frag, name );
-	(void)pass;
+		vert = "../Shaders/vert_MRT.glsl";
+		frag = "../Shaders/frag_MRT.glsl";
+		name = "TestShader_MRT";
+		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
 
+		vert = "../Shaders/vert_persp_MRT.glsl";
+		frag = "../Shaders/frag_persp_MRT.glsl";
+		name = "TestShader_persp_MRT_near";
+		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
+		(void)pass;
 
-	RS_L.InitialiseRenderObjects();
-
-	//--
-	//--
-	//--
-	//--
-	//--
-	//--
-	//Right
-
-	putenv("DISPLAY=:0.1");
-	windowR = glutCreateWindow("Multifocal Rendering R.");
-    glutKeyboardFunc(keyPressCallback);
-    glutDisplayFunc(drawRight);
-
-    std::cerr << "About to load shaders..." << std::endl;
-
-	vert = "../Shaders/vert.glsl";
-	frag = "../Shaders/frag.glsl";
-	name = "TestShader";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
-
-	vert = "../Shaders/vert_tex.glsl";
-	frag = "../Shaders/frag_tex.glsl";
-	name = "TestShader_Tex";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
+		vert = "../Shaders/vert_persp_MRT.glsl";
+		frag = "../Shaders/frag_persp_MRT.glsl";
+		name = "TestShader_persp_MRT_far";
+		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
+		(void)pass;
 
 
-	vert = "../Shaders/vert_MRT.glsl";
-	frag = "../Shaders/frag_MRT.glsl";
-	name = "TestShader_MRT";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
+		RS[i].InitialiseRenderObjects();
+	}
 
-	vert = "../Shaders/vert_persp_MRT.glsl";
-	frag = "../Shaders/frag_persp_MRT.glsl";
-	name = "TestShader_persp_MRT";
-    std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-	pass = RS_R.CreateShaderProgramObject( vert, frag, name );
-	(void)pass;
+	std::cerr << " Starting main loop\n";
+	int activeInput = 0;
 
-	RS_R.InitialiseRenderObjects();
+ 	while(1) 
+	{
+	    set_conio_terminal_mode();
+		//Check for input
+		if(kbhit())
+		{
+			reset_terminal_mode();
+
+			int ch = getch();
+			std::cerr << "Input " <<ch << "\n";
+			if(ch == 3)
+				return -1;
+			else if (ch == '1')
+				activeInput = 0;
+			else if (ch == '2')
+				activeInput = 1;
+			else if (ch == '3')
+				activeInput = 2;
+			else if (ch == '4')
+				activeInput = 3;
+			else
+			{
+				keyPressCallback(ch, &RS[activeInput]);
+			}
+		}	
+
+		reset_terminal_mode();
+		//////////////////////////
+
+		for(unsigned int i = 0; i < 4; i++)
+		{
+	   	    glXMakeCurrent( win[i].dpy, win[i].win, win[i].glc );
+
+			//Draw
+			draw(&RS[i]);
+		    glXSwapBuffers(win[i].dpy, win[i].win);
+		}
+
+		usleep(40000);
+    }
 
 
-	//glutFullScreen(); 
-    glutMainLoop();
-
-	
+	for(unsigned int i = 0; i < 4; i++)
+	{
+		//Shutdown
+		glXMakeCurrent(win[i].dpy, None, NULL);
+		glXDestroyContext(win[i].dpy, win[i].glc);
+		XDestroyWindow(win[i].dpy, win[i].win);
+		XCloseDisplay(win[i].dpy);
+	}		
 
     return 0;
 }

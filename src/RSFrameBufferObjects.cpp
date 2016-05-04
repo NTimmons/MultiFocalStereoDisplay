@@ -107,15 +107,19 @@ FBOMulti RenderScene::CreateTwoFrameBuffer(int _width, int _height, GLenum _form
 
 void RenderScene::ApplySingleFrameBuffer(FBO& _fbo)
 {
+ 	glBindFramebuffer(GL_FRAMEBUFFER, _fbo.m_frameBufferIndex);
+	glViewport(0,0,_fbo.m_width,_fbo.m_height);
+TESTGL;
  	// Set "renderedTexture" as our colour attachement #0
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _fbo.m_renderTextureIndex, 0);
-
+TESTGL;
  	// Set the list of draw buffers.
  	GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
  	glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
-
+TESTGL;
  	glBindFramebuffer(GL_FRAMEBUFFER, _fbo.m_frameBufferIndex);
 	glViewport(0,0,_fbo.m_width,_fbo.m_height);
+TESTGL;
 }
 
 void RenderScene::ApplyTwoFrameBuffers(FBOMulti _fbo)

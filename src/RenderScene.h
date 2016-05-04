@@ -4,7 +4,7 @@
 #include <vector>
 
 #include <GL/glew.h>
-#include "GL/freeglut.h"
+//#include "GL/freeglut.h"
 
 #include <fstream>
 #include <iostream>
@@ -20,6 +20,17 @@
 #define TESTGL 	RenderScene::TestGLError(__FILE__, __LINE__)
 
 //TODO NEEDS REFACTORING
+
+
+enum ERENDERMODE
+{
+	E_MODELSCENE,
+	E_RED,
+	E_GREEN,
+	E_BLUE,
+	E_BLANK,
+	E_END
+};
 
 struct colour
 {
@@ -96,6 +107,8 @@ public:
 	
 	GLuint Get(){ return m_texture; }
 
+	void Bind(GLenum _TextureUnit);
+
 	GLuint m_texture;
 };
 
@@ -131,10 +144,10 @@ struct FBO
 	int 	m_height;
 };
 
-struct Screen
+struct SubScreen
 {
-	Screen(){}
-	Screen(Position _pos, size _size, colour _colour):m_pos(_pos), m_size(_size), m_colour(_colour){}
+	SubScreen(){}
+	SubScreen(Position _pos, size _size, colour _colour):m_pos(_pos), m_size(_size), m_colour(_colour){}
 
 	Position m_pos;
 	size 	 m_size;
@@ -156,7 +169,7 @@ class ScreenLayout
 	void     	SetScreenSize		( unsigned int _index, size& _size);
 
 	private:
-	Screen		m_screenArray[4];
+	SubScreen		m_screenArray[4];
 
 };
 
@@ -185,6 +198,61 @@ class ShaderProgram
 	GLuint programID;
 	std::string name;
 };
+
+class Material
+{
+public:
+	Material( 	std::string _name, 
+				colour _ambient, colour _diffuse, colour _spec, colour _emissive,
+				float _spec_att, float _spec_pow, GLuint _ambient_map, GLuint _diffuse_map, GLuint _bump_map)
+	: 	ambient(_ambient),
+	  	diffuse(_diffuse),
+		specular(_spec),
+		emissive(_emissive),
+		spec_att(_spec_att),
+		spec_pow(_spec_pow),
+		ambient_map(_ambient_map),
+		diffuse_map(_diffuse_map),
+		bump_map(_bump_map)
+	{
+		std::cerr << "Material Initialised: " << _name.c_str() << "\n";
+	}
+
+	Material()
+	:	ambient (0.f, 0.f, 0.f, 0.f),
+	  	diffuse (0.f, 0.f, 0.f, 0.f),
+		specular(0.f, 0.f, 0.f, 0.f),
+		emissive(0.f, 0.f, 0.f, 0.f),
+		spec_att(0.f),
+		spec_pow(0.f),
+		ambient_map(0u),
+		diffuse_map(0u),
+		bump_map(0u)
+	{
+		std::cerr << "Material Initialised: NO PARAMS" << "\n";
+	}
+
+
+	void Apply(ShaderProgram _shad);
+			
+	colour ambient;
+	colour diffuse;
+	colour specular;
+	colour emissive;
+
+	float spec_att;
+	float spec_pow;
+
+	GLuint ambient_map;
+	GLuint diffuse_map;
+	GLuint bump_map;	
+
+};
+
+
+
+
+
 
 // 4 + 4 + 2 + 2 = 48byte vertex. 
 struct QuadVertex
@@ -275,17 +343,30 @@ class Camera
 	glm::mat4 m_proj;
 };
 
+struct ViewState
+{
+	ViewState(bool _left, bool _near) : m_IsNear(_near), m_IsLeft(_left){}
+	ViewState() : m_IsNear(true), m_IsLeft(true){}
+	bool m_IsNear;
+	bool m_IsLeft;
+};
+
 
 class RenderScene
 {
 public:
-	RenderScene(){ m_activeScreen = 0;}
+	RenderScene(){ m_activeScreen = 0; m_renderMode = E_MODELSCENE;}
 
 	//Setup
 	void Initialise();
 	void InitialiseRenderObjects();
 
 	static void TestGLError(const char* _file, int _line);
+
+	void IncrementMode();
+
+	void SetCamera(Camera& _cam);
+	void SetLeftRight(bool _left);
 
 	//Rendering
 	void Render();
@@ -341,7 +422,12 @@ public:
 	Texture						m_testTexture;
 
 	//Render Settings
-	Camera 						m_camera[2];
+	Camera 						m_camera;
+
+	ViewState					m_viewState;
+
+
+	ERENDERMODE					m_renderMode;
 
 	//Window Controls
 	int m_PosX;

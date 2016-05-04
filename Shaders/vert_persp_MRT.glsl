@@ -14,4 +14,7 @@ void main()
 	gl_Position =  mvp * vec4(pos.x, pos.y, pos.z, 1.0);
 
 	finalcolour = abs(nor);
+	//finalcolour.x = uv.x;
+	//finalcolour.y = uv.y;
+	//finalcolour.z = 0.0;
 }

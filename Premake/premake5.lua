@@ -21,7 +21,7 @@ solution "MultiFocalDisplay"
  
 	  configuration "linux"
 	         location "../LinuxBuild"
-		 links { "GLEW", "pthread", "assimp", "glut", "GL", "GLU"}
+		 links { "GLEW", "X11", "pthread", "assimp", "glut", "GL", "GLU"}
  
       configuration "Debug"
 		 targetsuffix "d"

@@ -7,7 +7,7 @@ void AIMesh::Draw()
 	if(firstDraw)
 	{
 		std::cerr << "Drawing Mesh  " << m_vertexObjects[0].vertexBufferObject << " / " << m_vertexObjects[0].elementBufferObject << "\n";
-		std::cerr << "\tIndex Count  " <<  m_vertexObjects[0].elementCount << "\n";
+		//std::cerr << "\tIndex Count  " <<  m_vertexObjects[0].elementCount << "\n";
 		firstDraw = false;
 	}
 
@@ -46,7 +46,9 @@ void AIMesh::Initialise(std::string& _path)
 {
 	(void)_path;
 
-	const aiScene* scene = (aiImportFile("../Mesh/box.obj",		aiProcessPreset_TargetRealtime_MaxQuality
+	std::cerr << " Loading model: " << _path << "\n";
+
+	const aiScene* scene = (aiImportFile( _path.c_str(),		aiProcessPreset_TargetRealtime_MaxQuality
 															| 	aiProcess_JoinIdenticalVertices 
 															| 	aiProcess_Triangulate 
 															| 	aiProcess_GenNormals
@@ -54,16 +56,17 @@ void AIMesh::Initialise(std::string& _path)
 							);
 	if(scene)
 	{
-		std::cerr << "Model Load Success\n";
+		//std::cerr << "Model Load Success\n";
 	}
 	else
 	{
 		std::cerr << "Model Load FAILED\n";
+		std::cerr << aiGetErrorString() << "\n";
 	}
 
 	if(scene->HasMeshes())
 	{
-		std::cerr << scene->mNumMeshes << " mesh(es) loaded.\n";
+		//std::cerr << scene->mNumMeshes << " mesh(es) loaded.\n";
 	}
 	else
 	{
@@ -76,17 +79,26 @@ void AIMesh::Initialise(std::string& _path)
 		aiMesh* currMesh = scene->mMeshes[i];
 		aiVector3D* vertexPos = currMesh->mVertices;
 		aiVector3D* vertexNor = currMesh->mNormals;
-		//aiVector3D* vertexUV = currMesh->mTextureCoords[0];
+		aiVector3D* vertexUV = 0;
+
+		if(currMesh->HasTextureCoords(0))
+		{
+			//std::cerr << "mesh has UV coordinates\n";
+			vertexUV = currMesh->mTextureCoords[0];
+		}
+		else
+		{
+			std::cerr << "mesh does not have UV coordinates\n";
+		}
 
 		aiFace* faces = currMesh->mFaces;
 
 		std::vector<GenericVertex> vecVertex;
 		std::vector<unsigned int>  vecIndices;
 
-		std::cerr << "Number of faces: " <<  currMesh->mNumFaces << "\n";
-		std::cerr << "Vert Count: " << currMesh->mNumVertices 	<< "\n";
-		std::cerr << "Idx  Count: " << faces->mNumIndices * currMesh->mNumFaces	<< "\n";
-
+		//std::cerr << "Number of faces: " <<  currMesh->mNumFaces << "\n";
+		//std::cerr << "Vert Count: " << currMesh->mNumVertices 	<< "\n";
+		//std::cerr << "Idx  Count: " << faces->mNumIndices * currMesh->mNumFaces	<< "\n";
 
 		//Process Vertices
 		for(unsigned int vi = 0; vi < currMesh->mNumVertices; vi++)
@@ -95,12 +107,15 @@ void AIMesh::Initialise(std::string& _path)
 			Position vN(vertexNor[vi][0], vertexNor[vi][1], vertexNor[vi][2]);
 
 			//TODO: Add UV Support.
-			//texCoord vT(vertexUV [vi][0], vertexUV[vi][1]);
+
+			texCoord vT;
+			if(currMesh->HasTextureCoords(0))
+				vT = texCoord(vertexUV [vi][0], vertexUV[vi][1]);
 
 			GenericVertex gv;
 			gv.m_pos = vP;
 			gv.m_nor = vN;
-			gv.m_uv = texCoord(0.f, 0.f);//vT;
+			gv.m_uv = texCoord(vT.u, vT.v);//vT;
 			vecVertex.push_back(gv);
 		}
 
@@ -115,7 +130,6 @@ void AIMesh::Initialise(std::string& _path)
 			vecIndices.push_back(i1);
 			vecIndices.push_back(i2);
 		}
-
 
 		/*
 		for(unsigned int ii = 0; ii < vecIndices.size(); ii++)
@@ -139,7 +153,7 @@ void AIMesh::Initialise(std::string& _path)
 		glGenBuffers(1, &elementBufferObject);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, vecIndices.size() * sizeof(unsigned int), &vecIndices[0], GL_STATIC_DRAW);
-		std::cerr << "\tCreated index buffer object at id: " << elementBufferObject << "\n";
+		//std::cerr << "\tCreated index buffer object at id: " << elementBufferObject << "\n";
 
 		//Vertex Buffer Objects
 		GLuint vertexBufferObject = -1;
@@ -159,7 +173,7 @@ void AIMesh::Initialise(std::string& _path)
 		glEnableVertexAttribArray(2);  // Vertex UV.
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(GenericVertex), (void*)40);
 
-		std::cerr << "\tCreated vertex buffer object at id: " << vertexBufferObject << "\n";
+		//std::cerr << "\tCreated vertex buffer object at id: " << vertexBufferObject << "\n";
 
 		//Cleanup
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -204,9 +218,9 @@ void QuadMesh::Draw()
 
 void QuadMesh::Initialise()
 {
-	std::cerr << "Initialising QuadMesh\n";
+	//std::cerr << "Initialising QuadMesh\n";
 
-	std::cerr << "\tInitialising vertex data...\n";
+	//std::cerr << "\tInitialising vertex data...\n";
 
 	vertices[0].m_pos = Position(0.f, 0.f, 0.f);
 	vertices[1].m_pos = Position(0.f, 1.f, 0.f);
@@ -262,7 +276,7 @@ void QuadMesh::Initialise()
 	glEnableVertexAttribArray(3);  // Vertex uv.
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex), (void*)40);
 
-	std::cerr << "\tCreated vertex buffer object at id: " << vertexBufferObject << "\n";
+	//std::cerr << "\tCreated vertex buffer object at id: " << vertexBufferObject << "\n";
 
 	//Cleanup
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

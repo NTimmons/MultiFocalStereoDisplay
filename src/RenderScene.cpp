@@ -101,11 +101,11 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 	std::string line;
 	if (file.is_open())
 	{
-		std::cerr << "\t Reading Config file>\n";
+		std::cerr << "Reading Config file>\n";
 		while ( getline (file,line) )
 		{
 			std::vector<std::string> sData = split(line, ':');
-			std::cerr << line << "\n";
+			//std::cerr << line << "\n";
 			if(sData.size() != 0 && sData.size() != 6)
 			{
 				std::cerr << "Invalid Config File\n";
@@ -144,8 +144,8 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 
 			//std::cerr << "-";	
 		}
-		std::cerr << "\n";
-		std::cerr << "\t Closing file.\n";
+		//std::cerr << "\n";
+		//std::cerr << "\t Closing file.\n";
 		file.close();
 		return true;
 
@@ -162,7 +162,7 @@ void RenderScene::InitialiseRenderObjects()
 	ScreenLoadFromFile(configFile, &m_layoutControl);
 
 
-	std::string path = "path";
+	std::string path = "../Mesh/sibenik.obj";
 	m_boxMesh.Initialise(path);
 
 	std::string img = "../Images/testimage.png";
@@ -170,19 +170,31 @@ void RenderScene::InitialiseRenderObjects()
 
 	m_genericUnitQuad.Initialise();
 
-	FBO newFBO = CreateSingleFrameBuffer(1024,1024,0);
-	FBOMulti newFBOMulti0 = CreateTwoFrameBuffer(1024,1024,0);
-	FBOMulti newFBOMulti1 = CreateTwoFrameBuffer(1024,1024,0);
+	FBO 	 newFBO 	  = CreateSingleFrameBuffer	(1024,1024,0);
+	FBOMulti newFBOMulti0 = CreateTwoFrameBuffer	(1024,1024,0);
+	FBOMulti newFBOMulti1 = CreateTwoFrameBuffer	(1024,1024,0);
 
 	m_FBOList.push_back(newFBO);
 	m_FBOMultiList.push_back(newFBOMulti0);
 	m_FBOMultiList.push_back(newFBOMulti1);
 
-	m_camera[0].Init( glm::vec3(-30.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
-					50.f, 1.0f, 0.01f, 200.f); 
+	//m_camera[0].Init( glm::vec3(-30.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
+	//					50.f, 1.0f, 0.01f, 200.f); 
 
-	m_camera[1].Init( glm::vec3(0.f, 0.f, 30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
-					50.f, 1.0f, 0.01f, 200.f); 
+	
+	//other
+	//m_camera[1].Init( glm::vec3(0.f, 0.f, 30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
+	//					50.f, 1.0f, 0.01f, 200.f); 
+}
+
+void RenderScene::SetCamera(Camera& _cam)
+{
+	m_camera = _cam;
+}
+
+void RenderScene::SetLeftRight(bool _left)
+{
+	m_viewState.m_IsLeft = _left;
 }
 
 void RenderScene::Initialise()
@@ -190,14 +202,13 @@ void RenderScene::Initialise()
 	m_PosX = 0;
 	m_PosY = 0;
 
-	m_SizeX = 800;
-	m_SizeY = 800;
+	m_SizeX = 2048;
+	m_SizeY = 1536;
 
 	glViewport(0,0,1,1);
 
 	InitialiseScreenPositions();
 }
-
 
 void RenderScene::SceneBody()
 {
@@ -213,24 +224,35 @@ void RenderScene::SceneBody()
 void RenderScene::Render_Scene()
 {
 		static float angle = 0.f;
-		angle+=0.06f;
-
+		angle+=0.02f;
 		//Model setup.
-		glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(2.0, 2.0, 2.0));
+		glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(3.4, 3.4, 3.4));
 		model =  glm::rotate(model, (glm::mediump_float)angle, glm::vec3(0,1,0));      //glm::rotate(model, 60.f, glm::vec3(0.0, 1.0, 0.0));
-
+TESTGL;
 		//Use shader
-		glUseProgram(m_shaderMap.find(std::string("TestShader_persp_MRT"))->second.programID);
 
+		std::string shadername = "";
+
+		if(m_viewState.m_IsNear)
+			shadername = "TestShader_persp_MRT_near";
+		else
+			shadername = "TestShader_persp_MRT_far";
+
+TESTGL;
+		glUseProgram(m_shaderMap.find(shadername)->second.programID);
+TESTGL;
 		//Render left
-		ApplyTwoFrameBuffers(m_FBOMultiList[0]);
-		m_shaderMap.find(std::string("TestShader_persp_MRT"))->second.SetMatrix4FV("mvp", glm::value_ptr(m_camera[0].GetMVP(model)));
+		ApplySingleFrameBuffer(m_FBOList[0]);
+TESTGL;
+		m_shaderMap.find(shadername)->second.SetMatrix4FV("mvp", glm::value_ptr(m_camera.GetMVP(model)));
 		SceneBody();
+
+TESTGL;
 
 		//Render right
-		ApplyTwoFrameBuffers(m_FBOMultiList[1]);
-		m_shaderMap.find(std::string("TestShader_persp_MRT"))->second.SetMatrix4FV("mvp", glm::value_ptr(m_camera[1].GetMVP(model)));
-		SceneBody();
+		//ApplyTwoFrameBuffers(m_FBOMultiList[1]);
+		//m_shaderMap.find(std::string("TestShader_persp_MRT"))->second.SetMatrix4FV("mvp", glm::value_ptr(m_camera[1].GetMVP(model)));
+		//SceneBody();
 
 		ClearFrameBuffers();
 }
@@ -242,13 +264,9 @@ void RenderScene::Render_CopyToViews()
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1UI("tex", 0);
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1F("testVal", 1.0f);
 
-	GLuint textureArray[4] =  {	m_FBOMultiList[0].m_renderTextureIndex0,
-								m_FBOMultiList[0].m_renderTextureIndex1,
-								m_FBOMultiList[1].m_renderTextureIndex0,
-								m_FBOMultiList[1].m_renderTextureIndex1
-							  };
+	GLuint textureArray[1] =  {	m_FBOList[0].m_renderTextureIndex };
 
-	for(unsigned int i = 0; i < 4; i++)
+	for(unsigned int i = 0; i < 1; i++)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureArray[i]);
@@ -261,20 +279,77 @@ void RenderScene::Render_CopyToViews()
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void RenderScene::IncrementMode()
+{
+	m_renderMode = (ERENDERMODE)(int( m_renderMode + 1) % (E_END) );
+}
+
 void RenderScene::Render()
 {
-    glClearColor(0.3, 0.4, 0.8, 0.0);
+    glClearColor(1.0, 1.0, 1.0, 0.0);
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
-    glCullFace(GL_BACK);
-    {
-		Render_Scene();
-		Render_CopyToViews();
-    }
+	switch (m_renderMode)
+	{
+		case E_MODELSCENE:
+		{
+			glCullFace(GL_BACK);
+			{
+				Render_Scene();
+				Render_CopyToViews();
+			}
+		}
+		break;
+
+		case E_RED:
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport( 0, 0, m_SizeX, m_SizeY);
+		    glClearColor(1.0, 0.0, 0.0, 0.0);
+		    glClearDepth(1.0f);
+		    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+		break;
+
+		case E_GREEN:
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport( 0, 0, m_SizeX, m_SizeY);
+		    glClearColor(0.0, 1.0, 0.0, 0.0);
+		    glClearDepth(1.0f);
+		    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);;
+		}
+		break;
+
+		case E_BLUE:
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport( 0, 0, m_SizeX, m_SizeY);
+		    glClearColor(0.0, 0.0, 1.0, 0.0);
+		    glClearDepth(1.0f);
+		    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+		break;
+
+		case E_BLANK:
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glViewport( 0, 0, m_SizeX, m_SizeY);
+		    glClearColor(0.0, 0.0, 0.0, 0.0);
+		    glClearDepth(1.0f);
+		    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
+		break;
+
+		default:
+			break;
+
+	}
+
 
     glFlush();
-    glutSwapBuffers() ;
+    //glutSwapBuffers() ;
 }
 
 void RenderScene::RenderScreenQuadAtOffset(Position& _offset, size& _size)
@@ -348,6 +423,10 @@ void RenderScene::HandleInput( unsigned char _key)
 	{
 			std::string configFile = "../Config/layout.data";
 			ScreenWriteToFile(configFile, &m_layoutControl);
+	}
+	else if ( _key == 'm')
+	{
+			IncrementMode();
 	}
 }
 

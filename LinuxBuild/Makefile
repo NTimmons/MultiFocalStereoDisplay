@@ -31,7 +31,7 @@ ifeq ($(config),debug)
   ALL_RESFLAGS  += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   ALL_LDFLAGS   += $(LDFLAGS) -L../lib/glew-1.13.0/lib -L../lib/assimp-3.1.1/lib -L../lib/freeglut-3.0.0/lib -L../lib/glfw-3.1.2/lib -L../lib -L.
   LDDEPS    +=
-  LIBS      += $(LDDEPS) -lGLEW -lpthread -lassimp -lglut -lGL -lGLU
+  LIBS      += $(LDDEPS) -lGLEW -lX11 -lpthread -lassimp -lglut -lGL -lGLU
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -53,7 +53,7 @@ ifeq ($(config),release)
   ALL_RESFLAGS  += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   ALL_LDFLAGS   += $(LDFLAGS) -L../lib/glew-1.13.0/lib -L../lib/assimp-3.1.1/lib -L../lib/freeglut-3.0.0/lib -L../lib/glfw-3.1.2/lib -L../lib -L. -s
   LDDEPS    +=
-  LIBS      += $(LDDEPS) -lGLEW -lpthread -lassimp -lglut -lGL -lGLU
+  LIBS      += $(LDDEPS) -lGLEW -lX11 -lpthread -lassimp -lglut -lGL -lGLU
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(ARCH) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef

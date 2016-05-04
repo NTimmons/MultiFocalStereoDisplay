@@ -37,3 +37,9 @@ void Texture::Init(std::string& _path)
 
 	stbi_image_free(image);
 }
+
+void Texture::Bind(GLenum _TextureUnit)
+{
+   glActiveTexture(_TextureUnit);
+   glBindTexture(GL_TEXTURE_2D, m_texture);
+} 

@@ -21,7 +21,7 @@ GLint ShaderProgram::FetchUniformValue(std::string _name)
 		}		
 		else
 		{
-			std::cerr << "\tFound uniform: " << _name << " at location " << loc << ". Storing...\n";
+			//std::cerr << "\tFound uniform: " << _name << " at location " << loc << ". Storing...\n";
 			m_uniformMap.insert( std::make_pair(_name, loc) );
 
 			return loc;
@@ -215,13 +215,13 @@ bool RenderScene::CreateShaderProgramObject(std::string& _vertexFilename, std::s
 		return  false;
 	}
 
-	std::cerr << _name << ": Complete:";
+	//std::cerr << _name << ": Complete:";
 
 	//ShaderProgram shaderObject = ;
 
 	m_shaderMap.insert(std::make_pair(_name,  ShaderProgram( ProgramObject, _name) ) );
 
-	std::cerr << "SUCCESS.\n";
+	//std::cerr << "SUCCESS.\n";
 
 	return true;
 }
