@@ -88,7 +88,7 @@ void AIMesh::Initialise(std::string& _path)
 		}
 		else
 		{
-			std::cerr << "mesh does not have UV coordinates\n";
+			//std::cerr << "mesh does not have UV coordinates\n";
 		}
 
 		aiFace* faces = currMesh->mFaces;

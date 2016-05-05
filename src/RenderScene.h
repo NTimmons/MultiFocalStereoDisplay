@@ -169,7 +169,7 @@ class ScreenLayout
 	void     	SetScreenSize		( unsigned int _index, size& _size);
 
 	private:
-	SubScreen		m_screenArray[4];
+	SubScreen	m_screenArray[4];
 
 };
 
@@ -189,8 +189,9 @@ class ShaderProgram
 	void SetUniform4F(std::string _name, float _val0, float _val1, float _val2, float _val3);
 
 	void SetUniform2FP(std::string _name, float* _val);
-	void SetUniform3FP(std::string _name, float* _val);
-	void SetUniform4FP(std::string _name, float* _val);
+	void SetUniform3FP(std::string _name, const float* _val);
+	void SetUniform4FP(std::string _name, const float* _val);
+	void SetUniform4FP(std::string _name, const float* _val, int _count);
 
 	void SetMatrix4FV(std::string _name, const GLfloat* _val);
 
@@ -248,11 +249,6 @@ public:
 	GLuint bump_map;	
 
 };
-
-
-
-
-
 
 // 4 + 4 + 2 + 2 = 48byte vertex. 
 struct QuadVertex
@@ -338,9 +334,17 @@ class Camera
 	void InitProj		( 	float _fov	, float _aspect	, float _near	, float _far);
 	
 	glm::mat4 GetMVP	( 	glm::mat4& _model);
+	glm::mat4 GetV		() { return m_view;}
+	glm::mat4 GetP		() { return m_proj;}
+
+	glm::vec3 GetPos    () { return m_pos;}
+	glm::vec3 GetDir    () { return m_dir;}
 
 	glm::mat4 m_view;
 	glm::mat4 m_proj;
+
+	glm::vec3 m_pos;
+	glm::vec3 m_dir;
 };
 
 struct ViewState
@@ -352,10 +356,38 @@ struct ViewState
 };
 
 
+struct PointLight
+{
+	PointLight()
+	{
+		m_pos 		= Position(0.f, 0.f, 0.f);
+		m_colour 	= colour(1.f, 1.f, 0.f, 1.f);
+		m_distance 	= 20.f;
+	}
+
+	void Set(glm::vec3 _pos, glm::vec3 _col, float _dist)
+	{
+
+		std::cerr << _pos.z << "\n";
+		m_pos 	 = Position(_pos.x, _pos.y, _pos.z);
+		m_colour = colour(_col.x, _col.y, _col.z, 1.0f);
+		m_distance = _dist;
+	}
+
+	Position m_pos;
+	colour 	 m_colour;
+	float	 m_distance;
+};
+
 class RenderScene
 {
 public:
-	RenderScene(){ m_activeScreen = 0; m_renderMode = E_MODELSCENE;}
+	RenderScene()
+	{ 
+		m_activeScreen = 0; 
+		m_renderMode = E_MODELSCENE;
+		std::cerr << "Starting Rendermode = : " << m_renderMode << "\n";
+	}
 
 	//Setup
 	void Initialise();
@@ -377,6 +409,8 @@ public:
 
 	void RenderQuad(Position& _pos, size& _size, colour& _col);
 	void RenderScreenQuadAtOffset(Position& _offset, size& _size);
+
+	void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index);
 
 	//Screen Control
 	void InitialiseScreenPositions();
@@ -428,6 +462,9 @@ public:
 
 
 	ERENDERMODE					m_renderMode;
+
+
+	PointLight					m_pointLights[8];
 
 	//Window Controls
 	int m_PosX;

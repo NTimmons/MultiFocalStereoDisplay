@@ -224,11 +224,12 @@ void RenderScene::SceneBody()
 void RenderScene::Render_Scene()
 {
 		static float angle = 0.f;
-		angle+=0.02f;
+		angle+=0.01f;
 		//Model setup.
-		glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(3.4, 3.4, 3.4));
-		model =  glm::rotate(model, (glm::mediump_float)angle, glm::vec3(0,1,0));      //glm::rotate(model, 60.f, glm::vec3(0.0, 1.0, 0.0));
-TESTGL;
+
+		glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 78.f, 0.f));
+		glm::mat4 model 	= translate * glm::scale(glm::mat4(1.0f), glm::vec3(6.4, 6.4, 6.4));
+		model 				= glm::rotate(model, (glm::mediump_float)angle, glm::vec3(0,1,0));      //glm::rotate(model, 60.f, glm::vec3(0.0, 1.0, 0.0));
 		//Use shader
 
 		std::string shadername = "";
@@ -238,21 +239,41 @@ TESTGL;
 		else
 			shadername = "TestShader_persp_MRT_far";
 
-TESTGL;
 		glUseProgram(m_shaderMap.find(shadername)->second.programID);
-TESTGL;
-		//Render left
+
 		ApplySingleFrameBuffer(m_FBOList[0]);
+		m_shaderMap.find(shadername)->second.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+		//m_shaderMap.find(shadername)->second.SetMatrix4FV("m", glm::value_ptr(model));
+
+
+		//Apply light matrix
+		colour lightColSize[8];
+		for(unsigned int i = 0; i < 8; i++)
+		{
+			lightColSize[i].r = m_pointLights[i].m_colour.r;
+			lightColSize[i].g = m_pointLights[i].m_colour.g;
+			lightColSize[i].b = m_pointLights[i].m_colour.b;
+			lightColSize[i].a = m_pointLights[i].m_distance;
+		}
+		colour lightPos[8];
+		for(unsigned int i = 0; i < 8; i++)
+		{
+			lightPos[i].r = m_pointLights[i].m_pos.pos[0];
+			lightPos[i].g = m_pointLights[i].m_pos.pos[1];
+			lightPos[i].b = m_pointLights[i].m_pos.pos[2];
+			lightPos[i].a = 1.0f;
+		}
 TESTGL;
-		m_shaderMap.find(shadername)->second.SetMatrix4FV("mvp", glm::value_ptr(m_camera.GetMVP(model)));
+		m_shaderMap.find(shadername)->second.SetUniform4FP("lightPosArray", (float*)&lightPos[0], 8);
+		m_shaderMap.find(shadername)->second.SetUniform4FP("lightColScaleArray", (float*)&lightColSize[0], 8);
+
+TESTGL;
+		//m_shaderMap.find(shadername)->second.SetMatrix4FV("v", glm::value_ptr(m_camera.GetV()));
+		//m_shaderMap.find(shadername)->second.SetMatrix4FV("p", glm::value_ptr(m_camera.GetP()));
+		//m_shaderMap.find(shadername)->second.SetUniform3FP("cameraPos", glm::value_ptr(m_camera.GetPos()));
+		//m_shaderMap.find(shadername)->second.SetUniform3FP("cameraDir", glm::value_ptr(m_camera.GetDir()));
 		SceneBody();
 
-TESTGL;
-
-		//Render right
-		//ApplyTwoFrameBuffers(m_FBOMultiList[1]);
-		//m_shaderMap.find(std::string("TestShader_persp_MRT"))->second.SetMatrix4FV("mvp", glm::value_ptr(m_camera[1].GetMVP(model)));
-		//SceneBody();
 
 		ClearFrameBuffers();
 }
@@ -286,10 +307,10 @@ void RenderScene::IncrementMode()
 
 void RenderScene::Render()
 {
-    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glClearColor(1.0, 1.0, 0.0, 0.0);
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
-
+	
 	switch (m_renderMode)
 	{
 		case E_MODELSCENE:
@@ -343,13 +364,10 @@ void RenderScene::Render()
 		break;
 
 		default:
+			std::cerr << "Defualt mode?\n";
 			break;
 
 	}
-
-
-    glFlush();
-    //glutSwapBuffers() ;
 }
 
 void RenderScene::RenderScreenQuadAtOffset(Position& _offset, size& _size)
@@ -429,6 +447,12 @@ void RenderScene::HandleInput( unsigned char _key)
 			IncrementMode();
 	}
 }
+
+void RenderScene::SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index)
+{
+	m_pointLights[_index].Set(_pos, _colour, _scale);
+}
+
 
 
 

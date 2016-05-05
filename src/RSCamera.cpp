@@ -7,6 +7,9 @@ void Camera::Init ( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up,
 {
 	InitView(_eye, _pos, _up);
 	InitProj(_fov, _aspect, _near, _far);
+
+	m_pos = _eye;
+	m_dir = glm::normalize(_pos - _eye);
 }
 
 void Camera::InitView( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up	)

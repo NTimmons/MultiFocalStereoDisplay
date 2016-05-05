@@ -7,12 +7,12 @@ GLint ShaderProgram::FetchUniformValue(std::string _name)
 	auto res = m_uniformMap.find(_name);
 	if(res == m_uniformMap.end())
 	{
-		std::cerr << "Uniform not in map. Attempting to fetch: " << _name.c_str() << "\n";
+		//std::cerr << "Uniform not in map. Attempting to fetch: " << _name.c_str() << "\n";
 
 		 		
 		glUseProgram(programID);	 
 		GLint loc = glGetUniformLocation(programID, _name.c_str());
-		glUseProgram(0);
+
 
 		if(loc == -1)
 		{
@@ -107,7 +107,7 @@ void  ShaderProgram::SetUniform2FP(std::string _name, float* _val)
 	glUniform2fv(uniLoc, 1,_val);
 		 
 }
-void  ShaderProgram::SetUniform3FP(std::string _name, float* _val)
+void  ShaderProgram::SetUniform3FP(std::string _name, const float* _val)
 {
 	GLint uniLoc = FetchUniformValue(_name);	
 	if(uniLoc == -1)
@@ -119,7 +119,7 @@ void  ShaderProgram::SetUniform3FP(std::string _name, float* _val)
 	glUniform3fv(uniLoc, 1,_val);
 		 
 }
-void  ShaderProgram::SetUniform4FP(std::string _name, float* _val)
+void  ShaderProgram::SetUniform4FP(std::string _name, const float* _val)
 {
 	GLint uniLoc = FetchUniformValue(_name);	
 	if(uniLoc == -1)
@@ -131,9 +131,23 @@ void  ShaderProgram::SetUniform4FP(std::string _name, float* _val)
 	glUniform4fv(uniLoc, 1,_val);
 }
 
-void ShaderProgram::SetMatrix4FV(std::string _name, const GLfloat* _val)
+void  ShaderProgram::SetUniform4FP(std::string _name, const float* _val, int _count)
 {
 	GLint uniLoc = FetchUniformValue(_name);	
+	if(uniLoc == -1)
+	{
+		return;
+	}
+		 
+	glUseProgram(programID);
+	glUniform4fv(uniLoc, _count,_val);
+}
+
+void ShaderProgram::SetMatrix4FV(std::string _name, const GLfloat* _val)
+{
+
+	GLint uniLoc = FetchUniformValue(_name);	
+
 	if(uniLoc == -1)
 	{
 		return;

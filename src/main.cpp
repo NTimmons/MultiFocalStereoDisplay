@@ -179,13 +179,6 @@ void draw(RenderScene* _rs)
 	//glutPostRedisplay();
 }
 
-void timerCB(int millisec)
-{
-	//glutTimerFunc(millisec, timerCB, millisec);
-
-	//glutSetWindow(windowL);
-	//glutPostRedisplay();
-}
 
 void InitialiseWindow( WindowData* _win, int _window, RenderScene* _RS)
 {
@@ -196,66 +189,51 @@ void InitialiseWindow( WindowData* _win, int _window, RenderScene* _RS)
  		printf("\n\tcannot connect to X server\n\n");
         exit(0);
 	}
-        
-	//int cou = ScreenCount(_win->dpy);
-	//std::cerr << "Screen Count: " << cou << "\n" ;
-
+       
  	_win->root = XRootWindow(_win->dpy, _window);
-	std::cerr << "Created a default root\n";
-
  	_win->vi = glXChooseVisual(_win->dpy, _window, _win->att);
-	std::cerr << "Visual Chosen\n";
-
  	if(_win->vi == NULL) 
 	{
 		printf("\n\tno appropriate visual found\n\n");
         exit(0);
  	} 
- 	else
-	{
-		printf("\n\tvisual %p selected\n", (void *)_win->vi->visualid); /* %p creates hexadecimal output like in glxinfo */
- 	}
-
 
  	_win->cmap = XCreateColormap(_win->dpy, _win->root, _win->vi->visual, AllocNone);
-	std::cerr << "Colour map created\n";
-
  	_win->swa.colormap = _win->cmap;
  	_win->swa.event_mask = ExposureMask | KeyPressMask;
- 
  	_win->win = XCreateWindow(_win->dpy, _win->root, 0, 0, _RS->m_SizeX, _RS->m_SizeY, 0, _win->vi->depth, InputOutput, _win->vi->visual, CWColormap | CWEventMask, &(_win->swa));
-
-	std::cerr << "Window created\n";
-
  	XMapWindow(_win->dpy, _win->win);
- 	XStoreName(_win->dpy, _win->win, "VERY SIMPLE APPLICATION");
-	std::cerr << "name stored\n"; 
-
+ 	XStoreName(_win->dpy, _win->win, "APPLICATION");
 
  	_win->glc = glXCreateContext(_win->dpy, _win->vi, NULL, GL_TRUE);
-	std::cerr << "Created context\n"; 
-
  	glXMakeCurrent(_win->dpy, _win->win, _win->glc);
- 	std::cerr << "Selected context\n"; 
-
-
 }
 
+
+void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index, RenderScene* _pRS)
+{
+	for(int i = 0; i < 4; i++)
+	{
+		_pRS[i].SetLight(_pos, _colour, _scale, _index);
+	}
+}
 
 
 
 int main(int argc, char **argv)
 {
+	(void*)argc; (void*)argv;
+
     std::cerr << "Main() Entry" << std::endl;
 
 	//Render Scene Controllers (One per context)
 	RenderScene RS[4];
 
 	Camera camera_left;
-	camera_left.Init( glm::vec3(-30.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	50.f, 1.0f, 0.01f, 200.f); 
+	camera_left.Init( glm::vec3(-3.25f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	70.f, 1.0f, 0.01f, 200.f); 
 	
 	Camera camera_right;
-	camera_right.Init( glm::vec3(0.f, 0.f, 30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	50.f, 1.0f, 0.01f, 200.f); 
+	camera_right.Init( glm::vec3(3.25f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	70.f, 1.0f, 0.01f, 200.f); 
 	
 	RS[0].Initialise();
 	RS[1].Initialise();
@@ -271,6 +249,12 @@ int main(int argc, char **argv)
 	RS[1].SetLeftRight(false);
 	RS[2].SetLeftRight(true);
 	RS[3].SetLeftRight(true);
+
+	
+	for(int i = 0; i < 8; i++)
+	{
+		SetLight(glm::vec3( (i-4) * 5.0, 0.0, 0.0), glm::vec3(0.8, 0.8, 0.7),500.f, i, &RS[0]);
+	}
 	
 
 	//Windows
@@ -280,9 +264,6 @@ int main(int argc, char **argv)
 	InitialiseWindow(&win[1],2, &RS[1]);
 	InitialiseWindow(&win[2],3, &RS[2]);
 	InitialiseWindow(&win[3],4, &RS[3]);
-
-
-
 
 	//Glew initialisation
 	GLenum err = glewInit();
@@ -307,32 +288,35 @@ int main(int argc, char **argv)
 		std::string name = "TestShader";
 		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 		bool pass = RS[i].CreateShaderProgramObject( vert, frag, name );
+		if(!pass) return -1;
 
 		vert = "../Shaders/vert_tex.glsl";
 		frag = "../Shaders/frag_tex.glsl";
 		name = "TestShader_Tex";
 		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
+		if(!pass) return -1;
 
 		vert = "../Shaders/vert_MRT.glsl";
 		frag = "../Shaders/frag_MRT.glsl";
 		name = "TestShader_MRT";
 		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
+		if(!pass) return -1;
 
 		vert = "../Shaders/vert_persp_MRT.glsl";
 		frag = "../Shaders/frag_persp_MRT.glsl";
 		name = "TestShader_persp_MRT_near";
 		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
-		(void)pass;
+		if(!pass) return -1;
 
 		vert = "../Shaders/vert_persp_MRT.glsl";
 		frag = "../Shaders/frag_persp_MRT.glsl";
 		name = "TestShader_persp_MRT_far";
 		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
-		(void)pass;
+		if(!pass) return -1;
 
 
 		RS[i].InitialiseRenderObjects();
