@@ -22,6 +22,7 @@
 //TODO NEEDS REFACTORING
 
 
+
 enum ERENDERMODE
 {
 	E_MODELSCENE,
@@ -169,10 +170,9 @@ class ScreenLayout
 	void     	SetScreenSize		( unsigned int _index, size& _size);
 
 	private:
-	SubScreen	m_screenArray[4];
+	SubScreen	m_screenArray[1];
 
 };
-
 
 class ShaderProgram
 {
@@ -205,14 +205,14 @@ class Material
 public:
 	Material( 	std::string _name, 
 				colour _ambient, colour _diffuse, colour _spec, colour _emissive,
-				float _spec_att, float _spec_pow, GLuint _ambient_map, GLuint _diffuse_map, GLuint _bump_map)
+				float _spec_att, float _spec_pow, Texture _specular_map, Texture _diffuse_map, Texture _bump_map)
 	: 	ambient(_ambient),
 	  	diffuse(_diffuse),
 		specular(_spec),
 		emissive(_emissive),
 		spec_att(_spec_att),
 		spec_pow(_spec_pow),
-		ambient_map(_ambient_map),
+		specular_map(_specular_map),
 		diffuse_map(_diffuse_map),
 		bump_map(_bump_map)
 	{
@@ -225,10 +225,7 @@ public:
 		specular(0.f, 0.f, 0.f, 0.f),
 		emissive(0.f, 0.f, 0.f, 0.f),
 		spec_att(0.f),
-		spec_pow(0.f),
-		ambient_map(0u),
-		diffuse_map(0u),
-		bump_map(0u)
+		spec_pow(0.f)
 	{
 		std::cerr << "Material Initialised: NO PARAMS" << "\n";
 	}
@@ -244,9 +241,9 @@ public:
 	float spec_att;
 	float spec_pow;
 
-	GLuint ambient_map;
-	GLuint diffuse_map;
-	GLuint bump_map;	
+	Texture specular_map;
+	Texture diffuse_map;
+	Texture bump_map;	
 
 };
 
@@ -294,10 +291,46 @@ public:
 
 	AIMesh()
 	{
+		m_modelMat = glm::mat4(1.f);
 	}
 
 	void Initialise	(std::string& _path);
 	void Draw		();
+
+	void SetModelMat (glm::mat4& _mat)
+	{
+		m_modelMat = _mat;
+	}
+
+	glm::mat4 GetModelMat ()
+	{
+		return m_modelMat;
+	}
+
+	void SetName(std::string _name)
+	{
+		m_name = _name;
+	}
+
+	void SetMaterial(std::string _name)
+	{
+		m_material = _name;
+	}
+
+	std::string GetMaterial()
+	{
+		return m_material;
+	}
+
+	std::string GetName()
+	{
+		return m_name;
+	}	
+
+	std::string m_name;
+	std::string m_material;
+
+	glm::mat4 m_modelMat;
 
 	std::vector<VBOIBO> m_vertexObjects;
 };
@@ -321,7 +354,6 @@ public:
 	unsigned int	indicies[6];
 };
 
-
 class Camera
 {
 	public:
@@ -332,17 +364,31 @@ class Camera
 
 	void InitView		( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up	);
 	void InitProj		( 	float _fov	, float _aspect	, float _near	, float _far);
+
+	void Rotate			( 	glm::mat4 _rotmat	);
+	void Translate		( 	float _x, float _y, float _z	);
+
+	void ChangeFOV		( 	float _amount );
 	
 	glm::mat4 GetMVP	( 	glm::mat4& _model);
+	glm::mat4 GetMV		( 	glm::mat4& _model);
 	glm::mat4 GetV		() { return m_view;}
 	glm::mat4 GetP		() { return m_proj;}
 
 	glm::vec3 GetPos    () { return m_pos;}
 	glm::vec3 GetDir    () { return m_dir;}
 
+	float m_fov;
+	float m_aspect;
+	float m_near;
+	float m_far;
+
 	glm::mat4 m_view;
 	glm::mat4 m_proj;
 
+
+	glm::vec3 m_centre;
+	glm::vec3 m_up;
 	glm::vec3 m_pos;
 	glm::vec3 m_dir;
 };
@@ -367,8 +413,6 @@ struct PointLight
 
 	void Set(glm::vec3 _pos, glm::vec3 _col, float _dist)
 	{
-
-		std::cerr << _pos.z << "\n";
 		m_pos 	 = Position(_pos.x, _pos.y, _pos.z);
 		m_colour = colour(_col.x, _col.y, _col.z, 1.0f);
 		m_distance = _dist;
@@ -384,9 +428,7 @@ class RenderScene
 public:
 	RenderScene()
 	{ 
-		m_activeScreen = 0; 
 		m_renderMode = E_MODELSCENE;
-		std::cerr << "Starting Rendermode = : " << m_renderMode << "\n";
 	}
 
 	//Setup
@@ -400,12 +442,14 @@ public:
 	void SetCamera(Camera& _cam);
 	void SetLeftRight(bool _left);
 
+	bool LoadMaterial( std::string _file,  std::string _name);
+
 	//Rendering
 	void Render();
 	void Render_CopyToViews();
 	void Render_Scene();
 
-	void SceneBody();
+	void SceneBody(ShaderProgram& _prog);
 
 	void RenderQuad(Position& _pos, size& _size, colour& _col);
 	void RenderScreenQuadAtOffset(Position& _offset, size& _size);
@@ -440,6 +484,23 @@ public:
 	public:
 	bool 	CreateShaderProgramObject	(std::string& _vertexFilename, std::string& _pixelFilename, std::string _name);
 
+	void SetNearFar(bool _near)
+	{
+		m_viewState.m_IsNear = _near;
+	}
+
+	void SetID( int _id)
+	{
+		m_id = _id;
+	}
+	
+	void SetXYZtoRGBMat( glm::mat4& _mat);
+
+	glm::mat4 m_XYZtoRGB;
+
+
+	int m_id;
+
 	// Lists and lists and lists
 	std::vector<GLuint> 		m_frameBuffers;
 	std::vector<GLuint> 		m_renderTextures;
@@ -448,6 +509,8 @@ public:
 	std::vector<FBOMulti> 		m_FBOMultiList;
 	
 	std::map<std::string, ShaderProgram> m_shaderMap;
+
+	std::map<std::string, Material> m_materialMap;
 
 	ScreenLayout				m_layoutControl;
 
@@ -466,17 +529,20 @@ public:
 
 	PointLight					m_pointLights[8];
 
+
+	std::vector<AIMesh>			m_meshArray;
+
+
 	//Window Controls
 	int m_PosX;
 	int m_PosY;
 
 	int m_SizeX;
 	int m_SizeY;
-	
-	int m_activeScreen;
-
 };
 
+
+void ScreenWriteToFile	(std::string _path, RenderScene* _RS);
 
 #endif
 

@@ -2,6 +2,25 @@
 #include <iostream>
 
 
+void Material::Apply(ShaderProgram _shad)
+{
+	_shad.SetUniform1UI("tex_0", 0);
+	_shad.SetUniform1UI("tex_1", 1);
+//	_shad.SetUniform1UI("tex_2", 2);
+
+	diffuse_map.Bind(GL_TEXTURE0);
+	specular_map.Bind(GL_TEXTURE1);
+	//bump_map.Bind(GL_TEXTURE2);
+
+	_shad.SetUniform1F("specPowUniform"		, spec_pow);
+
+	//_shad.SetUniform4F("ambientUniform"		, ambient.R()	, ambient.G()	, ambient.B()	, ambient.A()	);
+
+	_shad.SetUniform4F("diffuseUniform"		, diffuse.R()	, diffuse.G()	, diffuse.B()	, diffuse.A()	);
+	_shad.SetUniform4F("specularUniform"	, specular.R()	, specular.G()	, specular.B()	, specular.A());
+	//_shad.SetUniform4F("emissiveUniform"	, emissive.R()	, emissive.G()	, emissive.B()	, emissive.A());
+}
+
 GLint ShaderProgram::FetchUniformValue(std::string _name)
 {
 	auto res = m_uniformMap.find(_name);
@@ -12,7 +31,6 @@ GLint ShaderProgram::FetchUniformValue(std::string _name)
 		 		
 		glUseProgram(programID);	 
 		GLint loc = glGetUniformLocation(programID, _name.c_str());
-
 
 		if(loc == -1)
 		{

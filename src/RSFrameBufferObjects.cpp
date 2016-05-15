@@ -29,7 +29,7 @@ FBO RenderScene::CreateSingleFrameBuffer(int _width, int _height, GLenum _format
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
 	{
-		std::cerr<<"Frame Buffer is good.\n";
+		//std::cerr<<"Frame Buffer is good.\n";
 	}
 	else
 	{

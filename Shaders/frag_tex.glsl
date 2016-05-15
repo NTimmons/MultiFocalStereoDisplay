@@ -1,12 +1,16 @@
 #version 430
 
-in vec2 finaltexcoord;
+uniform sampler2D 	tex;
+uniform mat4 		XYZtoRGB;
 
-uniform sampler2D tex;
+in 		vec2		finaltexcoord;
 
-out vec4 outColor;
+out 	vec4 		outColor;
 
 void main()
 { 
-   outColor = (texture(tex, vec2(finaltexcoord.x, 1.0 - finaltexcoord.y))) + vec4(0.1, 0.1, 0.1, 1.0);
+	vec4 col = (texture(tex, vec2(finaltexcoord.x, 1.0 - finaltexcoord.y)));
+	col.w = 1.f;
+	col = XYZtoRGB * col;
+	outColor = col;
 }

@@ -3,20 +3,9 @@
 
 ScreenLayout::ScreenLayout()
 {
-	m_screenArray[0].m_pos = Position(-1.f    , 0.f, 0.f); 
-	m_screenArray[1].m_pos = Position(-0.5f   , 0.f, 0.f);
-	m_screenArray[2].m_pos = Position(0.0f   , 0.f, 0.f);
-	m_screenArray[3].m_pos = Position(0.5f   , 0.f, 0.f);
-
-	m_screenArray[0].m_size = size(0.25f, 0.25f);
-	m_screenArray[1].m_size = size(0.25f, 0.25f);
-	m_screenArray[2].m_size = size(0.25f, 0.25f);
-	m_screenArray[3].m_size = size(0.25f, 0.25f);
-
-	m_screenArray[0].m_colour = colour(1.f, 0.f, 0.f, 1.f);
-	m_screenArray[1].m_colour = colour(0.f, 1.f, 0.f, 1.f);
-	m_screenArray[2].m_colour = colour(0.f, 0.f, 1.f, 1.f);
-	m_screenArray[3].m_colour = colour(1.f, 1.f, 0.f, 1.f);
+	m_screenArray[0].m_pos 		= Position(-1.f    , 0.f, 0.f); 
+	m_screenArray[0].m_size 	= size(0.25f, 0.25f);
+	m_screenArray[0].m_colour 	= colour(1.f, 0.f, 0.f, 1.f);
 }
 	
 Position 	ScreenLayout::GetScreenPos		( unsigned int _index)
@@ -32,7 +21,6 @@ size     	ScreenLayout::GetScreenSize		( unsigned int _index)
 
 void 	ScreenLayout::SetScreenPos		( unsigned int _index, Position& _pos)
 {
-	//std::cerr << "Setting Screen Pos";
 	 m_screenArray[_index].m_pos = _pos;
 }
 

@@ -218,27 +218,34 @@ void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index, Rend
 	}
 }
 
-
-
 int main(int argc, char **argv)
 {
-	(void*)argc; (void*)argv;
+	(void)argc; (void)argv;
 
     std::cerr << "Main() Entry" << std::endl;
 
 	//Render Scene Controllers (One per context)
 	RenderScene RS[4];
 
+	glm::vec3 lefteye  		= glm::vec3( 3.25f	, 0.f, 0.f	);
+	glm::vec3 righteye 		= glm::vec3( -3.25f	, 0.f, 0.f	);
+	glm::vec3 convergePoint = glm::vec3( 0.f	, 0.f, 25.f	);
+
 	Camera camera_left;
-	camera_left.Init( glm::vec3(-3.25f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	70.f, 1.0f, 0.01f, 200.f); 
+	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	1.04, 1.0f, 0.01f, 200.f); 
 	
 	Camera camera_right;
-	camera_right.Init( glm::vec3(3.25f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),	70.f, 1.0f, 0.01f, 200.f); 
+	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	1.04, 1.0f, 0.01f, 200.f); 
 	
 	RS[0].Initialise();
 	RS[1].Initialise();
 	RS[2].Initialise();
 	RS[3].Initialise();
+
+	RS[0].SetID(1);
+	RS[1].SetID(2);
+	RS[2].SetID(3);
+	RS[3].SetID(4);
 
 	RS[0].SetCamera(camera_right);
 	RS[1].SetCamera(camera_right);
@@ -250,12 +257,22 @@ int main(int argc, char **argv)
 	RS[2].SetLeftRight(true);
 	RS[3].SetLeftRight(true);
 
+	RS[0].SetNearFar(true);
+	RS[1].SetNearFar(false);
+	RS[2].SetNearFar(false);
+	RS[3].SetNearFar(true);
+
+
+	glm::mat4 ident(1.0f);
+	RS[0].SetXYZtoRGBMat(ident);
+	RS[1].SetXYZtoRGBMat(ident);
+	RS[2].SetXYZtoRGBMat(ident);
+	RS[3].SetXYZtoRGBMat(ident);
 	
 	for(int i = 0; i < 8; i++)
 	{
-		SetLight(glm::vec3( (i-4) * 5.0, 0.0, 0.0), glm::vec3(0.8, 0.8, 0.7),500.f, i, &RS[0]);
-	}
-	
+		SetLight(glm::vec3( (i-4) * 45.0, 0.0, 0.0), glm::vec3(0.8, 0.8, 0.7),55.f, i, &RS[0]);
+	}	
 
 	//Windows
 	WindowData win[4];
@@ -318,6 +335,9 @@ int main(int argc, char **argv)
 		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
 		if(!pass) return -1;
 
+		RS[i].LoadMaterial("../Materials/Test.Material", "Test");
+		RS[i].LoadMaterial("../Materials/Box.Material", "Box");
+
 
 		RS[i].InitialiseRenderObjects();
 	}
@@ -334,9 +354,20 @@ int main(int argc, char **argv)
 			reset_terminal_mode();
 
 			int ch = getch();
-			std::cerr << "Input " <<ch << "\n";
+			//std::cerr << "Input " <<ch << "\n";
 			if(ch == 3)
 				return -1;
+			else if (ch == 'p')
+			{
+				std::string configFile = "../Config/layout.data";
+				ScreenWriteToFile(configFile, &RS[0]);
+			}
+			else if (ch == '0')
+				activeInput = -1;
+			else if (ch == '9')
+				activeInput = -2;
+			else if (ch == '8')
+				activeInput = -3;
 			else if (ch == '1')
 				activeInput = 0;
 			else if (ch == '2')
@@ -345,9 +376,27 @@ int main(int argc, char **argv)
 				activeInput = 2;
 			else if (ch == '4')
 				activeInput = 3;
-			else
+			
+			if (activeInput >= 0)
 			{
 				keyPressCallback(ch, &RS[activeInput]);
+			}
+			else if(activeInput == -1)
+			{
+				keyPressCallback(ch, &RS[0]);
+				keyPressCallback(ch, &RS[1]);
+				keyPressCallback(ch, &RS[2]);
+				keyPressCallback(ch, &RS[3]);
+			}
+			else if(activeInput == -2)
+			{
+				keyPressCallback(ch, &RS[0]);
+				keyPressCallback(ch, &RS[1]);
+			}
+			else if(activeInput == -3)
+			{
+				keyPressCallback(ch, &RS[2]);
+				keyPressCallback(ch, &RS[3]);
 			}
 		}	
 

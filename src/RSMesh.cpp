@@ -52,6 +52,7 @@ void AIMesh::Initialise(std::string& _path)
 															| 	aiProcess_JoinIdenticalVertices 
 															| 	aiProcess_Triangulate 
 															| 	aiProcess_GenNormals
+															| 	aiProcess_CalcTangentSpace 
 										)
 							);
 	if(scene)

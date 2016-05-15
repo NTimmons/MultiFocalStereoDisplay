@@ -54,8 +54,90 @@ void RenderScene::TestGLError(const char* _file, int _line)
 		std::cerr << "OpenGL Error: (" << _file << ", " << _line << ")-> " << id << "\n";
 }
 
+bool RenderScene::LoadMaterial( std::string _file, std::string _name)
+{
+	std::ifstream file;
+	file.open(_file.c_str(), std::ios::in);
+	if(!file)
+	{ 
+		std::cerr << "\t Failed to open screen config file: " << _file << "\n";
+		return false;
+	}
 
-void RenderScene::ScreenWriteToFile	(std::string _path, ScreenLayout* _screen)
+
+	char fileTypeMask[9] = { 'v', 'v', 'v', 'v', 'f', 'f', 't', 't', 't'};
+    colour colArray[4];
+	int colIndex = 0;
+
+    float floatArray[4];
+	int floatIndex = 0;
+
+    Texture texArray[3];
+	int texIndex = 0;
+
+
+	int index = 0;
+	
+	std::string line;
+	if (file.is_open())
+	{
+		std::cerr << "Reading Config file>\n";
+		while ( getline (file,line) )
+		{
+			if(fileTypeMask[index] == 'v')
+			{
+				std::vector<std::string> sData = split(line, ',');
+				if (sData.size() == 4 )
+				{
+					float r = (float)atof(sData[0].c_str());
+					float g = (float)atof(sData[1].c_str());
+					float b = (float)atof(sData[2].c_str());
+					float a = (float)atof(sData[3].c_str());
+
+					std::cerr << "Col Index: " << colIndex << " Values: " << r << ", " << g << ", " << b << ", " << a << "\n";
+
+					colour col(r,g,b,a);
+					colArray[colIndex] = col;
+					colIndex++;
+					
+				}
+			}	
+			else if(fileTypeMask[index] == 'f')
+			{
+				float f = (float)atof(line.c_str());
+
+				std::cerr << "Float Index: " << floatIndex << " Value: " << f << "\n";
+
+				floatArray[floatIndex] = f;
+				floatIndex++;
+			}
+			else if(fileTypeMask[index] == 't')
+			{
+				Texture t;
+				t.Init(line);
+				std::cerr << "Tex Index: " << texIndex << " Value: " << line << "\n";
+
+				texArray[texIndex] = t;
+				texIndex++;
+			}
+
+			index++;
+		}
+
+		Material mat(_name, colArray[0], colArray[1], colArray[2], colArray[3], floatArray[0], floatArray[1],
+						texArray[0], texArray[1], texArray[2] );
+
+		
+		m_materialMap.insert(std::make_pair(_name,  mat)  );
+
+		return true;
+	}
+
+	return false;
+}
+
+
+void ScreenWriteToFile	(std::string _path, RenderScene* _RS)
 {
 	std::ofstream file;
 	file.open(_path.c_str(), std::ios::out);
@@ -73,15 +155,14 @@ void RenderScene::ScreenWriteToFile	(std::string _path, ScreenLayout* _screen)
 			std::stringstream ssS;
 			unsigned int index = i;	
 
-			Position 	pos 	= _screen->GetScreenPos(i);
-			size		size 	= _screen->GetScreenSize(i);
+			Position 	pos 	= _RS[i].m_layoutControl.GetScreenPos(0);
+			size		size 	= _RS[i].m_layoutControl.GetScreenSize(0);
 			
-			ssP << index << ":" << "P" << ":" << pos.X() << ":" << pos.Y() << ":" << pos.Z() << ":0\n";
-			ssP << index << ":" << "S" << ":" << size.W() << ":" << size.H() << ":0"<< ":0\n";
+			ssP << _RS[i].m_id << ":" << "P" << ":" << pos.X()  << ":" << pos.Y() << ":" << pos.Z() << ":0\n";
+			ssP << _RS[i].m_id << ":" << "S" << ":" << size.W() << ":" << size.H() << ":0"<< ":0\n";
 
 			file << ssP.str();
 			file << ssS.str();
-
 		}
 
 		file.close();
@@ -129,17 +210,24 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 							 " val3: " << val3 << "\n";
 				*/
 
-				//std::cerr << "Type is: " << type << " \n";
-				if(type == 'P')
-				{	
-					Position p(val0, val1, val2);
-					_layout->SetScreenPos(index, p);
+
+				if(index == m_id)
+				{
+					//std::cerr << "Type is: " << type << " \n";
+					if(type == 'P')
+					{	
+						Position p(val0, val1, val2);
+						_layout->SetScreenPos(0, p);
+					}
+					else if(type == 'S')
+					{	
+						size s(val0, val1);
+						_layout->SetScreenSize(0, s);
+					}
+
 				}
-				else if(type == 'S')
-				{	
-					size s(val0, val1);
-					_layout->SetScreenSize(index, s);
-				}
+
+	
 			}
 
 			//std::cerr << "-";	
@@ -163,7 +251,41 @@ void RenderScene::InitialiseRenderObjects()
 
 
 	std::string path = "../Mesh/sibenik.obj";
-	m_boxMesh.Initialise(path);
+	AIMesh sibenik;
+
+	glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 48.f, 0.f));
+	glm::mat4 model 	= translate * glm::scale(glm::mat4(1.0f), glm::vec3(4.4, 4.4, 4.4));
+
+
+	sibenik.Initialise(path);
+	sibenik.SetName("Sibenik");
+    sibenik.SetMaterial("Test");
+	sibenik.SetModelMat(model);
+
+	m_meshArray.push_back(sibenik);
+
+	path = "../Mesh/cubet.obj";
+	AIMesh box;
+	box.Initialise(path);
+	box.SetMaterial("Box");
+	box.SetName("box_0");
+	
+	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 10.f));
+	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(4.4, 4.4, 4.4));
+	box.SetModelMat(model);
+	m_meshArray.push_back(box);
+
+	box.SetName("box_1");
+	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 5.f));
+	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
+	box.SetModelMat(model);
+	m_meshArray.push_back(box);
+
+	box.SetName("box_2");
+	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 40.f));
+	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(8.4, 8.4, 8.4));
+	box.SetModelMat(model);
+	m_meshArray.push_back(box);
 
 	std::string img = "../Images/testimage.png";
 	m_testTexture.Init(img);
@@ -210,41 +332,64 @@ void RenderScene::Initialise()
 	InitialiseScreenPositions();
 }
 
-void RenderScene::SceneBody()
+void RenderScene::SceneBody(ShaderProgram& _prog)
 {
 		glEnable(GL_DEPTH_TEST);
-	    glClearColor(0.6, 0.2, 0.4, 0.0);
+	    glClearColor(0.0, 0.0, 0.0, 0.0);
 	    glClearDepth(1.0f);
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		/*Add Nice Scene here */
-		m_boxMesh.Draw();
+
+		m_materialMap.find("Test")->second.Apply(_prog);
+
+		float angle  = 0.00f;
+		glm::mat4 rotation	= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
+
+		for(unsigned int i = 0; i < m_meshArray.size(); i++)
+		{
+			m_materialMap.find(m_meshArray[i].GetMaterial())->second.Apply(_prog);	
+	
+			glm::mat4 model = m_meshArray[i].GetModelMat();
+
+			_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+			_prog.SetMatrix4FV("m", glm::value_ptr(model));
+			_prog.SetMatrix4FV("r", glm::value_ptr(rotation));
+
+			m_meshArray[i].Draw();
+		}
+
+		//m_boxMesh.Draw();
 }
 
 void RenderScene::Render_Scene()
 {
-		static float angle = 0.f;
-		angle+=0.01f;
-		//Model setup.
+		static float angle = 0.00f;
+		glm::mat4 rotation	= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
+		m_camera.Rotate(rotation);
 
-		glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 78.f, 0.f));
-		glm::mat4 model 	= translate * glm::scale(glm::mat4(1.0f), glm::vec3(6.4, 6.4, 6.4));
-		model 				= glm::rotate(model, (glm::mediump_float)angle, glm::vec3(0,1,0));      //glm::rotate(model, 60.f, glm::vec3(0.0, 1.0, 0.0));
-		//Use shader
 
 		std::string shadername = "";
-
+		shadername = "TestShader_persp_MRT_near";
 		if(m_viewState.m_IsNear)
-			shadername = "TestShader_persp_MRT_near";
+		{
+			m_shaderMap.find(shadername)->second.SetUniform1F("near"		, 1.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("nearClip"	, 1.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("farClip"		, 10.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("blendClip"	, 15.f);
+
+		}
 		else
-			shadername = "TestShader_persp_MRT_far";
+		{
+			m_shaderMap.find(shadername)->second.SetUniform1F("near"		, 0.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("nearClip"	, 10.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("farClip"		, 9999.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("blendClip"	, 15.f);
+		}
 
 		glUseProgram(m_shaderMap.find(shadername)->second.programID);
 
 		ApplySingleFrameBuffer(m_FBOList[0]);
-		m_shaderMap.find(shadername)->second.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
-		//m_shaderMap.find(shadername)->second.SetMatrix4FV("m", glm::value_ptr(model));
-
 
 		//Apply light matrix
 		colour lightColSize[8];
@@ -270,10 +415,11 @@ TESTGL;
 TESTGL;
 		//m_shaderMap.find(shadername)->second.SetMatrix4FV("v", glm::value_ptr(m_camera.GetV()));
 		//m_shaderMap.find(shadername)->second.SetMatrix4FV("p", glm::value_ptr(m_camera.GetP()));
-		//m_shaderMap.find(shadername)->second.SetUniform3FP("cameraPos", glm::value_ptr(m_camera.GetPos()));
-		//m_shaderMap.find(shadername)->second.SetUniform3FP("cameraDir", glm::value_ptr(m_camera.GetDir()));
-		SceneBody();
+		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraPos", glm::value_ptr(m_camera.GetPos()));
+		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraDir", glm::value_ptr( glm::normalize( m_camera.GetDir() ) ) );
 
+		
+		SceneBody(m_shaderMap.find(shadername)->second);
 
 		ClearFrameBuffers();
 }
@@ -284,6 +430,7 @@ void RenderScene::Render_CopyToViews()
 
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1UI("tex", 0);
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1F("testVal", 1.0f);
+	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetMatrix4FV("XYZtoRGB", glm::value_ptr(m_XYZtoRGB));
 
 	GLuint textureArray[1] =  {	m_FBOList[0].m_renderTextureIndex };
 
@@ -307,7 +454,7 @@ void RenderScene::IncrementMode()
 
 void RenderScene::Render()
 {
-    glClearColor(1.0, 1.0, 0.0, 0.0);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 	
@@ -364,7 +511,7 @@ void RenderScene::Render()
 		break;
 
 		default:
-			std::cerr << "Defualt mode?\n";
+			std::cerr << "Defualt mode render mode\n";
 			break;
 
 	}
@@ -413,35 +560,47 @@ void RenderScene::RenderQuad(Position& _pos, size& _size, colour& _col)
 void RenderScene::HandleInput( unsigned char _key)
 {
 
-	//Which screen to move;
-	if		( _key == '0')
-		m_activeScreen = 0;
-	else if	( _key == '1' )
-		m_activeScreen = 1;
-	else if ( _key == '2' )
-		m_activeScreen = 2;
-	else if ( _key == '3' )
-		m_activeScreen = 3;
+	//Camera Translation
+	if( _key == 't' )
+	{
+		m_camera.Translate( 1.f, 0.f, 0.f);
+	}
+	else if( _key == 'g' )
+	{
+		m_camera.Translate( -1.f, 0.f, 0.f);
+	}
+	else if( _key == 'f' )
+	{
+		m_camera.Translate( 0.f, 0.f, -1.f);
+	}
+	else if( _key == 'h' )
+	{
+		m_camera.Translate( 0.f, 0.f, 1.f);
+	}
+
+	else if( _key == 'p')
+	{
+		m_camera.ChangeFOV(0.01f);
+	}
+	else if( _key == 'o')
+	{
+		m_camera.ChangeFOV(-0.01f);
+	}
 
 	else if	( _key == 'w' )
-		m_layoutControl.AdjustScreenPos(Position(0.f, 0.01f, 0.f), m_activeScreen);
+		m_layoutControl.AdjustScreenPos(Position(0.f, 0.01f, 0.f), 0);
 	else if	( _key == 's' )
-		m_layoutControl.AdjustScreenPos(Position(0.f, -0.01f, 0.f), m_activeScreen);
+		m_layoutControl.AdjustScreenPos(Position(0.f, -0.01f, 0.f), 0);
 	else if ( _key == 'a' )
-		m_layoutControl.AdjustScreenPos(Position(-0.01f, 0.0f, 0.f), m_activeScreen);
+		m_layoutControl.AdjustScreenPos(Position(-0.01f, 0.0f, 0.f), 0);
 	else if ( _key == 'd' )
-		m_layoutControl.AdjustScreenPos(Position(0.01f, 0.0f, 0.f), m_activeScreen);
+		m_layoutControl.AdjustScreenPos(Position(0.01f, 0.0f, 0.f), 0);
 
 	else if ( _key == 'e' )
-		m_layoutControl.AdjustScreenSize(size(0.01f, 0.01f), m_activeScreen);
+		m_layoutControl.AdjustScreenSize(size(0.01f, 0.01f), 0);
 	else if ( _key == 'q' )
-		m_layoutControl.AdjustScreenSize(size(-0.01f, -0.01f), m_activeScreen);
+		m_layoutControl.AdjustScreenSize(size(-0.01f, -0.01f), 0);
 
-	else if ( _key == 'p')
-	{
-			std::string configFile = "../Config/layout.data";
-			ScreenWriteToFile(configFile, &m_layoutControl);
-	}
 	else if ( _key == 'm')
 	{
 			IncrementMode();
@@ -451,6 +610,11 @@ void RenderScene::HandleInput( unsigned char _key)
 void RenderScene::SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index)
 {
 	m_pointLights[_index].Set(_pos, _colour, _scale);
+}
+
+void RenderScene::SetXYZtoRGBMat( glm::mat4& _mat)
+{
+	m_XYZtoRGB = _mat;
 }
 
 
