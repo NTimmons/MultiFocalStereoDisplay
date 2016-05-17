@@ -6,11 +6,11 @@ void Material::Apply(ShaderProgram _shad)
 {
 	_shad.SetUniform1UI("tex_0", 0);
 	_shad.SetUniform1UI("tex_1", 1);
-//	_shad.SetUniform1UI("tex_2", 2);
+	_shad.SetUniform1UI("tex_2", 2);
 
 	diffuse_map.Bind(GL_TEXTURE0);
 	specular_map.Bind(GL_TEXTURE1);
-	//bump_map.Bind(GL_TEXTURE2);
+	bump_map.Bind(GL_TEXTURE2);
 
 	_shad.SetUniform1F("specPowUniform"		, spec_pow);
 

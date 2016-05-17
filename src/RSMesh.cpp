@@ -25,8 +25,11 @@ void AIMesh::Draw()
 		glEnableVertexAttribArray(2);  // Vertex UV.
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GenericVertex), (void*)32);
 
-		glEnableVertexAttribArray(2);  // Vertex UV.
+		glEnableVertexAttribArray(3);  // Vertex UV.
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(GenericVertex), (void*)40);
+		
+		glEnableVertexAttribArray(4);  // Vertex UV.
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(GenericVertex), (void*)48);
 
 		// Draw the triangles !
 		glDrawElements	( GL_TRIANGLES,      			// mode
@@ -77,10 +80,11 @@ void AIMesh::Initialise(std::string& _path)
 	//For each mesh
 	for(unsigned int i = 0; i < scene->mNumMeshes; i++)
 	{
-		aiMesh* currMesh = scene->mMeshes[i];
+		aiMesh* currMesh      = scene->mMeshes[i];
 		aiVector3D* vertexPos = currMesh->mVertices;
 		aiVector3D* vertexNor = currMesh->mNormals;
-		aiVector3D* vertexUV = 0;
+		aiVector3D*	vertexTan = 0;
+		aiVector3D* vertexUV  = 0;
 
 		if(currMesh->HasTextureCoords(0))
 		{
@@ -91,6 +95,12 @@ void AIMesh::Initialise(std::string& _path)
 		{
 			//std::cerr << "mesh does not have UV coordinates\n";
 		}
+
+		if(currMesh->HasTangentsAndBitangents())
+		{
+			vertexTan = currMesh->mTangents;
+		}
+
 
 		aiFace* faces = currMesh->mFaces;
 
@@ -106,8 +116,12 @@ void AIMesh::Initialise(std::string& _path)
 		{
 			Position vP(vertexPos[vi][0], vertexPos[vi][1], vertexPos[vi][2]);
 			Position vN(vertexNor[vi][0], vertexNor[vi][1], vertexNor[vi][2]);
+			Position vTan;
 
-			//TODO: Add UV Support.
+			if(currMesh->HasTangentsAndBitangents())
+			{
+				vTan = Position(vertexTan[vi][0], vertexTan[vi][1], vertexTan[vi][2]);
+			}
 
 			texCoord vT;
 			if(currMesh->HasTextureCoords(0))
@@ -116,6 +130,7 @@ void AIMesh::Initialise(std::string& _path)
 			GenericVertex gv;
 			gv.m_pos = vP;
 			gv.m_nor = vN;
+		    gv.m_tan = vTan;
 			gv.m_uv = texCoord(vT.u, vT.v);//vT;
 			vecVertex.push_back(gv);
 		}
@@ -131,23 +146,6 @@ void AIMesh::Initialise(std::string& _path)
 			vecIndices.push_back(i1);
 			vecIndices.push_back(i2);
 		}
-
-		/*
-		for(unsigned int ii = 0; ii < vecIndices.size(); ii++)
-		{
-			std::cerr << "\tIndex: " << vecIndices[ii] << "\n";
-		}
-
-		for(unsigned int ii = 0; ii < vecVertex.size(); ii++)
-		{
-			std::cerr << "Pos: " << vecVertex[ii].m_pos.pos[0] 
-								 << "," << vecVertex[ii].m_pos.pos[1] 
-								 << "," << vecVertex[ii].m_pos.pos[2] << "\n";			
-		}
-
-		std::cerr << "Index Count: " << vecIndices.size() << "\n";
-		std::cerr << "Vertex Count: " << vecVertex.size() << "\n";
-		*/
 		
 		//Build VBOIBO
 		GLuint elementBufferObject = -1;
@@ -171,8 +169,12 @@ void AIMesh::Initialise(std::string& _path)
 		glEnableVertexAttribArray(2);  // Vertex UV.
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GenericVertex), (void*)32);
 
-		glEnableVertexAttribArray(2);  // Vertex UV.
+		glEnableVertexAttribArray(3);  // Vertex UV.
 		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(GenericVertex), (void*)40);
+
+		glEnableVertexAttribArray(4);  // Vertex Tangent.
+		glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(GenericVertex), (void*)48);
+
 
 		//std::cerr << "\tCreated vertex buffer object at id: " << vertexBufferObject << "\n";
 

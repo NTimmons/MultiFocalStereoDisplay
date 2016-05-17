@@ -25,6 +25,7 @@ uniform sampler2D tex_2;
 
 in  vec4 finalColour;
 in  vec4 finalNormal;
+in  vec4 finalTangent;
 in  vec4 finalPosition;
 in  vec4 finalUV;
 
@@ -52,6 +53,19 @@ void main()
 	vec3 ambient = GetAmbient();
 	light = light + ambient;
 
+
+	//normal
+	vec3 normal = normalize (texture(tex_2, vec2(finalUV.x, finalUV.y) ).xyz * 2.0 - 1.0);
+
+	//Normal Mapping
+	vec3 binormal = cross( finalNormal.xyz, finalTangent.xyz );	
+	mat3 TBN = mat3 (finalTangent.xyz, binormal, finalNormal.xyz);
+
+
+
+
+
+
 	for(int i = 0; i < 8; i++)
 	{
 		vec3  pointCol 	= lightColScaleArray[i].xyz;
@@ -62,23 +76,19 @@ void main()
 		float dist 		= length(gap);
 		float intensity = 1.0 - min(1.0, (dist/range) );
 
-		vec3  l  		= normalize(gap);
+		vec3  l  		= normalize ( TBN * normalize(gap) );
 		vec3  n 		= finalNormal.xyz;
-
-		vec3 r = (reflect(l,n));  
+		vec3 r 			= reflect(l,n);  
 
 		//Diffuse Term
-		float ldotn 	= abs( dot(l, finalNormal.xyz) );
-
+		float ldotn 	= 1.0 - max(0.0, ( dot(l, normal.xyz) ) );
 
 		// calculate Specular Term:
 		float Ispec = pow( max( dot( r, cameraDir ), 0.0 ), specPowUniform);
-		Ispec = texSpecCol.r * clamp(Ispec, 0.0, 1.0); 
-
+		Ispec 		= texSpecCol.r * clamp(Ispec, 0.0, 1.0); 
 
 		light = light + ( ldotn * intensity * texDifCol * diffuseColour.xyz) + (Ispec * intensity * specCol.xyz);
 	}
-
 
 	outColor0 = vec4(1.0, 1.0, 0.0, 1.0) ;
 
@@ -143,7 +153,7 @@ void main()
 
 
 
-	//outColor0 =  vec4(light.xyz, 1.0) ;
+	//outColor0 =  abs( vec4(normal.xyz,1.0));//vec4(light.xyz, 1.0) ;
 }
 
 

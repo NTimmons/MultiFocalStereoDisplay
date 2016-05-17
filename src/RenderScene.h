@@ -262,6 +262,7 @@ struct GenericVertex
 	Position m_nor;
 	texCoord m_uv;
 	texCoord m_uv1;
+	Position m_tan;
 };
 
 class Mesh
