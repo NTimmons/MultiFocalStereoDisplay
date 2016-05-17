@@ -271,7 +271,7 @@ void RenderScene::InitialiseRenderObjects()
 	box.SetName("box_0");
 	
 	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 10.f));
-	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(4.4, 4.4, 4.4));
+	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
 	box.SetModelMat(model);
 	m_meshArray.push_back(box);
 
@@ -282,8 +282,8 @@ void RenderScene::InitialiseRenderObjects()
 	m_meshArray.push_back(box);
 
 	box.SetName("box_2");
-	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 40.f));
-	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(8.4, 8.4, 8.4));
+	translate = glm::translate(glm::mat4(1.f), glm::vec3(10.f, 0.f, 0.f));
+	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.f, 1.f, 1.f));
 	box.SetModelMat(model);
 	m_meshArray.push_back(box);
 
@@ -374,17 +374,17 @@ void RenderScene::Render_Scene()
 		if(m_viewState.m_IsNear)
 		{
 			m_shaderMap.find(shadername)->second.SetUniform1F("near"		, 1.f);
-			m_shaderMap.find(shadername)->second.SetUniform1F("nearClip"	, 1.f);
-			m_shaderMap.find(shadername)->second.SetUniform1F("farClip"		, 10.f);
-			m_shaderMap.find(shadername)->second.SetUniform1F("blendClip"	, 15.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("nearClip"	, 0.0001f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("farClip"		, 5.4f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("blendClip"	, 8.1f);
 
 		}
 		else
 		{
 			m_shaderMap.find(shadername)->second.SetUniform1F("near"		, 0.f);
-			m_shaderMap.find(shadername)->second.SetUniform1F("nearClip"	, 10.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("nearClip"	, 5.4f);
 			m_shaderMap.find(shadername)->second.SetUniform1F("farClip"		, 9999.f);
-			m_shaderMap.find(shadername)->second.SetUniform1F("blendClip"	, 15.f);
+			m_shaderMap.find(shadername)->second.SetUniform1F("blendClip"	, 8.1f);
 		}
 
 		glUseProgram(m_shaderMap.find(shadername)->second.programID);

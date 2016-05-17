@@ -227,15 +227,19 @@ int main(int argc, char **argv)
 	//Render Scene Controllers (One per context)
 	RenderScene RS[4];
 
-	glm::vec3 lefteye  		= glm::vec3( 3.25f	, 0.f, 0.f	);
-	glm::vec3 righteye 		= glm::vec3( -3.25f	, 0.f, 0.f	);
-	glm::vec3 convergePoint = glm::vec3( 0.f	, 0.f, 25.f	);
+	float fov = 1.91f;
+	float interocularDist = 0.60f;
+	float eyePos = interocularDist / 2.0f;
+
+	glm::vec3 lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
+	glm::vec3 righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
+	glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 6.75f	);
 
 	Camera camera_left;
-	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	1.04, 1.0f, 0.01f, 200.f); 
+	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, 1.0f, 0.0001f, 40.f); 
 	
 	Camera camera_right;
-	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	1.04, 1.0f, 0.01f, 200.f); 
+	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, 1.0f, 0.0001f, 40.f); 
 	
 	RS[0].Initialise();
 	RS[1].Initialise();
