@@ -53,17 +53,12 @@ void main()
 	vec3 ambient = GetAmbient();
 	light = light + ambient;
 
-
-	//normal
+	//Normal
 	vec3 normal = normalize (texture(tex_2, vec2(finalUV.x, finalUV.y) ).xyz * 2.0 - 1.0);
 
 	//Normal Mapping
 	vec3 binormal = cross( finalNormal.xyz, finalTangent.xyz );	
 	mat3 TBN = mat3 (finalTangent.xyz, binormal, finalNormal.xyz);
-
-
-
-
 
 
 	for(int i = 0; i < 8; i++)
@@ -110,7 +105,7 @@ void main()
 		{
 			float dist = blendClip - farClip;
 			float blendstep = range - farClip;
-			float norm = blendstep/dist;
+			float norm = clamp(blendstep/dist, 0.0, 1.0);
 			
 			outColor0 = mix( vec4(light.xyz, 1.0) , vec4(0.0), norm);
 		}		
@@ -138,9 +133,9 @@ void main()
 		{
 			float dist = blendClip - nearClip;
 			float blendstep = range - nearClip;
-			float norm = blendstep/dist;
+			float norm = clamp(blendstep/dist, 0.0, 1.0);
 			
-			outColor0 = mix( vec4(0.0), vec4(light.xyz, 1.0) , norm);
+			outColor0 = mix( vec4(0.0, 0.0, 0.0, 1.0), vec4(light.xyz, 1.0) , norm);
 		}	
 
 
