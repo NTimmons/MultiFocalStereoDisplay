@@ -102,7 +102,7 @@ void main()
 		float Ispec = pow( max( dot( r, cameraDir ), 0.0 ), specPowUniform);
 		Ispec 		= texSpecCol.r * clamp(Ispec, 0.0, 1.0); 
 
-		light = light + ( ldotn * intensity * texDifCol * diffuseColour.xyz) + (Ispec * intensity * specCol.xyz);
+		light = light + ( ldotn * intensity * texDifCol * diffuseColour.xyz * pointCol) + (Ispec * intensity * specCol.xyz);
 	}
 
 	outColor0 = vec4(1.0, 1.0, 0.0, 1.0) ;

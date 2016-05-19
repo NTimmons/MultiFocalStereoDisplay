@@ -226,20 +226,19 @@ int main(int argc, char **argv)
 
 	//Render Scene Controllers (One per context)
 	RenderScene RS[4];
-
-	float fov = 1.91f;
-	float interocularDist = 0.60f;
+	float fov = 2.09f;
+	float interocularDist = 0.35f;
 	float eyePos = interocularDist / 2.0f;
 
 	glm::vec3 lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
 	glm::vec3 righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
-	glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 6.75f	);
+	glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 1000.f );//6.75f	);
 
 	Camera camera_left;
-	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, 1.0f, 0.0001f, 40.f); 
+	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, 1.0f, 0.01f, 70.f); 
 	
 	Camera camera_right;
-	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, 1.0f, 0.0001f, 40.f); 
+	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, 1.0f, 0.01f, 70.f); 
 	
 	RS[0].Initialise();
 	RS[1].Initialise();
@@ -275,7 +274,7 @@ int main(int argc, char **argv)
 	
 	for(int i = 0; i < 8; i++)
 	{
-		SetLight(glm::vec3( (i-4) * 45.0, 0.0, 0.0), glm::vec3(1.0, i * 0.1, (8-i) * 0.1),55.f, i, &RS[0]);
+		SetLight(glm::vec3( (i-4) * 25.0, 0.0, 0.0), glm::vec3(1.5f) * glm::vec3(1.2, 0.4 + (i * 0.15), 0.4 + ((8-i) * 0.15) ), 35.f, i, &RS[0]);
 	}	
 
 	//Windows
