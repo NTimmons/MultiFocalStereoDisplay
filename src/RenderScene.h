@@ -430,6 +430,7 @@ public:
 	RenderScene()
 	{ 
 		m_renderMode = E_MODELSCENE;
+		m_blendMode = 0.f;
 	}
 
 	//Setup
@@ -439,6 +440,7 @@ public:
 	static void TestGLError(const char* _file, int _line);
 
 	void IncrementMode();
+	void IncrementBlendMode();
 
 	void SetCamera(Camera& _cam);
 	void SetLeftRight(bool _left);
@@ -529,6 +531,8 @@ public:
 
 
 	PointLight					m_pointLights[8];
+
+	float						m_blendMode;
 
 
 	std::vector<AIMesh>			m_meshArray;

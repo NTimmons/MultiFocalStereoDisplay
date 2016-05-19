@@ -275,7 +275,7 @@ int main(int argc, char **argv)
 	
 	for(int i = 0; i < 8; i++)
 	{
-		SetLight(glm::vec3( (i-4) * 45.0, 0.0, 0.0), glm::vec3(0.8, 0.8, 0.7),55.f, i, &RS[0]);
+		SetLight(glm::vec3( (i-4) * 45.0, 0.0, 0.0), glm::vec3(1.0, i * 0.1, (8-i) * 0.1),55.f, i, &RS[0]);
 	}	
 
 	//Windows

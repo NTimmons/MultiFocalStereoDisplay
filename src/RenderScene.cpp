@@ -32,7 +32,6 @@ std::vector<std::string> &split(const std::string &s, char delim, std::vector<st
     return elems;
 }
 
-
 std::vector<std::string> split(const std::string &s, char delim) 
 {
     std::vector<std::string> elems;
@@ -42,8 +41,6 @@ std::vector<std::string> split(const std::string &s, char delim)
 
 //------------------------------------------------------------------------///
 
-
-
 void RenderScene::TestGLError(const char* _file, int _line)
 {
 	GLenum id = glGetError();
@@ -52,6 +49,17 @@ void RenderScene::TestGLError(const char* _file, int _line)
 		return;
 	else
 		std::cerr << "OpenGL Error: (" << _file << ", " << _line << ")-> " << id << "\n";
+}
+
+void RenderScene::IncrementBlendMode()
+{
+	m_blendMode += 1.0f;
+	if (m_blendMode > 4.0f)
+	{
+		m_blendMode = 0.f;
+	}
+
+	std::cerr << "BlendMode = " << m_blendMode << "\n";
 }
 
 bool RenderScene::LoadMaterial( std::string _file, std::string _name)
@@ -224,10 +232,7 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 						size s(val0, val1);
 						_layout->SetScreenSize(0, s);
 					}
-
 				}
-
-	
 			}
 
 			//std::cerr << "-";	
@@ -371,6 +376,9 @@ void RenderScene::Render_Scene()
 
 		std::string shadername = "";
 		shadername = "TestShader_persp_MRT_near";
+
+		m_shaderMap.find(shadername)->second.SetUniform1F("blendMode"	, m_blendMode);
+
 		if(m_viewState.m_IsNear)
 		{
 			m_shaderMap.find(shadername)->second.SetUniform1F("near"		, 1.f);
@@ -604,6 +612,11 @@ void RenderScene::HandleInput( unsigned char _key)
 	else if ( _key == 'm')
 	{
 			IncrementMode();
+	}
+
+	else if ( _key == 'z')
+	{
+		IncrementBlendMode();
 	}
 }
 
