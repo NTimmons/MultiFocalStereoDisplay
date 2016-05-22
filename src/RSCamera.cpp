@@ -100,8 +100,15 @@ void Camera::InitProj( 	float _fov	, float _aspect	, float _near	, float _far)
 void Camera::InitObliqueProj ( float _left	, float _right	, float _bottom	, float _top, float _near, float _far )          
 {
 	//m_proj = glm::frustum(-1.0f, -1.0f, -1.0f, 1.0f, 1.f, 150.f);
+	m_proj = glm::ortho(_left, _right, _bottom, _top, _near, _far);
+}
+
+void Camera::InitOffAxisProj ( float _left	, float _right	, float _bottom	, float _top, float _near, float _far )          
+{
+	//m_proj = glm::frustum(-1.0f, -1.0f, -1.0f, 1.0f, 1.f, 150.f);
 	m_proj = glm::frustum(_left, _right, _bottom, _top, _near, _far);
 }
+
 
 
 void Camera::ChangeFOV( float _amount )

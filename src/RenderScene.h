@@ -366,6 +366,7 @@ class Camera
 	void InitView		( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up	);
 	void InitProj		( 	float _fov	, float _aspect	, float _near	, float _far);
 	void InitObliqueProj( float _left	, float _right	, float _bottom	, float _top, float _near, float _far );
+	void InitOffAxisProj( float _left	, float _right	, float _bottom	, float _top, float _near, float _far );
 
 	void Rotate			( 	glm::mat4 _rotmat	);
 	void Translate		( 	float _x, float _y, float _z	);

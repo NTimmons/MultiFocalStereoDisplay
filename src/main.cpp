@@ -31,6 +31,8 @@
 #include <sys/select.h>
 #include <termios.h>
 
+#include <math.h>
+
 struct termios orig_termios;
 
 void reset_terminal_mode()
@@ -436,16 +438,56 @@ int main(int argc, char **argv)
 			else if (ch == '4')
 				activeInput = 3;
 			else if (ch == 'x')
-			{
+			{		
+				//Off-axis
+	
+				//Reset Camera
+				lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
+				righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
+				//Parallel
+				glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 10000.f); //6.75f	);
+				camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far); 
+				camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, aspect, near, far); 
+
 				float sx = 2.f;
 				float wd2     = near * tan(fov);
 			    float ndfl    = near / far;
 			    float left    = - aspect * wd2 - 0.5 * interocularDist * ndfl;
 			    float right   =   aspect * wd2 - 0.5 * interocularDist * ndfl;
 
+				std::cout << "Left: " << left << " Right: " << right << "\n";
 
-				camera_left.InitObliqueProj ( -sx, sx, -sx, sx, 1.f, 150.f);
-				camera_right.InitObliqueProj( -sx, sx, -sx, sx, 1.f, 150.f);
+				camera_left.InitOffAxisProj ( right, left, wd2, -wd2, near, far);
+				camera_right.InitOffAxisProj( right, left, wd2, -wd2, near, far);
+				RS[0].SetCamera(camera_right);
+				RS[1].SetCamera(camera_right);
+				RS[2].SetCamera(camera_left);
+				RS[3].SetCamera(camera_left);
+			}
+			else if (ch == 'v')
+			{
+				//Oblique
+
+				//Reset Camera
+				lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
+				righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
+				//Converging
+				glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 6.75f	);
+				camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far); 
+				camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, aspect, near, far); 
+
+				angle = atan2(0.0, interocularDist)
+				
+				/*TODO*/
+
+				float sx = 2.f;
+				float wd2     = near * tan(fov);
+			    float ndfl    = near / far;
+			    float left    = - aspect * wd2 - 0.5 * interocularDist * ndfl;
+			    float right   =   aspect * wd2 - 0.5 * interocularDist * ndfl;
+
+				camera_left.InitObliqueProj ( right, left, right, left, near, far);
+				camera_right.InitObliqueProj( right, left, right, left, near, far);
 				RS[0].SetCamera(camera_right);
 				RS[1].SetCamera(camera_right);
 				RS[2].SetCamera(camera_left);
@@ -453,6 +495,16 @@ int main(int argc, char **argv)
 			}
 			else if (ch == 'c')
 			{
+				//Toe-in
+				//Reset Camera
+				lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
+				righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
+				//Converging
+				glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 6.75f	);
+				camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far); 
+				camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, aspect, near, far); 
+
+
 				camera_left.InitProj(fov, aspect, near, far);
 				camera_right.InitProj(fov, aspect, near, far);
 				RS[0].SetCamera(camera_right);
