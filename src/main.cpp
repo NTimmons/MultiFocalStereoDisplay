@@ -227,18 +227,24 @@ int main(int argc, char **argv)
 	//Render Scene Controllers (One per context)
 	RenderScene RS[4];
 	float fov = 2.09f;
-	float interocularDist = 0.35f;
+	float interocularDist = 0.60f;
 	float eyePos = interocularDist / 2.0f;
+
+	float near = 0.1f;
+	float far  = 15.0f;
+	float aspect = 1.0f;
 
 	glm::vec3 lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
 	glm::vec3 righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
-	glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 1000.f );//6.75f	);
+
+	//Parallel
+	glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 10000.f); //6.75f	);
 
 	Camera camera_left;
-	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, 1.0f, 0.01f, 70.f); 
+	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far); 
 	
 	Camera camera_right;
-	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, 1.0f, 0.01f, 70.f); 
+	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, aspect, near, far); 
 	
 	RS[0].Initialise();
 	RS[1].Initialise();
@@ -267,14 +273,64 @@ int main(int argc, char **argv)
 
 
 	glm::mat4 ident(1.0f);
-	RS[0].SetXYZtoRGBMat(ident);
-	RS[1].SetXYZtoRGBMat(ident);
-	RS[2].SetXYZtoRGBMat(ident);
-	RS[3].SetXYZtoRGBMat(ident);
+
+	glm::mat4 screen1Mat ( 0.011892436210176f,  -0.003075955081056f,   0.000118814145655f, 0.f,
+						  -0.005536392048931f,   0.005868097848507f,  -0.000463192564228f, 0.f,
+						  -0.001974460228384f,   0.000249230286101f,   0.002781496777127f, 0.f,
+						   0.f	   			 ,   0.f 			   ,   0.f       		 , 1.f  );
+	glm::vec3 screen1Gamma (2.2368f, 2.2064f, 2.2247f);
+	glm::vec3 screen1Black (0.5074f, 0.4216f, 1.1063f);
+
+
+	glm::mat4 screen2Mat ( 0.034475622628084f,  -0.007862267519549f,   0.000280997295198f, 0.f,
+						  -0.015857954131203f,   0.014923870331527f,  -0.001109405678344f, 0.f,
+						  -0.005787481462444f,   0.000723034313692f,   0.006189001240789f, 0.f,
+						   0.f	   			 ,   0.f 			   ,   0.f       		 , 1.f  );
+	glm::vec3 screen2Gamma (2.231899881371509f, 2.166339420405890f, 2.193620521358579f);
+	glm::vec3 screen2Black (0.504462381467474f, 0.423266666666667f, 1.086920591710570f);
+
+
+	glm::mat4 screen3Mat ( 0.032444761295140f,  -0.009547688833762f,   0.000595203468668f, 0.f,
+						  -0.014657770181074f,   0.018025429443314f,  -0.001692196521873f, 0.f,
+						  -0.005050388050673f,   0.000554559502155f,   0.008060495469209f, 0.f,
+						   0.f	   			 ,   0.f 			   ,   0.f       		 , 1.f  );
+	glm::vec3 screen3Gamma (2.443844772990262f, 2.447539148753688f, 2.443793612251334f);
+	glm::vec3 screen3Black (0.442039104728199f, 0.432133333333333f, 0.811464976466370f);
+
+
+	glm::mat4 screen4Mat ( 0.011542204338726f,  -0.003764915349369f,   0.000364183349641f, 0.f,
+						  -0.005303723637745f,   0.007036682349081f,  -0.000946132633313f, 0.f,
+						  -0.001761148442849f,   0.000161634970344f,   0.003448831543285f, 0.f,
+						   0.f	   			 ,   0.f 			   ,   0.f       		 , 1.f  );
+
+	glm::vec3 screen4Gamma (2.240571482171093f, 2.195605584878330f, 2.255393264342192f);
+	glm::vec3 screen4Black (0.437321230188809f, 0.432466666666667f, 0.800857106179404f);
+
+
+	//screen1Mat = glm::transpose(screen1Mat);
+	//screen2Mat = glm::transpose(screen2Mat);
+	//screen3Mat = glm::transpose(screen3Mat);
+	//screen4Mat = glm::transpose(screen4Mat);
+
+	RS[0].SetXYZtoRGBMat(screen1Mat);
+	RS[1].SetXYZtoRGBMat(screen2Mat);
+	RS[2].SetXYZtoRGBMat(screen3Mat);
+	RS[3].SetXYZtoRGBMat(screen4Mat);
+
+	RS[0].SetBlackLevel(screen1Black);
+	RS[1].SetBlackLevel(screen2Black);
+	RS[2].SetBlackLevel(screen3Black);
+	RS[3].SetBlackLevel(screen4Black);
+
+	RS[0].SetGamma(screen1Gamma);
+	RS[1].SetGamma(screen2Gamma);
+	RS[2].SetGamma(screen3Gamma);
+	RS[3].SetGamma(screen4Gamma);
+
 	
 	for(int i = 0; i < 8; i++)
 	{
-		SetLight(glm::vec3( (i-4) * 25.0, 0.0, 0.0), glm::vec3(1.5f) * glm::vec3(1.2, 0.4 + (i * 0.15), 0.4 + ((8-i) * 0.15) ), 35.f, i, &RS[0]);
+		SetLight(glm::vec3( (i-4) * 25.0, 0.0, 0.0), glm::vec3(1.5f) * glm::vec3(150.0), 35.f, i, &RS[0]);
 	}	
 
 	//Windows
@@ -379,6 +435,31 @@ int main(int argc, char **argv)
 				activeInput = 2;
 			else if (ch == '4')
 				activeInput = 3;
+			else if (ch == 'x')
+			{
+				float sx = 2.f;
+				float wd2     = near * tan(fov);
+			    float ndfl    = near / far;
+			    float left    = - aspect * wd2 - 0.5 * interocularDist * ndfl;
+			    float right   =   aspect * wd2 - 0.5 * interocularDist * ndfl;
+
+
+				camera_left.InitObliqueProj ( -sx, sx, -sx, sx, 1.f, 150.f);
+				camera_right.InitObliqueProj( -sx, sx, -sx, sx, 1.f, 150.f);
+				RS[0].SetCamera(camera_right);
+				RS[1].SetCamera(camera_right);
+				RS[2].SetCamera(camera_left);
+				RS[3].SetCamera(camera_left);
+			}
+			else if (ch == 'c')
+			{
+				camera_left.InitProj(fov, aspect, near, far);
+				camera_right.InitProj(fov, aspect, near, far);
+				RS[0].SetCamera(camera_right);
+				RS[1].SetCamera(camera_right);
+				RS[2].SetCamera(camera_left);
+				RS[3].SetCamera(camera_left);
+			}
 			
 			if (activeInput >= 0)
 			{

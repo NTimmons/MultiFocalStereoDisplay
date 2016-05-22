@@ -27,4 +27,6 @@ void main()
 	finalTangent  = normalize( r * (  vec4(tan.xyz, 0.0) ) );
 	finalPosition = m * (  vec4(pos.xyz, 1.0) );
 	finalUV		  = vec4(uv,uv1);
+
+	gl_Position.z = gl_Position.z/2.0;
 }

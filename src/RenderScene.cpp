@@ -54,7 +54,7 @@ void RenderScene::TestGLError(const char* _file, int _line)
 void RenderScene::IncrementBlendMode()
 {
 	m_blendMode += 1.0f;
-	if (m_blendMode > 4.0f)
+	if (m_blendMode > 5.0f)
 	{
 		m_blendMode = 0.f;
 	}
@@ -278,19 +278,52 @@ void RenderScene::InitialiseRenderObjects()
 	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 10.f));
 	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
 	box.SetModelMat(model);
-	m_meshArray.push_back(box);
+	//m_meshArray.push_back(box);
 
 	box.SetName("box_1");
 	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 5.f));
 	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
 	box.SetModelMat(model);
-	m_meshArray.push_back(box);
+	//m_meshArray.push_back(box);
 
 	box.SetName("box_2");
 	translate = glm::translate(glm::mat4(1.f), glm::vec3(10.f, 0.f, 0.f));
 	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.f, 1.f, 1.f));
 	box.SetModelMat(model);
+	box.SetMaterial("Box");
 	m_meshArray.push_back(box);
+
+
+
+	translate = glm::translate(glm::mat4(1.f), glm::vec3(-0.5f, -0.5f, 4.9f));
+	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
+	box.SetModelMat(model);
+	m_meshArray.push_back(box);
+
+
+
+	for(int x = 0; x < 10; x++)
+	{
+		for(int y = 0; y < 10; y++)
+		{
+			std::stringstream boxStr;
+			boxStr << "box_";
+			boxStr << x << "_" << y; 
+			box.SetName(boxStr.str().c_str());
+			translate = glm::translate(glm::mat4(1.f), glm::vec3(x * 2.0f, 0.f, y * 2.f));
+			model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.f, 1.f, 1.f));
+			box.SetModelMat(model);
+			m_meshArray.push_back(box);
+		}
+	}
+
+
+
+
+
+
+
+
 
 	std::string img = "../Images/testimage.png";
 	m_testTexture.Init(img);
@@ -340,6 +373,7 @@ void RenderScene::Initialise()
 void RenderScene::SceneBody(ShaderProgram& _prog)
 {
 		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 	    glClearColor(0.0, 0.0, 0.0, 0.0);
 	    glClearDepth(1.0f);
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -397,7 +431,11 @@ void RenderScene::Render_Scene()
 
 		glUseProgram(m_shaderMap.find(shadername)->second.programID);
 
+TESTGL;
+
 		ApplySingleFrameBuffer(m_FBOList[0]);
+
+TESTGL;
 
 		//Apply light matrix
 		colour lightColSize[8];
@@ -434,14 +472,19 @@ TESTGL;
 
 void RenderScene::Render_CopyToViews()
 {
-	glUseProgram(m_shaderMap.find(std::string("TestShader_Tex"))->second.programID);
+	glDisable(GL_CULL_FACE);
 
+TESTGL;
+	glUseProgram(m_shaderMap.find(std::string("TestShader_Tex"))->second.programID);
+TESTGL;
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1UI("tex", 0);
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1F("testVal", 1.0f);
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetMatrix4FV("XYZtoRGB", glm::value_ptr(m_XYZtoRGB));
-
+	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform3FP("blacklevel", glm::value_ptr(m_blackLevel));
+	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform3FP("gamma", glm::value_ptr(m_gamma));
+TESTGL;
 	GLuint textureArray[1] =  {	m_FBOList[0].m_renderTextureIndex };
-
+TESTGL;
 	for(unsigned int i = 0; i < 1; i++)
 	{
 		glActiveTexture(GL_TEXTURE0);
@@ -450,7 +493,7 @@ void RenderScene::Render_CopyToViews()
 		size 	 s = m_layoutControl.GetScreenSize(i);
 		RenderScreenQuadAtOffset(p,s);
 	}
-
+TESTGL;
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -472,8 +515,11 @@ void RenderScene::Render()
 		{
 			glCullFace(GL_BACK);
 			{
+TESTGL;
 				Render_Scene();
+TESTGL;
 				Render_CopyToViews();
+TESTGL;
 			}
 		}
 		break;
@@ -568,22 +614,33 @@ void RenderScene::RenderQuad(Position& _pos, size& _size, colour& _col)
 void RenderScene::HandleInput( unsigned char _key)
 {
 
+	float speed = 0.25f;
+
+
 	//Camera Translation
 	if( _key == 't' )
 	{
-		m_camera.Translate( 1.f, 0.f, 0.f);
+		m_camera.Translate( speed*1.f, 0.f, 0.f);
 	}
 	else if( _key == 'g' )
 	{
-		m_camera.Translate( -1.f, 0.f, 0.f);
+		m_camera.Translate( speed*-1.f, 0.f, 0.f);
 	}
 	else if( _key == 'f' )
 	{
-		m_camera.Translate( 0.f, 0.f, -1.f);
+		m_camera.Translate( 0.f, 0.f, speed*-1.f);
 	}
 	else if( _key == 'h' )
 	{
-		m_camera.Translate( 0.f, 0.f, 1.f);
+		m_camera.Translate( 0.f, 0.f, speed*1.f);
+	}
+	else if( _key == 'r' )
+	{
+		m_camera.Translate( 0.f, speed*-1.f, 0.f);
+	}
+	else if( _key == 'y' )
+	{
+		m_camera.Translate( 0.f, speed*1.f, 0.f);
 	}
 
 	else if( _key == 'p')
@@ -611,7 +668,7 @@ void RenderScene::HandleInput( unsigned char _key)
 
 	else if ( _key == 'm')
 	{
-			IncrementMode();
+	   IncrementMode();
 	}
 
 	else if ( _key == 'z')

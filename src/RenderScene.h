@@ -365,6 +365,7 @@ class Camera
 
 	void InitView		( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up	);
 	void InitProj		( 	float _fov	, float _aspect	, float _near	, float _far);
+	void InitObliqueProj( float _left	, float _right	, float _bottom	, float _top, float _near, float _far );
 
 	void Rotate			( 	glm::mat4 _rotmat	);
 	void Translate		( 	float _x, float _y, float _z	);
@@ -497,9 +498,19 @@ public:
 		m_id = _id;
 	}
 	
-	void SetXYZtoRGBMat( glm::mat4& _mat);
+	void SetXYZtoRGBMat	( glm::mat4& _mat	);
+	void SetBlackLevel	( glm::vec3& _blk	)
+	{
+		m_blackLevel = _blk;
+	}
+	void SetGamma		( glm::vec3& _gamma	)
+	{
+		m_gamma = _gamma;
+	}
 
 	glm::mat4 m_XYZtoRGB;
+	glm::vec3 m_blackLevel;
+	glm::vec3 m_gamma;
 
 
 	int m_id;

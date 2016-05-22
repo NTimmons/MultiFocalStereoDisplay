@@ -46,15 +46,16 @@ vec4 BlendMethod( vec4 _col0, vec4 _col1, float _a)
 	//3 - Near
 	//4 - Far
 
-	if (blendMode < 0.5)
+	if (blendMode < 0.5) 		// 0
 		return mix( _col0, _col1, _a);
-	else if (blendMode < 1.5)
+	else if (blendMode < 1.5) 	//1
 		return _a < 0.5 ? _col0 : _col1;
-	else if (blendMode < 2.5)
+	else if (blendMode < 2.5) 	//2
 	{
 		float nonLinA = (1.0 / (1.0 + exp(  (( -(_a*2) + 1)*6)     )     ));	//1.0 / (1.0 + exp(-10.0 * (_a - 0.5) ) );
 		return mix( _col0, _col1, nonLinA);
-	}		
+	}
+
 }
 
 void main()
@@ -63,6 +64,11 @@ void main()
 
 	vec4 diffuseTexColour 	= texture(tex_0, vec2(finalUV.x, finalUV.y) ) ;
 	vec3 texDifCol 			= vec3(diffuseTexColour.x, diffuseTexColour.y, diffuseTexColour.z);
+
+	float avg = (texDifCol.x + texDifCol.y + texDifCol.z) / 3.f;
+	texDifCol = vec3(avg);
+	texDifCol = normalize(texDifCol);
+
 
 	vec4 specularTexColour 	= texture(tex_1, vec2(finalUV.x, finalUV.y) ) ;
 	vec3 texSpecCol 		= specularTexColour.xyz;
@@ -133,11 +139,25 @@ void main()
 			}
 			else if ( range > farClip && range < blendClip )
 			{
-				float dist = blendClip - farClip;
-				float blendstep = range - farClip;
-				float norm = clamp(blendstep/dist, 0.0, 1.0);
+
+				if ( blendMode < 5.5 && blendMode > 4.5) 	//5
+				{
+					//n2  - n1
+					float dist 		= (1/blendClip) - (1/farClip);
+					//ni - n1
+					float blendstep = (1/range) - (1/farClip);
+					float norm 		= clamp(blendstep/dist, 0.0, 1.0);
+
+					outColor0 = mix( vec4(light.xyz, 1.0), vec4(0.0, 0.0, 0.0, 1.0), norm);
+				}
+				else
+				{
+					float dist = blendClip - farClip;
+					float blendstep = range - farClip;
+					float norm = clamp(blendstep/dist, 0.0, 1.0);
 			
-				outColor0 = BlendMethod(vec4(light.xyz, 1.0) , vec4(0.0), norm);
+					outColor0 = BlendMethod(vec4(light.xyz, 1.0) , vec4(0.0), norm);
+				}
 			}	
 		}	
 	}
@@ -171,11 +191,24 @@ void main()
 			}
 			else if ( range > nearClip && range < blendClip )
 			{
-				float dist = blendClip - nearClip;
-				float blendstep = range - nearClip;
-				float norm = clamp(blendstep/dist, 0.0, 1.0);
+				if ( blendMode < 5.5 && blendMode > 4.5) 	//5
+				{
+					//n2  - n1
+					float dist 		= (1/blendClip) - (1/nearClip);
+					//ni - n1
+					float blendstep = (1/range) - (1/nearClip);
+					float norm 		= clamp(blendstep/dist, 0.0, 1.0);
+
+					outColor0 = mix( vec4(0.0, 0.0, 0.0, 1.0), vec4(light.xyz, 1.0), norm);
+				}
+				else
+				{
+					float dist 		= blendClip - nearClip;
+					float blendstep = range - nearClip;
+					float norm 		= clamp(blendstep/dist, 0.0, 1.0);
 			
-				outColor0 = BlendMethod(vec4(0.0, 0.0, 0.0, 1.0), vec4(light.xyz, 1.0) , norm);
+					outColor0 = BlendMethod(vec4(0.0, 0.0, 0.0, 1.0), vec4(light.xyz, 1.0) , norm);
+				}
 			}
 		}	
 	}
