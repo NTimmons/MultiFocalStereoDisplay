@@ -34,7 +34,7 @@ GLint ShaderProgram::FetchUniformValue(std::string _name)
 
 		if(loc == -1)
 		{
-			std::cerr << "\tError: " << _name << " is not a uniform in " << name << " \n";
+			//std::cerr << "\tError: " << _name << " is not a uniform in " << name << " \n";
 			return -1;
 		}		
 		else

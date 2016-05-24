@@ -17,7 +17,6 @@ void main()
 	vec4 xyz 	= col;
 
 	vec4 xyzBlk = xyz - vec4(blacklevel,1.0);
-
 	vec4 rgb 	= XYZtoRGB * xyzBlk;
 	rgb 		= pow(rgb, vec4(1/gamma, 1.0));
 

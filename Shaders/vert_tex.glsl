@@ -16,7 +16,8 @@ void main()
 { 
 	finaltexcoord = texcoord;
 	
-	gl_Position = vec4(testVal * pos.x, pos.y, 0.0, 1.0);
+//* (1536.0/2048.0)
+	gl_Position = vec4(testVal * pos.x , pos.y, 0.0, 1.0);
 	gl_Position.x *= scale.x;
 	gl_Position.y *= scale.y;
 	gl_Position += positionOffset;

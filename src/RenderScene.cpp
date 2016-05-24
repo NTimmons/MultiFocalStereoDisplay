@@ -259,49 +259,42 @@ void RenderScene::InitialiseRenderObjects()
 	AIMesh sibenik;
 
 	glm::mat4 translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 48.f, 0.f));
-	glm::mat4 model 	= translate * glm::scale(glm::mat4(1.0f), glm::vec3(4.4, 4.4, 4.4));
-
 
 	sibenik.Initialise(path);
 	sibenik.SetName("Sibenik");
     sibenik.SetMaterial("Test");
-	sibenik.SetModelMat(model);
+	sibenik.SetScaleMat(glm::scale(glm::mat4(1.0f), glm::vec3(4.4, 4.4, 4.4)));
+	sibenik.SetRotationMat(glm::mat4(1.f));
+	sibenik.SetTranslationMat(glm::mat4(1.f));
+//	m_meshArray.push_back(sibenik);
 
-	m_meshArray.push_back(sibenik);
+	path = "../Mesh/teapot.obj";
+	AIMesh teapot;
+	teapot.Initialise(path);
+	teapot.SetMaterial("Test");
+	teapot.SetName("Teapot");
+	teapot.SetScaleMat(glm::mat4(1.f));
+	teapot.SetRotationMat(glm::mat4(1.f));
+	teapot.SetTranslationMat(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.f, 0.f)));
+	m_meshArray.push_back(teapot);
+
+	path = "../Mesh/groundPlane.obj";
+	AIMesh plane;
+	plane.Initialise(path);
+	plane.SetMaterial("Test");
+	plane.SetName("Plane");
+	translate = glm::translate(glm::mat4(1.f), glm::vec3(-0.5f, 0.f, -0.5f));
+	plane.SetScaleMat(glm::scale(glm::mat4(1.0f), glm::vec3(100.f, 1.f, 100.f)));
+	plane.SetRotationMat(glm::mat4(1.f));
+	plane.SetTranslationMat(translate);
+	m_meshArray.push_back(plane);
 
 	path = "../Mesh/cubet.obj";
 	AIMesh box;
 	box.Initialise(path);
 	box.SetMaterial("Box");
-	box.SetName("box_0");
-	
-	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 10.f));
-	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
-	box.SetModelMat(model);
-	//m_meshArray.push_back(box);
 
-	box.SetName("box_1");
-	translate = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, 5.f));
-	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
-	box.SetModelMat(model);
-	//m_meshArray.push_back(box);
-
-	box.SetName("box_2");
-	translate = glm::translate(glm::mat4(1.f), glm::vec3(10.f, 0.f, 0.f));
-	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.f, 1.f, 1.f));
-	box.SetModelMat(model);
-	box.SetMaterial("Box");
-	m_meshArray.push_back(box);
-
-
-
-	translate = glm::translate(glm::mat4(1.f), glm::vec3(-0.5f, -0.5f, 4.9f));
-	model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.0, 1.0, 1.0));
-	box.SetModelMat(model);
-	m_meshArray.push_back(box);
-
-
-
+	//Box grid
 	for(int x = 0; x < 10; x++)
 	{
 		for(int y = 0; y < 10; y++)
@@ -310,20 +303,13 @@ void RenderScene::InitialiseRenderObjects()
 			boxStr << "box_";
 			boxStr << x << "_" << y; 
 			box.SetName(boxStr.str().c_str());
-			translate = glm::translate(glm::mat4(1.f), glm::vec3(x * 2.0f, 0.f, y * 2.f));
-			model 	  = translate * glm::scale(glm::mat4(1.0f), glm::vec3(1.f, 1.f, 1.f));
-			box.SetModelMat(model);
+			translate = glm::translate(glm::mat4(1.f), glm::vec3((x-5) * 2.0f, 0.f, (y-5) * 2.f));
+			box.SetScaleMat(glm::mat4(1.f));
+			box.SetRotationMat(glm::mat4(1.f));
+			box.SetTranslationMat(translate);
 			m_meshArray.push_back(box);
 		}
 	}
-
-
-
-
-
-
-
-
 
 	std::string img = "../Images/testimage.png";
 	m_testTexture.Init(img);
@@ -373,7 +359,7 @@ void RenderScene::Initialise()
 void RenderScene::SceneBody(ShaderProgram& _prog)
 {
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 	    glClearColor(0.0, 0.0, 0.0, 0.0);
 	    glClearDepth(1.0f);
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -382,8 +368,16 @@ void RenderScene::SceneBody(ShaderProgram& _prog)
 
 		m_materialMap.find("Test")->second.Apply(_prog);
 
-		float angle  = 0.00f;
+		static float angle  = 0.00f;
+		angle += 0.01f;
 		glm::mat4 rotation	= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
+
+		AIMesh* pot = GetMesh("Teapot");
+		pot->SetRotationMat(rotation);
+
+
+
+
 
 		for(unsigned int i = 0; i < m_meshArray.size(); i++)
 		{
@@ -393,7 +387,7 @@ void RenderScene::SceneBody(ShaderProgram& _prog)
 
 			_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
 			_prog.SetMatrix4FV("m", glm::value_ptr(model));
-			_prog.SetMatrix4FV("r", glm::value_ptr(rotation));
+			_prog.SetMatrix4FV("r", glm::value_ptr(m_meshArray[i].GetRotationMat()));
 
 			m_meshArray[i].Draw();
 		}

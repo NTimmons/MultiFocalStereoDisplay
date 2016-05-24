@@ -60,7 +60,7 @@ void AIMesh::Initialise(std::string& _path)
 							);
 	if(scene)
 	{
-		//std::cerr << "Model Load Success\n";
+		std::cerr << "Model Load Success\n";
 	}
 	else
 	{

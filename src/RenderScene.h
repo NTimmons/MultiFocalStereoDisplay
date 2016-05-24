@@ -292,20 +292,37 @@ public:
 
 	AIMesh()
 	{
-		m_modelMat = glm::mat4(1.f);
+		m_rotationMat= glm::mat4(1.f);
+		m_scaleMat= glm::mat4(1.f);
+		m_transMat= glm::mat4(1.f);
 	}
 
 	void Initialise	(std::string& _path);
 	void Draw		();
 
-	void SetModelMat (glm::mat4& _mat)
+	void SetRotationMat (glm::mat4 _mat)
 	{
-		m_modelMat = _mat;
+		m_rotationMat = _mat;
+	}
+
+	glm::mat4 GetRotationMat ()
+	{
+		return m_rotationMat;
+	}
+
+	void SetTranslationMat (glm::mat4 _mat)
+	{
+		m_transMat = _mat;
+	}
+
+	void SetScaleMat (glm::mat4 _mat)
+	{
+		m_scaleMat = _mat;
 	}
 
 	glm::mat4 GetModelMat ()
 	{
-		return m_modelMat;
+		return m_scaleMat * m_rotationMat * m_transMat;
 	}
 
 	void SetName(std::string _name)
@@ -331,7 +348,9 @@ public:
 	std::string m_name;
 	std::string m_material;
 
-	glm::mat4 m_modelMat;
+	glm::mat4 m_rotationMat;
+	glm::mat4 m_scaleMat;
+	glm::mat4 m_transMat;
 
 	std::vector<VBOIBO> m_vertexObjects;
 };
@@ -367,6 +386,8 @@ class Camera
 	void InitProj		( 	float _fov	, float _aspect	, float _near	, float _far);
 	void InitObliqueProj( float _left	, float _right	, float _bottom	, float _top, float _near, float _far );
 	void InitOffAxisProj( float _left	, float _right	, float _bottom	, float _top, float _near, float _far );
+	void SetProjectionMatrix( glm::mat4& _mat);
+	void SetViewMatrix	( glm::mat4& _mat);
 
 	void Rotate			( 	glm::mat4 _rotmat	);
 	void Translate		( 	float _x, float _y, float _z	);
@@ -432,7 +453,7 @@ public:
 	RenderScene()
 	{ 
 		m_renderMode = E_MODELSCENE;
-		m_blendMode = 0.f;
+		m_blendMode = 3.f;
 	}
 
 	//Setup
@@ -449,6 +470,19 @@ public:
 
 	bool LoadMaterial( std::string _file,  std::string _name);
 
+	AIMesh* GetMesh( std::string _name)
+	{
+		for(unsigned int i = 0; i < m_meshArray.size(); i++)
+		{
+			if(m_meshArray[i].m_name.compare(_name) == 0)
+			{
+				return &m_meshArray[i];
+			}
+		}
+
+		return 0;
+	}
+	
 	//Rendering
 	void Render();
 	void Render_CopyToViews();

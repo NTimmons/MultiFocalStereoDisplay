@@ -35,7 +35,7 @@ out vec4 outColor0;
 
 vec3 GetAmbient()
 {
-	return vec3(0.1, 0.1, 0.1);
+	return vec3(0.0, 0.0, 0.0);
 }
 
 vec4 BlendMethod( vec4 _col0, vec4 _col1, float _a)
@@ -45,6 +45,7 @@ vec4 BlendMethod( vec4 _col0, vec4 _col1, float _a)
 	//2 - Non-linear
 	//3 - Near
 	//4 - Far
+	//5 - Persp
 
 	if (blendMode < 0.5) 		// 0
 		return mix( _col0, _col1, _a);
@@ -66,8 +67,8 @@ void main()
 	vec3 texDifCol 			= vec3(diffuseTexColour.x, diffuseTexColour.y, diffuseTexColour.z);
 
 	float avg = (texDifCol.x + texDifCol.y + texDifCol.z) / 3.f;
-	texDifCol = vec3(avg);
-	texDifCol = normalize(texDifCol);
+	//texDifCol = vec3(avg);
+	//texDifCol = normalize(texDifCol);
 
 
 	vec4 specularTexColour 	= texture(tex_1, vec2(finalUV.x, finalUV.y) ) ;
@@ -87,7 +88,7 @@ void main()
 	vec3 binormal 			= cross( finalNormal.xyz, finalTangent.xyz );	
 	mat3 TBN 				= mat3 (finalTangent.xyz, binormal, finalNormal.xyz);
 
-	for(int i = 0; i < 8; i++)
+	for(int i = 0; i < 1; i++)
 	{
 		vec3  pointCol 	= lightColScaleArray[i].xyz;
 		float range    	= lightColScaleArray[i].w;
@@ -95,20 +96,20 @@ void main()
 
 		vec3  gap  		= finalPosition.xyz - pointPos ;
 		float dist 		= length(gap);
-		float intensity = 1.0 - min(1.0, (dist/range) );
+		float intensity = 1.0;//1.0 - min(1.0, (dist/range) );
 
-		vec3  l  		= normalize ( TBN * normalize(gap) );
+		vec3  l  		= normalize(vec3(1.0, -1.0, -1.0));//gap);//normalize ( TBN * normalize(gap) );
 		vec3  n 		= finalNormal.xyz;
 		vec3  r			= reflect(l,n);  
 
 		//Diffuse Term
-		float ldotn 	= 1.0 - max(0.0, ( dot(l, normal.xyz) ) );
+		float ldotn 	= 1.0 - max(0.0, ( dot(l, finalNormal.xyz) ) );
 
 		// calculate Specular Term:
 		float Ispec = pow( max( dot( r, cameraDir ), 0.0 ), specPowUniform);
 		Ispec 		= texSpecCol.r * clamp(Ispec, 0.0, 1.0); 
 
-		light = light + ( ldotn * intensity * texDifCol * diffuseColour.xyz * pointCol) + (Ispec * intensity * specCol.xyz);
+		light = light + ( ldotn * intensity * texDifCol * diffuseColour.xyz * pointCol);// + (Ispec * intensity * specCol.xyz);
 	}
 
 	outColor0 = vec4(1.0, 1.0, 0.0, 1.0) ;

@@ -2,68 +2,6 @@
 #include <iostream>
 
 
-   /* Misc stuff 
-   ratio  = camera.screenwidth / (double)camera.screenheight;
-   radians = DTOR * camera.aperture / 2;
-   wd2     = near * tan(radians);
-   ndfl    = near / camera.focallength;
-
-*/
- /* Derive the two eye positions 
-
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      left  = - ratio * wd2 - 0.5 * camera.eyesep * ndfl;
-      right =   ratio * wd2 - 0.5 * camera.eyesep * ndfl;
-      top    =   wd2;
-      bottom = - wd2;
-      glFrustum(left,right,bottom,top,near,far);
-
-      glMatrixMode(GL_MODELVIEW);
-      glDrawBuffer(GL_BACK_RIGHT);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glLoadIdentity();
-      gluLookAt(camera.vp.x + r.x,camera.vp.y + r.y,camera.vp.z + r.z,
-                camera.vp.x + r.x + camera.vd.x,
-                camera.vp.y + r.y + camera.vd.y,
-                camera.vp.z + r.z + camera.vd.z,
-                camera.vu.x,camera.vu.y,camera.vu.z);
-      MakeLighting();
-      MakeGeometry();
-
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      left  = - ratio * wd2 + 0.5 * camera.eyesep * ndfl;
-      right =   ratio * wd2 + 0.5 * camera.eyesep * ndfl;
-      top    =   wd2;
-      bottom = - wd2;
-      glFrustum(left,right,bottom,top,near,far);
-
-      glMatrixMode(GL_MODELVIEW);
-      glDrawBuffer(GL_BACK_LEFT);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glLoadIdentity();
-      gluLookAt(camera.vp.x - r.x,camera.vp.y - r.y,camera.vp.z - r.z,
-                camera.vp.x - r.x + camera.vd.x,
-                camera.vp.y - r.y + camera.vd.y,
-                camera.vp.z - r.z + camera.vd.z,
-                camera.vu.x,camera.vu.y,camera.vu.z);
-      MakeLighting();
-      MakeGeometry();
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-
 void Camera::Init ( 	glm::vec3 _eye, glm::vec3 _pos, glm::vec3 _up,
 	 						float _fov	, float _aspect	, float _near	, float _far)
 {
@@ -94,7 +32,7 @@ void Camera::InitProj( 	float _fov	, float _aspect	, float _near	, float _far)
 	m_near = _near;
 	m_far = _far;
 
-	m_proj =  glm::perspectiveFov(_fov, _aspect,_aspect, _near, _far);
+	m_proj =  glm::perspectiveFov(_fov, 2048.f, 1536.f, _near, _far);
 }
 
 void Camera::InitObliqueProj ( float _left	, float _right	, float _bottom	, float _top, float _near, float _far )          
@@ -107,6 +45,16 @@ void Camera::InitOffAxisProj ( float _left	, float _right	, float _bottom	, floa
 {
 	//m_proj = glm::frustum(-1.0f, -1.0f, -1.0f, 1.0f, 1.f, 150.f);
 	m_proj = glm::frustum(_left, _right, _bottom, _top, _near, _far);
+}
+
+void Camera::SetProjectionMatrix( glm::mat4& _mat)
+{
+	m_proj = _mat;
+}
+
+void Camera::SetViewMatrix( glm::mat4& _mat)
+{
+	m_view = _mat;
 }
 
 
