@@ -112,6 +112,13 @@ void AIMesh::Initialise(std::string& _path)
 		//std::cerr << "Idx  Count: " << faces->mNumIndices * currMesh->mNumFaces	<< "\n";
 
 		//Process Vertices
+		float minx,miny, minz;
+		float maxx, maxy, maxz;
+		minx = miny = minz = 99999.f;
+		maxx = maxy = maxz = -99999.f;
+
+
+
 		for(unsigned int vi = 0; vi < currMesh->mNumVertices; vi++)
 		{
 			Position vP(vertexPos[vi][0], vertexPos[vi][1], vertexPos[vi][2]);
@@ -133,7 +140,18 @@ void AIMesh::Initialise(std::string& _path)
 		    gv.m_tan = vTan;
 			gv.m_uv = texCoord(vT.u, vT.v);//vT;
 			vecVertex.push_back(gv);
+	
+			minx = gv.m_pos.X() < minx ? gv.m_pos.X() : minx;
+			miny = gv.m_pos.Y() < miny ? gv.m_pos.Y() : miny;
+			minz = gv.m_pos.Z() < minz ? gv.m_pos.Z() : minz;
+
+			maxx = gv.m_pos.X() > maxx ? gv.m_pos.X() : maxx;
+			maxy = gv.m_pos.Y() > maxy ? gv.m_pos.Y() : maxy;
+			maxz = gv.m_pos.Z() > maxz ? gv.m_pos.Z() : maxz;
 		}
+			
+		std::cerr << "Size (x,y,z) = " << (maxx-minx) << ", " << (maxy-miny) << ", " << (maxz - minz) << ".\n";
+
 
 		//Process Indices
 		for(unsigned int ii = 0; ii < currMesh->mNumFaces; ii++)

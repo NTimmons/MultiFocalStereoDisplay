@@ -20,5 +20,17 @@ void main()
 	vec4 rgb 	= XYZtoRGB * xyzBlk;
 	rgb 		= pow(rgb, vec4(1/gamma, 1.0));
 
+	
 	outColor = rgb;
+
+	if(finaltexcoord.x < 0.01 || finaltexcoord.x > 0.99)
+	{
+		outColor = vec4(1.0, 1.0, 0.0, 1.0);
+	}
+	else if(finaltexcoord.y < 0.01 || finaltexcoord.y > 0.99)
+	{
+		outColor = vec4(1.0, 1.0, 0.0, 1.0);
+	}	
+	
+
 }

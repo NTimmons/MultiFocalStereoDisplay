@@ -64,7 +64,7 @@ void Camera::ChangeFOV( float _amount )
 
 	m_fov += _amount;
 	
-	m_fov = m_fov < 1.f ? 1.f : m_fov;
+	m_fov = m_fov < 0.1f ? 1.f : m_fov;
 
 	std::cerr << "New FOV = " << m_fov << " \n";
 

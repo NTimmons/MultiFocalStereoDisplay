@@ -322,7 +322,7 @@ public:
 
 	glm::mat4 GetModelMat ()
 	{
-		return m_scaleMat * m_rotationMat * m_transMat;
+		return m_scaleMat *  m_transMat * m_rotationMat;
 	}
 
 	void SetName(std::string _name)
@@ -454,6 +454,7 @@ public:
 	{ 
 		m_renderMode = E_MODELSCENE;
 		m_blendMode = 3.f;
+		m_sceneID = 0;
 	}
 
 	//Setup
@@ -463,7 +464,17 @@ public:
 	static void TestGLError(const char* _file, int _line);
 
 	void IncrementMode();
+
 	void IncrementBlendMode();
+	void SetBlendMode(float _blendMode)
+	{
+		m_blendMode = _blendMode;
+	}
+
+	void SetScene( int _sceneID)
+	{
+		m_sceneID = _sceneID;
+	}
 
 	void SetCamera(Camera& _cam);
 	void SetLeftRight(bool _left);
@@ -488,10 +499,18 @@ public:
 	void Render_CopyToViews();
 	void Render_Scene();
 
-	void SceneBody(ShaderProgram& _prog);
+
+	//Scenes -:
+	void SceneBody_Test			(ShaderProgram& _prog);
+	void SceneBody_Distance		(ShaderProgram& _prog, glm::vec3 _left	, glm::vec3 _middle	, 	glm::vec3 _right);
+	void SceneBody_Rotation		(ShaderProgram& _prog, float _depth		, float _speed		);
+	void SceneBody_Translation	(ShaderProgram& _prog, float _depthMin	, float _depthMax	, 	float _speed);
+	void SceneBody_Calibration();
+	void SceneBody_Decision();
 
 	void RenderQuad(Position& _pos, size& _size, colour& _col);
-	void RenderScreenQuadAtOffset(Position& _offset, size& _size);
+///	void RenderScreenQuadAtOffset(Position& _offset, size& _size);
+	void RenderScreenQuadAtOffset(ShaderProgram& _shad, Position& _offset, size& _size);
 
 	void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index);
 
@@ -565,7 +584,11 @@ public:
 
 	QuadMesh					m_genericUnitQuad;
 	AIMesh						m_boxMesh;
+
 	Texture						m_testTexture;
+	Texture						m_nearCalibration;
+	Texture						m_farCalibration;
+	Texture						m_decision;
 
 	//Render Settings
 	Camera 						m_camera;
@@ -582,6 +605,8 @@ public:
 
 
 	std::vector<AIMesh>			m_meshArray;
+
+	int 						m_sceneID;
 
 
 	//Window Controls

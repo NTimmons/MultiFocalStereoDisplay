@@ -83,7 +83,6 @@ bool RenderScene::LoadMaterial( std::string _file, std::string _name)
     Texture texArray[3];
 	int texIndex = 0;
 
-
 	int index = 0;
 	
 	std::string line;
@@ -263,10 +262,11 @@ void RenderScene::InitialiseRenderObjects()
 	sibenik.Initialise(path);
 	sibenik.SetName("Sibenik");
     sibenik.SetMaterial("Test");
-	sibenik.SetScaleMat(glm::scale(glm::mat4(1.0f), glm::vec3(4.4, 4.4, 4.4)));
+	sibenik.SetScaleMat(glm::scale(glm::mat4(1.0f), glm::vec3(10.4, 10.4, 10.4)));
 	sibenik.SetRotationMat(glm::mat4(1.f));
 	sibenik.SetTranslationMat(glm::mat4(1.f));
-//	m_meshArray.push_back(sibenik);
+	//m_meshArray.push_back(sibenik);
+
 
 	path = "../Mesh/teapot.obj";
 	AIMesh teapot;
@@ -275,8 +275,18 @@ void RenderScene::InitialiseRenderObjects()
 	teapot.SetName("Teapot");
 	teapot.SetScaleMat(glm::mat4(1.f));
 	teapot.SetRotationMat(glm::mat4(1.f));
-	teapot.SetTranslationMat(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.f, 0.f)));
-	m_meshArray.push_back(teapot);
+	teapot.SetTranslationMat(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.f, 5.f)));
+	//m_meshArray.push_back(teapot);
+
+	path = "../Mesh/teapot.obj";
+	AIMesh teapotRot;
+	teapotRot.Initialise(path);
+	teapotRot.SetMaterial("Test");
+	teapotRot.SetName("Teapot_Rotation_0");
+	teapotRot.SetScaleMat(glm::mat4(1.f));
+	teapotRot.SetRotationMat(glm::mat4(1.f));
+	teapotRot.SetTranslationMat(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.f, 5.f)));
+	//m_meshArray.push_back(teapotRot);
 
 	path = "../Mesh/groundPlane.obj";
 	AIMesh plane;
@@ -294,6 +304,30 @@ void RenderScene::InitialiseRenderObjects()
 	box.Initialise(path);
 	box.SetMaterial("Box");
 
+	box.SetScaleMat			(glm::mat4(1.f));
+	box.SetRotationMat		(glm::mat4(1.f));
+	box.SetTranslationMat	(glm::mat4(1.f));
+	
+	box.SetName("Box_Left_Distance_0");
+	//m_meshArray.push_back(box);
+	box.SetName("Box_Middle_Distance_0");
+	//m_meshArray.push_back(box);
+
+	box.SetName("Box_Far_Distance_0");
+	m_meshArray.push_back(box);
+	box.SetName("Box_Translation_0");
+	m_meshArray.push_back(box);
+
+		
+	box.SetName("Box_NEAR_0");
+	box.SetTranslationMat	(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 5.4f + 0.5f)) );
+	m_meshArray.push_back(box);
+
+	box.SetName("Box_FAR_0");
+	box.SetTranslationMat	(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 8.1f  + 0.5f)) );
+	m_meshArray.push_back(box);
+
+
 	//Box grid
 	for(int x = 0; x < 10; x++)
 	{
@@ -303,7 +337,7 @@ void RenderScene::InitialiseRenderObjects()
 			boxStr << "box_";
 			boxStr << x << "_" << y; 
 			box.SetName(boxStr.str().c_str());
-			translate = glm::translate(glm::mat4(1.f), glm::vec3((x-5) * 2.0f, 0.f, (y-5) * 2.f));
+			translate = glm::translate(glm::mat4(1.f), glm::vec3((x-5) * 2.0f, -2.5f, (y-5) * 2.f));
 			box.SetScaleMat(glm::mat4(1.f));
 			box.SetRotationMat(glm::mat4(1.f));
 			box.SetTranslationMat(translate);
@@ -314,6 +348,15 @@ void RenderScene::InitialiseRenderObjects()
 	std::string img = "../Images/testimage.png";
 	m_testTexture.Init(img);
 
+	img = "../Images/nearCalib.png";
+	m_nearCalibration.Init(img);
+
+	img = "../Images/farCalib.png";
+	m_farCalibration.Init(img);
+
+	img = "../Images/decision.png";	
+	m_decision.Init(img);
+
 	m_genericUnitQuad.Initialise();
 
 	FBO 	 newFBO 	  = CreateSingleFrameBuffer	(1024,1024,0);
@@ -323,14 +366,6 @@ void RenderScene::InitialiseRenderObjects()
 	m_FBOList.push_back(newFBO);
 	m_FBOMultiList.push_back(newFBOMulti0);
 	m_FBOMultiList.push_back(newFBOMulti1);
-
-	//m_camera[0].Init( glm::vec3(-30.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
-	//					50.f, 1.0f, 0.01f, 200.f); 
-
-	
-	//other
-	//m_camera[1].Init( glm::vec3(0.f, 0.f, 30.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
-	//					50.f, 1.0f, 0.01f, 200.f); 
 }
 
 void RenderScene::SetCamera(Camera& _cam)
@@ -356,7 +391,7 @@ void RenderScene::Initialise()
 	InitialiseScreenPositions();
 }
 
-void RenderScene::SceneBody(ShaderProgram& _prog)
+void RenderScene::SceneBody_Test(ShaderProgram& _prog)
 {
 		glEnable(GL_DEPTH_TEST);
 		//glEnable(GL_CULL_FACE);
@@ -365,19 +400,15 @@ void RenderScene::SceneBody(ShaderProgram& _prog)
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		/*Add Nice Scene here */
-
 		m_materialMap.find("Test")->second.Apply(_prog);
 
 		static float angle  = 0.00f;
 		angle += 0.01f;
 		glm::mat4 rotation	= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
 
-		AIMesh* pot = GetMesh("Teapot");
-		pot->SetRotationMat(rotation);
-
-
-
-
+		//Rotate the teapot.
+		//AIMesh* pot = GetMesh("Teapot");
+		//pot->SetRotationMat(rotation);
 
 		for(unsigned int i = 0; i < m_meshArray.size(); i++)
 		{
@@ -392,7 +423,174 @@ void RenderScene::SceneBody(ShaderProgram& _prog)
 			m_meshArray[i].Draw();
 		}
 
-		//m_boxMesh.Draw();
+}
+
+void RenderScene::SceneBody_Rotation(ShaderProgram& _prog, float _depth, float _speed)
+{
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	static float angle  = 0.00f;
+	angle += _speed;
+	glm::mat4 rotation		= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
+	glm::mat4 translation 	= glm::translate(glm::mat4(1.f), glm::vec3( 0.0f, -1.5625f, _depth - 2.0f ));
+	glm::mat4 scale			= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+	//Rotate the teapot.
+	AIMesh* pot = GetMesh("Teapot_Rotation_0");
+	pot->SetScaleMat(scale);
+	pot->SetRotationMat(rotation);
+	pot->SetTranslationMat(translation);
+
+	m_materialMap.find(pot->GetMaterial())->second.Apply(_prog);	
+
+	glm::mat4 model = pot->GetModelMat();
+	_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+	_prog.SetMatrix4FV("m", glm::value_ptr(model));
+	_prog.SetMatrix4FV("r", glm::value_ptr(pot->GetRotationMat()));
+	pot->Draw();
+}
+
+void RenderScene::SceneBody_Translation(ShaderProgram& _prog, float _depthMin, float _depthMax, float _speed)
+{
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	AIMesh* box = GetMesh("Box_Translation_0");
+	m_materialMap.find(box->GetMaterial())->second.Apply(_prog);	
+		
+	static float angle  = 0.00f;
+	angle += _speed;
+
+	float alpha = 0.5f + sin(angle)/2;
+	float depth = (alpha * _depthMin) + ( (1.0f - alpha) * _depthMax);
+
+	glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, depth));//
+	box->SetTranslationMat(translateLeft);
+
+	glm::mat4 model = box->GetModelMat();
+	_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+	_prog.SetMatrix4FV("m", glm::value_ptr(model));
+	_prog.SetMatrix4FV("r", glm::value_ptr(box->GetRotationMat()));
+	box->Draw();
+}
+
+
+
+void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm::vec3 _middle, glm::vec3 _right)
+{
+		glEnable(GL_DEPTH_TEST);
+		//glEnable(GL_CULL_FACE);
+	    glClearColor(0.0, 0.0, 0.0, 0.0);
+	    glClearDepth(1.0f);
+	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		AIMesh* boxLeft 	= GetMesh("Box_Left_Distance_0");
+		AIMesh* boxMiddle 	= GetMesh("Box_Middle_Distance_0");
+		AIMesh* boxRight 	= GetMesh("Box_Far_Distance_0");
+
+		m_materialMap.find(boxLeft->GetMaterial())->second.Apply(_prog);	
+		
+		glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), _left);//
+		boxLeft->SetTranslationMat(translateLeft);
+		glm::mat4 model = boxLeft->GetModelMat();
+		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+		_prog.SetMatrix4FV("m", glm::value_ptr(model));
+		_prog.SetMatrix4FV("r", glm::value_ptr(boxLeft->GetRotationMat()));
+		boxLeft->Draw();
+
+		glm::mat4 translateMiddle = glm::translate(glm::mat4(1.f), _middle);//glm::vec3( 0.0f, -0.f, 6.5f ));
+		boxMiddle->SetTranslationMat(translateMiddle);
+		model = boxMiddle->GetModelMat();
+		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+		_prog.SetMatrix4FV("m", glm::value_ptr(model));
+		_prog.SetMatrix4FV("r", glm::value_ptr(boxMiddle->GetRotationMat()));
+		boxMiddle->Draw();
+
+		glm::mat4 translateRight = glm::translate(glm::mat4(1.f), _right);//glm::vec3( 1.0f, -0.f, 6.5f ));
+		boxRight->SetTranslationMat(translateRight);
+		model = boxRight->GetModelMat();
+		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+		_prog.SetMatrix4FV("m", glm::value_ptr(model));
+		_prog.SetMatrix4FV("r", glm::value_ptr(boxRight->GetRotationMat()));
+		boxRight->Draw();
+
+}
+
+void RenderScene::SceneBody_Calibration()
+{
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+	glClearColor(50.0, 0.0, 50.0, 0.0);
+	glClearDepth(1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glDisable(GL_CULL_FACE);
+
+	glUseProgram(m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.programID);
+
+	m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.SetUniform1UI("tex", 0);
+	m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.SetUniform1F("testVal", 1.0f);
+
+	GLuint textureArray;
+	if(m_viewState.m_IsNear)
+	{
+		textureArray = m_nearCalibration.Get();
+	}
+	else
+	{
+		textureArray = m_farCalibration.Get() ;
+	}
+
+	ShaderProgram shad = m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureArray);
+	Position p (-1,-1,0);
+	size 	 s (2,2);
+	RenderScreenQuadAtOffset(shad, p,s);
+
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+}
+
+void RenderScene::SceneBody_Decision()
+{
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+	glClearColor(50.0, 0.0, 50.0, 0.0);
+	glClearDepth(1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glDisable(GL_CULL_FACE);
+
+	glUseProgram(m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.programID);
+
+	m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.SetUniform1UI("tex", 0);
+	m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.SetUniform1F("testVal", 1.0f);
+
+	GLuint textureArray = m_decision.Get();
+
+	ShaderProgram shad = m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureArray);
+	Position p (-1,-1,0);
+	size 	 s (2,2);
+	RenderScreenQuadAtOffset(shad, p,s);
+
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 
 void RenderScene::Render_Scene()
@@ -401,9 +599,7 @@ void RenderScene::Render_Scene()
 		glm::mat4 rotation	= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
 		m_camera.Rotate(rotation);
 
-
-		std::string shadername = "";
-		shadername = "TestShader_persp_MRT_near";
+		std::string shadername =  "TestShader_persp_MRT_near";
 
 		m_shaderMap.find(shadername)->second.SetUniform1F("blendMode"	, m_blendMode);
 
@@ -413,7 +609,6 @@ void RenderScene::Render_Scene()
 			m_shaderMap.find(shadername)->second.SetUniform1F("nearClip"	, 0.0001f);
 			m_shaderMap.find(shadername)->second.SetUniform1F("farClip"		, 5.4f);
 			m_shaderMap.find(shadername)->second.SetUniform1F("blendClip"	, 8.1f);
-
 		}
 		else
 		{
@@ -424,12 +619,7 @@ void RenderScene::Render_Scene()
 		}
 
 		glUseProgram(m_shaderMap.find(shadername)->second.programID);
-
-TESTGL;
-
 		ApplySingleFrameBuffer(m_FBOList[0]);
-
-TESTGL;
 
 		//Apply light matrix
 		colour lightColSize[8];
@@ -448,18 +638,26 @@ TESTGL;
 			lightPos[i].b = m_pointLights[i].m_pos.pos[2];
 			lightPos[i].a = 1.0f;
 		}
-TESTGL;
 		m_shaderMap.find(shadername)->second.SetUniform4FP("lightPosArray", (float*)&lightPos[0], 8);
 		m_shaderMap.find(shadername)->second.SetUniform4FP("lightColScaleArray", (float*)&lightColSize[0], 8);
 
-TESTGL;
-		//m_shaderMap.find(shadername)->second.SetMatrix4FV("v", glm::value_ptr(m_camera.GetV()));
-		//m_shaderMap.find(shadername)->second.SetMatrix4FV("p", glm::value_ptr(m_camera.GetP()));
 		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraPos", glm::value_ptr(m_camera.GetPos()));
 		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraDir", glm::value_ptr( glm::normalize( m_camera.GetDir() ) ) );
 
-		
-		SceneBody(m_shaderMap.find(shadername)->second);
+		//Distance Scene	
+
+		if(m_sceneID == 0) 		//Test
+			SceneBody_Test( m_shaderMap.find(shadername)->second);
+		else if(m_sceneID == 1) //Distance Test
+			SceneBody_Distance( m_shaderMap.find(shadername)->second, glm::vec3(-1.0f, -0.f, 6.5f ), glm::vec3(0.0f, -0.f, 6.5f ), glm::vec3(1.0f, -0.f, 6.5f ));
+		else if(m_sceneID == 2) //Rotation
+			SceneBody_Rotation( m_shaderMap.find(shadername)->second, 8.75, 0.1f);
+		else if(m_sceneID == 3) //Translation
+			SceneBody_Translation(m_shaderMap.find(shadername)->second, 2.0f	, 	10.f, 0.01f);
+		else if(m_sceneID == 4) //Calibration
+			SceneBody_Calibration();
+		else if(m_sceneID == 5) //Decision
+			SceneBody_Decision();
 
 		ClearFrameBuffers();
 }
@@ -468,26 +666,27 @@ void RenderScene::Render_CopyToViews()
 {
 	glDisable(GL_CULL_FACE);
 
-TESTGL;
 	glUseProgram(m_shaderMap.find(std::string("TestShader_Tex"))->second.programID);
-TESTGL;
+
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1UI("tex", 0);
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform1F("testVal", 1.0f);
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetMatrix4FV("XYZtoRGB", glm::value_ptr(m_XYZtoRGB));
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform3FP("blacklevel", glm::value_ptr(m_blackLevel));
 	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform3FP("gamma", glm::value_ptr(m_gamma));
-TESTGL;
+
+	ShaderProgram shad = m_shaderMap.find(std::string("TestShader_Tex"))->second;
+
 	GLuint textureArray[1] =  {	m_FBOList[0].m_renderTextureIndex };
-TESTGL;
+
 	for(unsigned int i = 0; i < 1; i++)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureArray[i]);
 		Position p = m_layoutControl.GetScreenPos(i);
 		size 	 s = m_layoutControl.GetScreenSize(i);
-		RenderScreenQuadAtOffset(p,s);
+		RenderScreenQuadAtOffset(shad, p,s);
 	}
-TESTGL;
+
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -565,10 +764,10 @@ TESTGL;
 	}
 }
 
-void RenderScene::RenderScreenQuadAtOffset(Position& _offset, size& _size)
+void RenderScene::RenderScreenQuadAtOffset(ShaderProgram& _shad, Position& _offset, size& _size)
 {
-	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform4F("positionOffset", _offset.X(), _offset.Y(), _offset.Z(), 0.f);
-	m_shaderMap.find(std::string("TestShader_Tex"))->second.SetUniform2F("scale", _size.W(), _size.H());
+	_shad.SetUniform4F("positionOffset", _offset.X(), _offset.Y(), _offset.Z(), 0.f);
+	_shad.SetUniform2F("scale", _size.W(), _size.H());
 	m_genericUnitQuad.Draw();
 
 }
@@ -610,55 +809,39 @@ void RenderScene::HandleInput( unsigned char _key)
 
 	float speed = 0.25f;
 
-
 	//Camera Translation
-	if( _key == 't' )
-	{
-		m_camera.Translate( speed*1.f, 0.f, 0.f);
-	}
-	else if( _key == 'g' )
-	{
-		m_camera.Translate( speed*-1.f, 0.f, 0.f);
-	}
-	else if( _key == 'f' )
-	{
-		m_camera.Translate( 0.f, 0.f, speed*-1.f);
-	}
-	else if( _key == 'h' )
-	{
-		m_camera.Translate( 0.f, 0.f, speed*1.f);
-	}
-	else if( _key == 'r' )
-	{
-		m_camera.Translate( 0.f, speed*-1.f, 0.f);
-	}
-	else if( _key == 'y' )
-	{
-		m_camera.Translate( 0.f, speed*1.f, 0.f);
-	}
 
-	else if( _key == 'p')
-	{
+	if( _key == 'w' )
+		m_camera.Translate( speed* 1.f	, 0.f			, 0.f			);
+	else if( _key == 's' )
+		m_camera.Translate( speed*-1.f	, 0.f			, 0.f			);
+	else if( _key == 'a' )
+		m_camera.Translate( 0.f			, 0.f			, speed*-1.f	);
+	else if( _key == 'd' )
+		m_camera.Translate( 0.f			, 0.f			, speed*1.f		);
+	else if( _key == 'q' )
+		m_camera.Translate( 0.f			, speed*-1.f	, 0.f			);
+	else if( _key == 'e' )
+		m_camera.Translate( 0.f			, speed*1.f		, 0.f			);
+
+	else if( _key == '[')
 		m_camera.ChangeFOV(0.01f);
-	}
-	else if( _key == 'o')
-	{
+	else if( _key == ']')
 		m_camera.ChangeFOV(-0.01f);
-	}
 
-	else if	( _key == 'w' )
-		m_layoutControl.AdjustScreenPos(Position(0.f, 0.01f, 0.f), 0);
-	else if	( _key == 's' )
-		m_layoutControl.AdjustScreenPos(Position(0.f, -0.01f, 0.f), 0);
-	else if ( _key == 'a' )
-		m_layoutControl.AdjustScreenPos(Position(-0.01f, 0.0f, 0.f), 0);
-	else if ( _key == 'd' )
-		m_layoutControl.AdjustScreenPos(Position(0.01f, 0.0f, 0.f), 0);
+	else if	( _key == 't' )
+		m_layoutControl.AdjustScreenPos(Position(0.f, 0.005f, 0.f), 0);
+	else if	( _key == 'g' )
+		m_layoutControl.AdjustScreenPos(Position(0.f, -0.005f, 0.f), 0);
+	else if ( _key == 'f' )
+		m_layoutControl.AdjustScreenPos(Position(-0.005f, 0.0f, 0.f), 0);
+	else if ( _key == 'h' )
+		m_layoutControl.AdjustScreenPos(Position(0.005f, 0.0f, 0.f), 0);
 
-	else if ( _key == 'e' )
-		m_layoutControl.AdjustScreenSize(size(0.01f, 0.01f), 0);
-	else if ( _key == 'q' )
-		m_layoutControl.AdjustScreenSize(size(-0.01f, -0.01f), 0);
+	else if ( _key == 'r' )
+		m_layoutControl.AdjustScreenSize(size(0.005f, 0.005f), 0);
+	else if ( _key == 'y' )
+		m_layoutControl.AdjustScreenSize(size(-0.005f, -0.005f), 0);
 
 	else if ( _key == 'm')
 	{

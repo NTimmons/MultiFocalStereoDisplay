@@ -35,6 +35,10 @@
 
 #include <math.h>
 
+#include <random>
+
+#include "TestController.h"
+
 struct termios orig_termios;
 
 void reset_terminal_mode()
@@ -69,9 +73,12 @@ int getch()
 {
     int r;
     unsigned char c;
-    if ((r = read(0, &c, sizeof(c))) < 0) {
+    if ((r = read(0, &c, sizeof(c))) < 0)
+	{
         return r;
-    } else {
+    }
+	else 
+	{
         return c;
     }
 }
@@ -120,9 +127,7 @@ RenderScene RS_R;
 void keyPressCallback(int _key, RenderScene* _rs)
 {
 	_rs->HandleInput(_key);
-
-
-	std::cerr << "(" << _key << ")";	    
+    
 	switch(_key)
 	{
 		case 'q':
@@ -213,6 +218,155 @@ void InitialiseWindow( WindowData* _win, int _window, RenderScene* _RS)
  	glXMakeCurrent(_win->dpy, _win->win, _win->glc);
 }
 
+void SetOffAxisProjection(RenderScene* _RS, float _eyeOffSet, float _aspect, float _fov, float _near, float _far, float _interocularDist)
+{
+	//Reset Camera
+	glm::vec3 lefteye  		= glm::vec3( -_eyeOffSet	, 0.f, 0.f	);
+	glm::vec3 righteye 		= glm::vec3(  _eyeOffSet	, 0.f, 0.f	);
+	//Parallel
+	glm::vec3 convergePoint = glm::vec3(  0.f		, 0.f, 100000.f);
+
+	Camera camera_left;
+	Camera camera_right;
+
+	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		_fov, _aspect, _near, _far); 
+	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	_fov, _aspect, _near, _far); 
+
+	float wd2       = 5.4f * tan(_fov/2.f);
+	float ndfl      = _near / _far;
+
+	float bottom    = - wd2 - (_eyeOffSet*0.5f);
+	float top   	=   wd2 + (_eyeOffSet*0.5f);
+
+	//right eye
+	float righteye_left 	= -(wd2 * _aspect) - _eyeOffSet;// *  _aspect;
+	float righteye_right 	=  (wd2 * _aspect);// * _aspect;
+
+	float width 			= righteye_right - righteye_left;
+	float height 			= top - bottom;
+
+	std::cerr << "left: " << righteye_left << "\n";
+	std::cerr << "right: " << righteye_right << "\n";
+	std::cerr << "top: " << top << "\n";
+	std::cerr << "bottom: " << top << "\n";
+	std::cerr << "width: " << width << "\n";
+	std::cerr << "height: " << height << "\n";
+	std::cerr << "w/h: " << width/height << "\n";
+	std::cerr << "aspect: " << _aspect << "\n";
+	std::cerr << "eyeOffset: " << _eyeOffSet << "\n";
+
+	float lefteye_left  = -(wd2 * _aspect);// *  _aspect;
+	float lefteye_right =  (wd2 * _aspect) + _eyeOffSet * _aspect;
+
+	camera_left.InitOffAxisProj ( lefteye_left , lefteye_right, 	bottom, top, _near, _far);
+	camera_right.InitOffAxisProj( righteye_left, righteye_right,	bottom, top, _near, _far);
+
+	_RS[0].SetCamera(camera_right);
+	_RS[1].SetCamera(camera_right);
+	_RS[2].SetCamera(camera_left);
+	_RS[3].SetCamera(camera_left);
+}
+
+
+
+void SetToeInProjection(RenderScene* _RS, float _eyeOffSet, float _aspect, float _fov, float _near, float _far)
+{
+	//Toe-in
+	//Reset Camera
+	glm::vec3 lefteye  		= glm::vec3( -_eyeOffSet, 0.f, 0.f	);
+	glm::vec3 righteye 		= glm::vec3( _eyeOffSet, 0.f, 0.f	);
+
+	//Converging
+	glm::vec3 convergePoint = glm::vec3(  0.f		, 0.f, 6.75f	);
+
+	Camera camera_left;
+	Camera camera_right;
+
+	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		_fov, _aspect, _near, _far); 
+	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	_fov, _aspect, _near, _far); 
+	camera_left.InitProj(_fov, _aspect, _near, _far);
+	camera_right.InitProj(_fov, _aspect, _near, _far);
+
+	_RS[0].SetCamera(camera_right);
+	_RS[1].SetCamera(camera_right);
+	_RS[2].SetCamera(camera_left);
+	_RS[3].SetCamera(camera_left);
+}
+
+
+void SetObliqueProjection( RenderScene* _RS, float _eyeOffSet, float _screenAspect, float _fov )
+{
+//Oblique
+	//Reset Camera
+	glm::vec3 lefteye  				= glm::vec3( 0.0f	, 0.f, 0.f	);
+	glm::vec3 righteye 				= glm::vec3(  0.0f	, 0.f, 0.f	);
+	glm::vec3 convergePoint 		= glm::vec3(  0.f	, 0.f, -1.0f	);
+
+	float sz 	= 1.f;
+	float sx	= _screenAspect * sz;				
+
+	glm::mat4 mlt(1.0f);
+	mlt[0][0] 	= -1.f/sx;
+	mlt[1][1] 	= 1.f/sz;
+	mlt[3][3] 	= 1.f;
+
+	float eyeDepth = -5.4f;
+
+	float near_ = 2.4f;
+	float far_  = 8.1f;
+
+	glm::vec3 screenNormal 	= glm::vec3(0.f, 0.f, 1.f);
+	glm::vec3 screenPos 	= glm::vec3(0.f, 0.f, 0.f);
+
+	float pr22 = 1.f/(far_-near_);
+	float pr23 = near_/(far_-near_);
+
+	//Set left eye
+	{
+		glm::vec3 eye			= glm::vec3(-_eyeOffSet, 0.f, eyeDepth);
+
+		glm::vec4 nn 			= glm::vec4( screenNormal, -glm::dot(screenPos, screenNormal) );
+		glm::vec4 eyePosW 		= glm::vec4(eye, 1.0f);
+
+		glm::mat4 PR;
+		PR = glm::outerProduct(eyePosW, nn  ) + ( glm::mat4(1.0f) * glm::dot(screenNormal, screenPos - eye) );
+	
+		PR[2][2] 	= pr22;
+		PR[3][2] 	= pr23;
+
+		PR 			= PR * mlt;
+
+		std::cerr << "PR: " << glm::to_string(PR) << "\n";	
+
+		Camera camera_left;
+		camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	_fov, _screenAspect, near_, far_);
+		camera_left.SetProjectionMatrix(PR);
+		_RS[2].SetCamera(camera_left);
+		_RS[3].SetCamera(camera_left); 
+	}
+
+	//Set right eye
+	{
+		glm::vec3 eye			= glm::vec3(_eyeOffSet, 0.f, eyeDepth); //
+		glm::vec4 nn 			= glm::vec4( screenNormal, -glm::dot(screenPos, screenNormal) );
+		glm::vec4 eyePosW 		= glm::vec4(eye, 1.0f);
+
+		glm::mat4 PR;
+		PR = glm::outerProduct(eyePosW, nn  ) + ( glm::mat4(1.0f) * glm::dot(screenNormal, screenPos - eye) );
+		
+		PR[2][2] 	= pr22;
+		PR[3][2] 	= pr23;
+
+		PR 			= PR * mlt;
+	
+		Camera camera_right;
+		camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	_fov, _screenAspect, near_, far_); 
+		camera_right.SetProjectionMatrix(PR);
+		_RS[0].SetCamera(camera_right);
+		_RS[1].SetCamera(camera_right);
+	}
+}
+
 
 void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index, RenderScene* _pRS)
 {
@@ -222,6 +376,30 @@ void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index, Rend
 	}
 }
 
+
+void AddDepthTests(TestController* _TC)
+{
+	std::vector<int> ranges;
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(1, 2);
+    for (int n = 0; n < 10; ++n) {
+        std::cout << dis(gen) << ' ';
+    }
+    std::cout << '\n';
+
+	int numTests = 4;
+
+	for(int i = 0; i < numTests; i++)
+	{
+		
+
+	}
+
+
+}
+
 int main(int argc, char **argv)
 {
 	(void)argc; (void)argv;
@@ -229,25 +407,23 @@ int main(int argc, char **argv)
 
 	//Render Scene Controllers (One per context)
 	RenderScene RS[4];
-	float fov 				= 1.0f;
-	float interocularDist 	= 0.60f;
+	float fov 				= 0.7f;
+	float interocularDist 	= 0.65f;
 	float eyePos 			= interocularDist / 2.0f;
 
-	float near 				= 0.5;//2.5f;
+	float near 				= 1.5f;//2.5f;
 	float far  				= 15.0f;
-
 
 	float sizeX 		= 2048.f;
 	float sizeY 		= 1536.f;
 	float screenAspect 	= sizeX/sizeY;
 	float aspect 		= sizeX/sizeY;
 
-
-	glm::vec3 lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
-	glm::vec3 righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
+	glm::vec3 lefteye  		= glm::vec3(  eyePos	, 0.0f, 0.f	);
+	glm::vec3 righteye 		= glm::vec3( -eyePos	, 0.0f, 0.f	);
 
 	//Parallel
-	glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 10000.f); //6.75f	);
+	glm::vec3 convergePoint = glm::vec3(  0.f		, 0.f, 10000.f); //6.75f	);
 
 	Camera camera_left;
 	camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far); 
@@ -335,10 +511,9 @@ int main(int argc, char **argv)
 	RS[2].SetGamma(screen3Gamma);
 	RS[3].SetGamma(screen4Gamma);
 
-	
 	for(int i = 0; i < 8; i++)
 	{
-		SetLight(glm::vec3( (i-4) * 20.0, 0.0, 0.0), glm::vec3(15.0), 15.f, i, &RS[0]);
+		SetLight(glm::vec3( (i-4) * 20.0, 0.0, 0.0), glm::vec3(40.0), 15.f, i, &RS[0]);
 	}	
 
 	//Windows
@@ -381,6 +556,13 @@ int main(int argc, char **argv)
 		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
 		if(!pass) return -1;
 
+		vert = "../Shaders/vert_tex.glsl";
+		frag = "../Shaders/frag_tex_calibration.glsl";
+		name = "TestShader_Tex_Calibration";
+		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
+		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
+		if(!pass) return -1;
+
 		vert = "../Shaders/vert_MRT.glsl";
 		frag = "../Shaders/frag_MRT.glsl";
 		name = "TestShader_MRT";
@@ -409,32 +591,55 @@ int main(int argc, char **argv)
 		RS[i].InitialiseRenderObjects();
 	}
 
+	TestController TC;
+
+	ContrEntry calib;
+	calib.InitCalibration();
+
+	ContrEntry twoSecondTimerA;
+	twoSecondTimerA.InitTimer(3, 1.f, 2, 1000.f);
+	//						scene, blendmode, projection, time(ms)
+
+	ContrEntry twoSecondTimerB;
+	twoSecondTimerB.InitTimer(3, 5.f, 2, 5000000.f);
+
+	ContrEntry input;
+	input.InitInput(3, 3.f, 0, 3, 4.f, 0);
+
+	TC.Add(calib);
+	TC.Add(twoSecondTimerA);
+	TC.Add(calib);
+	TC.Add(twoSecondTimerB);
+	TC.Add(input);
+	TC.Add(calib);
+
+	TC.Start();
+
+
+
+	SetObliqueProjection( &RS[0],  eyePos, screenAspect, fov );
+
+
 	std::cerr << " Starting main loop\n";
-	int activeInput = 0;
+	int activeInput = -1;
 
-/*
-	//Opening Input file.
-    const char *dev = "/dev/input/by-path/pci-0000:00:14.0-usb-0:9.4.4:1.0-event-kbd";
-    struct input_event ev;
-    ssize_t n;
-
-    int fd = open(dev, O_RDONLY);
-    if (fd == -1) 
-	{
-        fprintf(stderr, "Cannot open %s: %s.\n", dev, strerror(errno));
-        return -1;
-    }
-*/
+    typedef std::chrono::high_resolution_clock Time;
+	typedef std::chrono::milliseconds ms;
+	typedef std::chrono::duration<float> fsec;    	
+	auto t0 = Time::now();
 
  	while(1) 
 	{
 	    set_conio_terminal_mode();
+
+		int ch = -1;
+
 		//Check for input
 		if(kbhit())
 		{
 			reset_terminal_mode();
 
-			int ch = getch();
+			ch = getch();
 			//std::cerr << "Input " <<ch << "\n";
 			if(ch == 3)
 				return -1;
@@ -460,130 +665,16 @@ int main(int argc, char **argv)
 			else if (ch == 'x')
 			{		
 				//Off-axis
-	
-				//Reset Camera
-				lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
-				righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
-				//Parallel
-				glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 100000.f); //6.75f	);
-				camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far); 
-				camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, aspect, near, far); 
-
-				float wd2     = near * tan(fov);
-			    float ndfl    = near / far;
-			    float left    	= - aspect * wd2 - 0.5 * interocularDist * ndfl;
-			    float right   	=   aspect * wd2 - 0.5 * interocularDist * ndfl;
-			    float bottom    = - 1.0 * wd2 - 0.5 * interocularDist * ndfl;
-			    float top   	=   1.0 * wd2 - 0.5 * interocularDist * ndfl;
-
-				std::cout << "Left: " << left << " Right: " << right << "\n";
-
-				camera_left.InitOffAxisProj ( right, left, top, bottom, near, far);
-				camera_right.InitOffAxisProj( right, left, top, bottom, near, far);
-				RS[0].SetCamera(camera_right);
-				RS[1].SetCamera(camera_right);
-				RS[2].SetCamera(camera_left);
-				RS[3].SetCamera(camera_left);
+				SetOffAxisProjection(&RS[0],  eyePos, aspect, fov, near, far, interocularDist);
 			}
 			else if (ch == 'c')
 			{
-				//Toe-in
-				//Reset Camera
-				lefteye  		= glm::vec3(  eyePos	, 1.6f, 0.f	);
-				righteye 		= glm::vec3( -eyePos	, 1.6f, 0.f	);
-				//Converging
-				glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, 6.75f	);
-				camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far); 
-				camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, aspect, near, far); 
-
-				camera_left.InitProj(fov, aspect, near, far);
-				camera_right.InitProj(fov, aspect, near, far);
-				RS[0].SetCamera(camera_right);
-				RS[1].SetCamera(camera_right);
-				RS[2].SetCamera(camera_left);
-				RS[3].SetCamera(camera_left);
+				SetToeInProjection(&RS[0],  eyePos, aspect, fov, near, far);
 			}
 			else if (ch == 'v')
 			{
-				//Oblique
-
-				//Reset Camera
-				lefteye  				= glm::vec3(  eyePos	, 1.6f, 0.f	);
-				righteye 				= glm::vec3( -eyePos	, 1.6f, 0.f	);
-				glm::vec3 convergePoint = glm::vec3(  0.f		, 1.6f, -6.75f	);
-
-
-				float sz 	= 6.f;//5.f;
-				float sx	= screenAspect * sz;				
-
-
-				glm::mat4 mlt(1.0f);
-				mlt[0][0] 	= -1.f/sx;
-				mlt[1][1] 	= 1.f/sz;
-				mlt[3][3] 	= 1.f;
-
-
-				//Set left eye
-				{
-					glm::vec3 eye			= glm::vec3(-eyePos, 0.f, -5.4f);
-					glm::vec3 screenNormal 	= glm::vec3(0.f, 0.f, 1.f);
-					glm::vec3 screenPos 	= glm::vec3(0.f, 0.f, 0.f);
-					glm::vec4 nn 			= glm::vec4( screenNormal, -glm::dot(screenPos, screenNormal) );
-					glm::vec4 eyePosW 		= glm::vec4(eye, 1.0f);
-
-					glm::mat4 PR;
-					PR = glm::outerProduct(eyePosW, nn  ) + ( glm::mat4(1.0f) * glm::dot(screenNormal, screenPos - eye) );
-				
-						std::cerr << "nn: " << glm::to_string(nn) << "\n";
-						std::cerr << "OuterProd: " << glm::to_string(glm::outerProduct(eyePosW, nn )) << "\n";
-						std::cerr << "Dot: " << ( ( glm::dot(screenNormal, screenPos - eye) )) << "\n";
-						std::cerr << "PR: " << glm::to_string(PR) << "\n";				
-				
-					float near_ = 0.5f;
-					float far_  = 8.1f;
-
-					PR[2][2] 	= 1.f/(far_-near_);
-					PR[3][2] 	= near_/(far_-near_);
-
-					PR 			= PR * mlt;
-
-					camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),		fov, aspect, near, far);
-					camera_left.SetProjectionMatrix(PR);
-					RS[2].SetCamera(camera_left);
-					RS[3].SetCamera(camera_left); 
-				}
-
-				//Set right eye
-				{
-					glm::vec3 eye			= glm::vec3(eyePos, 0.f, -5.4f); //
-					glm::vec3 screenNormal 	= glm::vec3(0.f, 0.f, 1.f);
-					glm::vec3 screenPos 	= glm::vec3(0.f, 0.f, 0.f);
-					glm::vec4 nn 			= glm::vec4( screenNormal, -glm::dot(screenPos, screenNormal) );
-					glm::vec4 eyePosW 		= glm::vec4(eye, 1.0f);
-
-					glm::mat4 PR;
-					PR = glm::outerProduct(eyePosW, nn  ) + ( glm::mat4(1.0f) * glm::dot(screenNormal, screenPos - eye) );
-				
-						std::cerr << "nn: " << glm::to_string(nn) << "\n";
-						std::cerr << "OuterProd: " << glm::to_string(glm::outerProduct(eyePosW, nn )) << "\n";
-						std::cerr << "Dot: " << ( ( glm::dot(screenNormal, screenPos - eye) )) << "\n";
-						std::cerr << "PR: " << glm::to_string(PR) << "\n";				
-				
-					float near_ = 0.5f;
-					float far_  = 8.1f;
-
-					PR[2][2] 	= 1.f/(far_-near_);
-					PR[3][2] 	= near_/(far_-near_);
-
-					PR 			= PR * mlt;
-
-					camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	fov, aspect, near, far); 
-					camera_right.SetProjectionMatrix(PR);
-					RS[0].SetCamera(camera_right);
-					RS[1].SetCamera(camera_right);
-				}
+				SetObliqueProjection( &RS[0],  eyePos, screenAspect, fov );
 			}
-
 			
 			if (activeInput >= 0)
 			{
@@ -611,6 +702,49 @@ int main(int argc, char **argv)
 		reset_terminal_mode();
 		//////////////////////////
 
+		int tcInput = -1;
+
+		if(ch == ',')
+			tcInput = 0;
+		else if(ch == '.')
+			tcInput = 1;
+		else if(ch == '/')
+			tcInput = 2;
+
+		ms nw = std::chrono::duration_cast<ms>(Time::now() - t0);
+		float timenow = nw.count();
+
+		TC.Update(timenow,tcInput); 
+
+		ContrEntry curActive = TC.Get();
+		for(int i = 0; i < 4; i++)
+		{
+			RS[i].SetBlendMode	(curActive.blendModeA	);
+
+			if(curActive.inputMode == eMode_INPUT)
+				RS[i].SetScene		(5	);	
+			else if(curActive.inputMode == eMode_CALIBRATE)
+			RS[i].SetScene		(4	);	
+			else if(curActive.inputMode == eMode_CALIBRATE)
+			{
+				RS[i].SetScene		(6	);	
+
+				//TODO SET RANDOM SCALE and DEPTH.
+			}
+			else
+				RS[i].SetScene		(curActive.renderModeA	);	
+
+			if(curActive.projModeA == 0)
+				SetOffAxisProjection(&RS[0],  eyePos, aspect, fov, near, far, interocularDist);
+			else if(curActive.projModeA == 1)
+				SetToeInProjection(&RS[0],  eyePos, aspect, fov, near, far);
+			else if(curActive.projModeA == 2)
+				SetObliqueProjection( &RS[0],  eyePos, screenAspect, fov );
+
+		}
+			
+		//////////////////////////
+
 		for(unsigned int i = 0; i < 4; i++)
 		{
 	   	    glXMakeCurrent( win[i].dpy, win[i].win, win[i].glc );
@@ -620,7 +754,7 @@ int main(int argc, char **argv)
 		    glXSwapBuffers(win[i].dpy, win[i].win);
 		}
 
-		usleep(40000);
+		usleep(10000);
     }
 
 
