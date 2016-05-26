@@ -299,6 +299,12 @@ void RenderScene::InitialiseRenderObjects()
 	plane.SetTranslationMat(translate);
 	m_meshArray.push_back(plane);
 
+	path = "../Mesh/blob.obj";
+	AIMesh blob;
+	blob.Initialise(path);
+
+
+
 	path = "../Mesh/cubet.obj";
 	AIMesh box;
 	box.Initialise(path);
@@ -308,13 +314,19 @@ void RenderScene::InitialiseRenderObjects()
 	box.SetRotationMat		(glm::mat4(1.f));
 	box.SetTranslationMat	(glm::mat4(1.f));
 	
-	box.SetName("Box_Left_Distance_0");
-	//m_meshArray.push_back(box);
-	box.SetName("Box_Middle_Distance_0");
-	//m_meshArray.push_back(box);
+	blob.SetName("Box_Left_Distance_0");
+	blob.SetMaterial("Red");
+	blob.SetRotationMat( glm::rotate(glm::mat4(1.f), (glm::mediump_float)1.0f, glm::vec3(0,1,0))); 
+	m_meshArray.push_back(blob);
+	blob.SetName("Box_Middle_Distance_0");
+	blob.SetMaterial("Blue");
+	blob.SetRotationMat( glm::rotate(glm::mat4(1.f), (glm::mediump_float)1.0f, glm::vec3(1,1,0)) ); 
+	m_meshArray.push_back(blob);
+	blob.SetName("Box_Far_Distance_0");
+	blob.SetMaterial("Green");
+	blob.SetRotationMat( glm::rotate(glm::mat4(1.f), (glm::mediump_float)1.0f, glm::vec3(0,1,1) )); 
+	m_meshArray.push_back(blob);
 
-	box.SetName("Box_Far_Distance_0");
-	m_meshArray.push_back(box);
 	box.SetName("Box_Translation_0");
 	m_meshArray.push_back(box);
 
@@ -483,7 +495,19 @@ void RenderScene::SceneBody_Translation(ShaderProgram& _prog, float _depthMin, f
 	box->Draw();
 }
 
+void RenderScene::SceneBody_Static(ShaderProgram& _prog)
+{
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	AIMesh* box = GetMesh("Box_Translation_0");
+	m_materialMap.find(box->GetMaterial())->second.Apply(_prog);	
+
+	/* Add interesting scene here */
+}
 
 void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm::vec3 _middle, glm::vec3 _right)
 {
@@ -499,30 +523,46 @@ void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm:
 
 		m_materialMap.find(boxLeft->GetMaterial())->second.Apply(_prog);	
 		
+		glm::mat4 scaleA = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleA, m_depthControls.scaleA, m_depthControls.scaleA) );
+		glm::mat4 scaleB = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleB, m_depthControls.scaleB, m_depthControls.scaleB) );
+		glm::mat4 scaleC = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleC, m_depthControls.scaleC, m_depthControls.scaleC) );
+
 		glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), _left);//
 		boxLeft->SetTranslationMat(translateLeft);
+		boxLeft->SetScaleMat(glm::scale(scaleA, glm::vec3( _left.z/10.f )));
+		//boxLeft->SetScaleMat(scaleA);
+
 		glm::mat4 model = boxLeft->GetModelMat();
 		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
 		_prog.SetMatrix4FV("m", glm::value_ptr(model));
 		_prog.SetMatrix4FV("r", glm::value_ptr(boxLeft->GetRotationMat()));
 		boxLeft->Draw();
 
+
+		m_materialMap.find(boxMiddle->GetMaterial())->second.Apply(_prog);	
 		glm::mat4 translateMiddle = glm::translate(glm::mat4(1.f), _middle);//glm::vec3( 0.0f, -0.f, 6.5f ));
 		boxMiddle->SetTranslationMat(translateMiddle);
+		boxMiddle->SetScaleMat(glm::scale(scaleB, glm::vec3( _middle.z/10.f  )));
+		//boxMiddle->SetScaleMat(scaleB);
+
 		model = boxMiddle->GetModelMat();
 		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
 		_prog.SetMatrix4FV("m", glm::value_ptr(model));
 		_prog.SetMatrix4FV("r", glm::value_ptr(boxMiddle->GetRotationMat()));
+
 		boxMiddle->Draw();
 
+
+		m_materialMap.find(boxRight->GetMaterial())->second.Apply(_prog);	
 		glm::mat4 translateRight = glm::translate(glm::mat4(1.f), _right);//glm::vec3( 1.0f, -0.f, 6.5f ));
 		boxRight->SetTranslationMat(translateRight);
+		boxRight->SetScaleMat(glm::scale(scaleC, glm::vec3( _right.z/10.f )));
+
 		model = boxRight->GetModelMat();
 		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
 		_prog.SetMatrix4FV("m", glm::value_ptr(model));
 		_prog.SetMatrix4FV("r", glm::value_ptr(boxRight->GetRotationMat()));
 		boxRight->Draw();
-
 }
 
 void RenderScene::SceneBody_Calibration()
@@ -638,26 +678,31 @@ void RenderScene::Render_Scene()
 			lightPos[i].b = m_pointLights[i].m_pos.pos[2];
 			lightPos[i].a = 1.0f;
 		}
+
 		m_shaderMap.find(shadername)->second.SetUniform4FP("lightPosArray", (float*)&lightPos[0], 8);
 		m_shaderMap.find(shadername)->second.SetUniform4FP("lightColScaleArray", (float*)&lightColSize[0], 8);
 
 		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraPos", glm::value_ptr(m_camera.GetPos()));
 		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraDir", glm::value_ptr( glm::normalize( m_camera.GetDir() ) ) );
 
-		//Distance Scene	
-
+		//Distance Scene	a
 		if(m_sceneID == 0) 		//Test
 			SceneBody_Test( m_shaderMap.find(shadername)->second);
 		else if(m_sceneID == 1) //Distance Test
-			SceneBody_Distance( m_shaderMap.find(shadername)->second, glm::vec3(-1.0f, -0.f, 6.5f ), glm::vec3(0.0f, -0.f, 6.5f ), glm::vec3(1.0f, -0.f, 6.5f ));
+			SceneBody_Distance( m_shaderMap.find(shadername)->second, 
+											glm::vec3(  1.4f, -0.f, m_depthControls.depthA )	, 
+											glm::vec3(  0.0f, -0.f, m_depthControls.depthB )	, 
+											glm::vec3( -1.4f, -0.f, m_depthControls.depthC )	);
 		else if(m_sceneID == 2) //Rotation
 			SceneBody_Rotation( m_shaderMap.find(shadername)->second, 8.75, 0.1f);
 		else if(m_sceneID == 3) //Translation
-			SceneBody_Translation(m_shaderMap.find(shadername)->second, 2.0f	, 	10.f, 0.01f);
+			SceneBody_Translation(m_shaderMap.find(shadername)->second, 1.5f	, 	10.f, 0.015f);
 		else if(m_sceneID == 4) //Calibration
 			SceneBody_Calibration();
-		else if(m_sceneID == 5) //Decision
+		else if(m_sceneID == 5) //Decision (left or right)
 			SceneBody_Decision();
+		else if(m_sceneID == 6) //Static
+			SceneBody_Static(m_shaderMap.find(shadername)->second);
 
 		ClearFrameBuffers();
 }
@@ -706,13 +751,25 @@ void RenderScene::Render()
 	{
 		case E_MODELSCENE:
 		{
-			glCullFace(GL_BACK);
+
+			if( m_stereoMode == eStereo_Both  || 	
+				(m_stereoMode == eStereo_Left && m_viewState.m_IsLeft) ||
+				(m_stereoMode == eStereo_Right && !m_viewState.m_IsLeft)
+			  )
 			{
-TESTGL;
-				Render_Scene();
-TESTGL;
-				Render_CopyToViews();
-TESTGL;
+				glCullFace(GL_BACK);
+				{
+					Render_Scene();
+					Render_CopyToViews();
+				}
+			}
+			else
+			{
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glViewport( 0, 0, m_SizeX, m_SizeY);
+				glClearColor(0.0, 0.0, 0.0, 0.0);
+				glClearDepth(1.0f);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			}
 		}
 		break;

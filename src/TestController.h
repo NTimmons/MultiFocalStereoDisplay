@@ -13,16 +13,58 @@ enum ContrMode
 	eMode_CALIBRATE
 };
 
+enum BlendModes
+{
+	eBlend_Linear,
+	eBlend_Box,
+	eBlend_NonLinear,
+	eBlend_Near,
+	eBlend_Far,
+	eBlend_Projective
+};
+
+enum EyeSeperationModes
+{
+	eEye_Sep,
+	eEye_None
+};
+
+enum ProjectionModes
+{
+	eProj_OffAxis,
+	eProj_ToeIn,
+	eProj_Oblique
+};
+
+enum StereoModes
+{
+	eStereo_Left,
+	eStereo_Right,
+	eStereo_Both
+};
+
+
+enum SceneModes
+{
+	eScene_Test,
+	eScene_Distance,
+	eScene_Rotation,
+	eScene_Translation,
+	eScene_Calibration,
+	eScene_Decision,
+	eScene_Static
+};
+
 
 struct ContrEntry
 {
-	void InitDistanceInput( int _renderModeA, float _a, float _b, float _c, int _answer)
+	void InitDistanceInput( SceneModes _renderModeA, BlendModes _blendMode, StereoModes _stereo, EyeSeperationModes _eyeSep, float _da, float _db, float _dc, float _sa, float _sb, float _sc, int _answer)
 	{
-		inputMode = eMode_INPUT_DEPTH;
+		inputMode 	= eMode_INPUT_DEPTH;
 
 		renderModeA = _renderModeA;
-		blendModeA 	= 5;
-		projModeA 	= 3;
+		blendModeA 	= _blendMode;
+		projModeA 	= eProj_Oblique;
 
 		timeMs 		= 0.f;
 		startTime 	= 0.f;
@@ -31,15 +73,26 @@ struct ContrEntry
 		blendModeB 	= 0.f;
 		projModeB 	= 0;
 
-		depthA = _a;
-		depthB = _b;
-		depthC = _c;
-		answer = _answer;
+		depthA 		= _da;
+		depthB 		= _db;
+		depthC 		= _dc;
+		
+		scaleA 		= _sa;
+		scaleB 		= _sb;
+		scaleC 		= _sc;
+
+		answer 		= _answer;
+
+		stereoModeA = _stereo;
+		stereoModeB = _stereo;
+
+		eyeSeperationA = _eyeSep;
+		eyeSeperationB = _eyeSep;
 	}
 
-	void InitTimer( int _renderModeA, int _blendModeA, int _projModeA, float _timeMS)
+	void InitTimer( SceneModes _renderModeA, StereoModes _stereoA,  EyeSeperationModes _eyeSep, BlendModes _blendModeA, ProjectionModes _projModeA, float _timeMS)
 	{
-		inputMode = eMode_TIMER;
+		inputMode 	= eMode_TIMER;
 
 		renderModeA = _renderModeA;
 		blendModeA 	= _blendModeA;
@@ -52,16 +105,25 @@ struct ContrEntry
 		blendModeB 	= 0.f;
 		projModeB 	= 0;
 
-		depthA = 0.f;
-		depthB = 0.f;
-		depthC = 0.f;
+		depthA 		= 0.f;
+		depthB 		= 0.f;
+		depthC 		= 0.f;
+		scaleA 		= 0.f;
+		scaleB 		= 0.f;
+		scaleC 		= 0.f;
+
+		stereoModeA = _stereoA;
+		stereoModeB = _stereoA;
+
+		eyeSeperationA = _eyeSep;
+		eyeSeperationB = _eyeSep;
 	}
 
 	void InitCalibration()
 	{
-		inputMode = eMode_CALIBRATE;
+		inputMode 	= eMode_CALIBRATE;
 
-		renderModeA = 4;
+		renderModeA = eScene_Calibration;
 		blendModeA 	= 0;
 		projModeA 	= 0;
 
@@ -71,12 +133,21 @@ struct ContrEntry
 		blendModeB 	= 0.f;
 		projModeB 	= 0;
 
-		depthA = 0.f;
-		depthB = 0.f;
-		depthC = 0.f;
+		depthA 		= 0.f;
+		depthB 		= 0.f;
+		depthC 		= 0.f;
+		scaleA 		= 0.f;
+		scaleB 		= 0.f;
+		scaleC 		= 0.f;
+
+		stereoModeA = eStereo_Both;
+		stereoModeB = eStereo_Both;
+
+		eyeSeperationA = eEye_Sep;
+		eyeSeperationB = eEye_Sep;
 	}
 
-	void InitInput( int _renderModeA, int _blendModeA, int _projModeA, int _renderModeB, int _blendModeB, int _projModeB)
+	void InitInput( SceneModes _renderModeA, StereoModes _stereoA, EyeSeperationModes _eyeSepA, BlendModes _blendModeA, ProjectionModes _projModeA, SceneModes _renderModeB, StereoModes _stereoB, EyeSeperationModes _eyeSepB, BlendModes _blendModeB, ProjectionModes _projModeB)
 	{
 		inputMode 	= eMode_INPUT;
 
@@ -91,22 +162,32 @@ struct ContrEntry
 		blendModeB 	= _blendModeB;
 		projModeB 	= _projModeB;
 
-		depthA = 0.f;
-		depthB = 0.f;
-		depthC = 0.f;
+		depthA 		= 0.f;
+		depthB 		= 0.f;
+		depthC 		= 0.f;
+		scaleA 		= 0.f;
+		scaleB 		= 0.f;
+		scaleC 		= 0.f;
+
+		stereoModeA = _stereoA;
+		stereoModeB = _stereoB;
+
+		eyeSeperationA = _eyeSepA;
+		eyeSeperationB = _eyeSepB;
 	}
 
-
-
 	int 		renderModeA;
-	float 		blendModeA;
+	int 		blendModeA;
 	int 		projModeA;
 
 	int 		renderModeB;
-	float 		blendModeB;
+	int 		blendModeB;
 	int 		projModeB;
 
 	ContrMode 	inputMode;
+
+	StereoModes stereoModeA;
+	StereoModes stereoModeB;
 
 	float 		timeMs;
 	float 		startTime;
@@ -114,19 +195,27 @@ struct ContrEntry
 	float		depthA;
 	float		depthB;
 	float		depthC;
+
+	float		scaleA;
+	float		scaleB;
+	float		scaleC;
+
+	EyeSeperationModes eyeSeperationA;
+	EyeSeperationModes eyeSeperationB;
+
 	int 		answer;
 };
-
-
 
 class TestController
 {
 	public:
-	TestController() : m_started(false)
+	TestController() : m_started(false), m_name("No Name Set")
 	{}
 
-	void Start()
+	void Start(std::string _name)
 	{
+		m_name = _name;
+
 		m_started = true;
 		m_active = m_WorkStack[0];
 		OutputCommand();
@@ -164,13 +253,7 @@ class TestController
 				std::cerr << "Recieved input\n";
 				m_results.push_back( (_input == 1 ? true : false) );
 
-				std::ofstream output;
-				output.open("output.csv", std::ios::out | std::ios::app);
-				output << "Somename," << 	m_active.depthA 	<< "," << m_active.depthB 		<< "," << m_active.depthC << "," << m_active.answer << "," <<	
-											m_active.renderModeA<< "," << m_active.renderModeB 	<< "," <<
-											m_active.blendModeA << "," << m_active.blendModeB 	<< "," <<
-											m_active.projModeA 	<< "," << m_active.projModeB 	<< "," << (_input == 1 ? true : false) << "\n";
-				output.close();
+				OutputResult((_input == 1 ? true : false));
 			
 				Pop(_time);
 				return;
@@ -184,19 +267,19 @@ class TestController
 		//Waiting for positive or negative result
 		else if( m_active.inputMode == eMode_INPUT_DEPTH)
 		{
-			if(_input == 1 || _input == 0 || _input == 2)
+			if(_input == 0 || _input == 1 || _input == 2)
 			{
 				std::cerr << "Recieved input\n";
 				m_results.push_back( (_input == m_active.answer ? true : false) );
 
-				std::ofstream output;
-				output.open("output.csv", std::ios::out | std::ios::app);
-				output << "Somename," << 	m_active.depthA 	<< "," << m_active.depthB 		<< "," << m_active.depthC << "," << m_active.answer << "," << 	
-											m_active.renderModeA<< "," << m_active.renderModeB 	<< "," <<
-											m_active.blendModeA << "," << m_active.blendModeB 	<< "," <<
-											m_active.projModeA 	<< "," << m_active.projModeB 	<< "," << (_input == m_active.answer ? true : false) << "\n";
-				output.close();
+				bool answer = (_input == m_active.answer ? true : false);
+				OutputResult(answer);
 			
+				if(_input == m_active.answer)
+					std::cerr << "Correct\n";
+				else
+					std::cerr << "Wrong\n";
+
 				Pop(_time);
 				return;
 			}
@@ -213,24 +296,41 @@ class TestController
 				std::cerr << "End of timer\n";
 				Pop(_time);
 			}
-
 			return;
 		}
+	}
+
+	void OutputResult(bool _answer)
+	{
+		std::ofstream output;
+		output.open("output.csv", std::ios::out | std::ios::app);
+		output << m_name << "," << 	m_active.scaleA 		<< "," << m_active.scaleB 			<< "," << m_active.scaleC << "," <<
+									m_active.depthA 		<< "," << m_active.depthB 			<< "," << m_active.depthC << "," << m_active.answer << "," << 	
+									m_active.stereoModeA	<< "," << m_active.stereoModeB		<< "," <<	
+									m_active.eyeSeperationA	<< "," << m_active.eyeSeperationB	<< "," <<	
+									m_active.renderModeA	<< "," << m_active.renderModeB 		<< "," <<
+									m_active.blendModeA 	<< "," << m_active.blendModeB 		<< "," <<
+									m_active.projModeA 		<< "," << m_active.projModeB 		<< "," << _answer << "\n";
+		output.close();
 	}
 
 	void OutputCommand()
 	{
 		if(m_active.inputMode == eMode_TIMER)
 		{
-			std::cerr << "Timer Started... \n";
+			std::cerr << "Timer Started. \n";
 		}			
 		else if(m_active.inputMode == eMode_CALIBRATE)
 		{
-			std::cerr << "Press '/' to end calbibration \n";
+			std::cerr << "Press '/' to end calbibration. \n";
 		}			
 		else if(m_active.inputMode == eMode_INPUT)
 		{
-			std::cerr << "Use '<' and '>' to vote first or second... \n";
+			std::cerr << "Use '<' and '>' to vote first or second. \n";
+		}	
+		else if(m_active.inputMode == eMode_INPUT_DEPTH)
+		{
+			std::cerr << "Use '<', '>' and '/' to vote left, middle or right object being closest. \n";
 		}	
 	}
 
@@ -248,6 +348,7 @@ class TestController
 		{
 			std::cerr << "List complete.";
 			m_started = false;
+			exit(0);
 		}
 
 	}
@@ -263,6 +364,8 @@ class TestController
 
 	ContrEntry				m_active;
 	std::vector<ContrEntry> m_WorkStack;
+
+	std::string 			m_name;
 };
 
 

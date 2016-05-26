@@ -17,6 +17,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "TestController.h"
+
 #define TESTGL 	RenderScene::TestGLError(__FILE__, __LINE__)
 
 //TODO NEEDS REFACTORING
@@ -322,7 +324,7 @@ public:
 
 	glm::mat4 GetModelMat ()
 	{
-		return m_scaleMat *  m_transMat * m_rotationMat;
+		return m_transMat * m_rotationMat * m_scaleMat;
 	}
 
 	void SetName(std::string _name)
@@ -455,6 +457,7 @@ public:
 		m_renderMode = E_MODELSCENE;
 		m_blendMode = 3.f;
 		m_sceneID = 0;
+		m_stereoMode = eStereo_Both;
 	}
 
 	//Setup
@@ -507,6 +510,7 @@ public:
 	void SceneBody_Translation	(ShaderProgram& _prog, float _depthMin	, float _depthMax	, 	float _speed);
 	void SceneBody_Calibration();
 	void SceneBody_Decision();
+	void SceneBody_Static(ShaderProgram& _prog);
 
 	void RenderQuad(Position& _pos, size& _size, colour& _col);
 ///	void RenderScreenQuadAtOffset(Position& _offset, size& _size);
@@ -514,13 +518,22 @@ public:
 
 	void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index);
 
+	void SetStereoMode( StereoModes _mode)
+	{
+		m_stereoMode = _mode;
+	}
+
+	void SetDepthComparison( float _da, float _db, float _dc, float _sa, float _sb, float _sc)
+	{
+		 m_depthControls = DepthObjects( _da, _db, _dc, _sa, _sb, _sc);
+	}
+
 	//Screen Control
 	void InitialiseScreenPositions();
 	void HandleInput( unsigned char _key);
 
 	bool ScreenLoadFromFile	(std::string _path, ScreenLayout* _screen);
 	void ScreenWriteToFile	(std::string _path, ScreenLayout* _screen);
-
 
 	// FBO Control
 	FBO 	 CreateSingleFrameBuffer(int _width, int _height, GLenum _format);
@@ -607,6 +620,26 @@ public:
 	std::vector<AIMesh>			m_meshArray;
 
 	int 						m_sceneID;
+
+
+	struct DepthObjects
+	{
+		DepthObjects(){};
+		DepthObjects( float _da, float _db, float _dc, float _sa, float _sb, float _sc)
+			: depthA(_da), depthB(_db), depthC(_dc), scaleA(_sa), scaleB(_sb), scaleC(_sc) {}
+
+		float depthA;
+		float depthB;
+		float depthC;
+
+		float scaleA;
+		float scaleB;
+		float scaleC;
+	};
+
+	DepthObjects m_depthControls;
+
+	StereoModes	m_stereoMode;
 
 
 	//Window Controls

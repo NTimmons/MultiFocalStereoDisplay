@@ -28,5 +28,5 @@ void main()
 	finalPosition = m * (  vec4(pos.xyz, 1.0) );
 	finalUV		  = vec4(uv,uv1);
 
-	gl_Position.z = gl_Position.z/2.0;
+	gl_Position.z = (gl_Position.z/2.0);
 }

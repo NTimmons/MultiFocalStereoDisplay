@@ -88,9 +88,9 @@ void main()
 	vec3 binormal 			= cross( finalNormal.xyz, finalTangent.xyz );	
 	mat3 TBN 				= mat3 (finalTangent.xyz, binormal, finalNormal.xyz);
 
-	for(int i = 0; i < 1; i++)
+	for(int i = 0; i < 2; i++)
 	{
-		vec3  pointCol 	= lightColScaleArray[i].xyz;
+		vec3  pointCol 	= vec3(50.f);//lightColScaleArray[i].xyz;
 		float range    	= lightColScaleArray[i].w;
 		vec3  pointPos 	= lightPosArray[i].xyz;
 
@@ -98,7 +98,7 @@ void main()
 		float dist 		= length(gap);
 		float intensity = 1.0;//1.0 - min(1.0, (dist/range) );
 
-		vec3  l  		= normalize(vec3(1.0, -1.0, -1.0));//gap);//normalize ( TBN * normalize(gap) );
+		vec3  l  		= normalize(pointPos);//gap);//normalize ( TBN * normalize(gap) );
 		vec3  n 		= finalNormal.xyz;
 		vec3  r			= reflect(l,n);  
 
