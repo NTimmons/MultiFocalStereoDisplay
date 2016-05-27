@@ -66,7 +66,7 @@ void main()
 	vec4 diffuseTexColour 	= texture(tex_0, vec2(finalUV.x, finalUV.y) ) ;
 	vec3 texDifCol 			= vec3(diffuseTexColour.x, diffuseTexColour.y, diffuseTexColour.z);
 
-	float avg = (texDifCol.x + texDifCol.y + texDifCol.z) / 3.f;
+	//float avg = (texDifCol.x + texDifCol.y + texDifCol.z) / 3.f;
 	//texDifCol = vec3(avg);
 	//texDifCol = normalize(texDifCol);
 
@@ -88,9 +88,9 @@ void main()
 	vec3 binormal 			= cross( finalNormal.xyz, finalTangent.xyz );	
 	mat3 TBN 				= mat3 (finalTangent.xyz, binormal, finalNormal.xyz);
 
-	for(int i = 0; i < 2; i++)
+	/*for(int i = 0; i < 1; i++)
 	{
-		vec3  pointCol 	= vec3(50.f);//lightColScaleArray[i].xyz;
+		vec3  pointCol 	= lightColScaleArray[i].xyz;
 		float range    	= lightColScaleArray[i].w;
 		vec3  pointPos 	= lightPosArray[i].xyz;
 
@@ -109,12 +109,28 @@ void main()
 		float Ispec = pow( max( dot( r, cameraDir ), 0.0 ), specPowUniform);
 		Ispec 		= texSpecCol.r * clamp(Ispec, 0.0, 1.0); 
 
+		light = light + (ldotn * texDifCol);
+
 		light = light + ( ldotn * intensity * texDifCol * diffuseColour.xyz * pointCol);// + (Ispec * intensity * specCol.xyz);
-	}
+	}*/
+	
+
+	vec3 lightDir0 	= normalize(vec3(-1.0, 1.0, -0.5));
+	vec3 n 			= finalNormal.xyz;
+	float ldotn0 	= max(0.0, dot(lightDir0, n) );
+
+	vec3 lightDir1 	= normalize(vec3(0.0, 0.0, -1.0));
+	float ldotn1 	= max(0.0, dot(lightDir1, n) );
+
+
+
+	light 			= (ldotn0 * texDifCol * diffuseColour.xyz * 40.f) + (ldotn1 * texDifCol * diffuseColour.xyz * 40.f);
+
 
 	outColor0 = vec4(1.0, 1.0, 0.0, 1.0) ;
 
 	float range  = length(cameraPos - finalPosition.xyz);
+
 	if( near > 0.5 )
 	{
 		if(blendMode > 2.5 && blendMode < 3.5)
@@ -214,6 +230,7 @@ void main()
 		}	
 	}
 
+	//outColor0 = vec4( pow( (range/5.1) , 4) );
 }
 
 

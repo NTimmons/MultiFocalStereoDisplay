@@ -53,9 +53,9 @@ void AIMesh::Initialise(std::string& _path)
 
 	const aiScene* scene = (aiImportFile( _path.c_str(),		aiProcessPreset_TargetRealtime_MaxQuality
 															| 	aiProcess_JoinIdenticalVertices 
-															| 	aiProcess_Triangulate 
-															| 	aiProcess_GenNormals
-															| 	aiProcess_CalcTangentSpace 
+															//| 	aiProcess_Triangulate 
+															//| 	aiProcess_GenNormals
+															//| 	aiProcess_CalcTangentSpace 
 										)
 							);
 	if(scene)

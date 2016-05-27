@@ -262,10 +262,9 @@ void RenderScene::InitialiseRenderObjects()
 	sibenik.Initialise(path);
 	sibenik.SetName("Sibenik");
     sibenik.SetMaterial("Test");
-	sibenik.SetScaleMat(glm::scale(glm::mat4(1.0f), glm::vec3(10.4, 10.4, 10.4)));
-	sibenik.SetRotationMat(glm::mat4(1.f));
-	sibenik.SetTranslationMat(glm::mat4(1.f));
-	//m_meshArray.push_back(sibenik);
+	sibenik.SetScaleMat(glm::scale(glm::mat4(1.0f), glm::vec3(4.4, 4.4, 4.4)));
+	sibenik.SetTranslationMat( glm::translate(glm::mat4(1.f), glm::vec3(-0.f, 38.f, 0.f) ) );
+	m_meshArray.push_back(sibenik);
 
 
 	path = "../Mesh/teapot.obj";
@@ -286,7 +285,7 @@ void RenderScene::InitialiseRenderObjects()
 	teapotRot.SetScaleMat(glm::mat4(1.f));
 	teapotRot.SetRotationMat(glm::mat4(1.f));
 	teapotRot.SetTranslationMat(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.f, 5.f)));
-	//m_meshArray.push_back(teapotRot);
+	m_meshArray.push_back(teapotRot);
 
 	path = "../Mesh/groundPlane.obj";
 	AIMesh plane;
@@ -302,8 +301,6 @@ void RenderScene::InitialiseRenderObjects()
 	path = "../Mesh/blob.obj";
 	AIMesh blob;
 	blob.Initialise(path);
-
-
 
 	path = "../Mesh/cubet.obj";
 	AIMesh box;
@@ -327,8 +324,9 @@ void RenderScene::InitialiseRenderObjects()
 	blob.SetRotationMat( glm::rotate(glm::mat4(1.f), (glm::mediump_float)1.0f, glm::vec3(0,1,1) )); 
 	m_meshArray.push_back(blob);
 
-	box.SetName("Box_Translation_0");
-	m_meshArray.push_back(box);
+	blob.SetName("Box_Translation_0");
+	blob.SetMaterial("Green");
+	m_meshArray.push_back(blob);
 
 		
 	box.SetName("Box_NEAR_0");
@@ -445,27 +443,33 @@ void RenderScene::SceneBody_Rotation(ShaderProgram& _prog, float _depth, float _
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	static	float angle  = 1.5708f * 0.5f;
+	angle+=_speed;
+	for(int x = 0; x < 4; x++)
+	{
+		for (int y = 0; y < 4; y++)
+		{
+			float angle  = 1.5708f * 0.5f;
+			glm::mat4 rotation		= glm::rotate(glm::mat4(1.f)	, (glm::mediump_float)angle, glm::vec3(0,1,0));  
+			glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x-2) * 3.f, -1.625f, (y+1) * (3.5f) ));
+			glm::mat4 scale			= glm::scale(glm::mat4(1.0f)	, glm::vec3(0.50f, 0.50f, 0.50f));
 
-	static float angle  = 0.00f;
-	angle += _speed;
-	glm::mat4 rotation		= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
-	glm::mat4 translation 	= glm::translate(glm::mat4(1.f), glm::vec3( 0.0f, -1.5625f, _depth - 2.0f ));
-	glm::mat4 scale			= glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+			//Rotate the teapot.
+			AIMesh* pot = GetMesh("Teapot_Rotation_0");
+			pot->SetScaleMat(scale);
+			pot->SetRotationMat(rotation);
+			pot->SetTranslationMat(translation);
 
+			m_materialMap.find(pot->GetMaterial())->second.Apply(_prog);	
 
-	//Rotate the teapot.
-	AIMesh* pot = GetMesh("Teapot_Rotation_0");
-	pot->SetScaleMat(scale);
-	pot->SetRotationMat(rotation);
-	pot->SetTranslationMat(translation);
+			glm::mat4 model = pot->GetModelMat();
+			_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+			_prog.SetMatrix4FV("m", glm::value_ptr(model));
+			_prog.SetMatrix4FV("r", glm::value_ptr(pot->GetRotationMat()));
+			pot->Draw();
+		}
 
-	m_materialMap.find(pot->GetMaterial())->second.Apply(_prog);	
-
-	glm::mat4 model = pot->GetModelMat();
-	_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
-	_prog.SetMatrix4FV("m", glm::value_ptr(model));
-	_prog.SetMatrix4FV("r", glm::value_ptr(pot->GetRotationMat()));
-	pot->Draw();
+	}
 }
 
 void RenderScene::SceneBody_Translation(ShaderProgram& _prog, float _depthMin, float _depthMax, float _speed)
@@ -483,12 +487,32 @@ void RenderScene::SceneBody_Translation(ShaderProgram& _prog, float _depthMin, f
 	angle += _speed;
 
 	float alpha = 0.5f + sin(angle)/2;
+	float alpha1 = 0.5f + sin(angle + 1.5708f)/2;
+	float alpha2 = 0.5f + sin((angle/2) + (1.5708f * 2.0f))/2;
+
 	float depth = (alpha * _depthMin) + ( (1.0f - alpha) * _depthMax);
 
-	glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, depth));//
+	glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), glm::vec3(-1.4f, 0.f, depth));//
 	box->SetTranslationMat(translateLeft);
-
 	glm::mat4 model = box->GetModelMat();
+	_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+	_prog.SetMatrix4FV("m", glm::value_ptr(model));
+	_prog.SetMatrix4FV("r", glm::value_ptr(box->GetRotationMat()));
+	box->Draw();
+
+	depth = (alpha1 * _depthMin) + ( (1.0f - alpha1) * _depthMax);
+	translateLeft = glm::translate(glm::mat4(1.f), glm::vec3(0.f, 0.f, depth));//
+	box->SetTranslationMat(translateLeft);
+	model = box->GetModelMat();
+	_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+	_prog.SetMatrix4FV("m", glm::value_ptr(model));
+	_prog.SetMatrix4FV("r", glm::value_ptr(box->GetRotationMat()));
+	box->Draw();
+
+	depth = (alpha2 * _depthMin) + ( (1.0f - alpha2) * _depthMax);
+	translateLeft = glm::translate(glm::mat4(1.f), glm::vec3(1.4f, 0.f, depth));//
+	box->SetTranslationMat(translateLeft);
+	model = box->GetModelMat();
 	_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
 	_prog.SetMatrix4FV("m", glm::value_ptr(model));
 	_prog.SetMatrix4FV("r", glm::value_ptr(box->GetRotationMat()));
@@ -503,10 +527,39 @@ void RenderScene::SceneBody_Static(ShaderProgram& _prog)
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	AIMesh* box = GetMesh("Box_Translation_0");
-	m_materialMap.find(box->GetMaterial())->second.Apply(_prog);	
 
-	/* Add interesting scene here */
+	for(int x = 0; x < 8; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			for( int z = 0; z < 2; z++)
+			{
+				float angle  = 1.5708f * 0.5f;
+				glm::mat4 rotation		= glm::rotate(glm::mat4(1.f)	, (glm::mediump_float)angle, glm::vec3(0,1,0));  
+				glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x-4) * 1.5f,  -1.5625f + (z * 2.5f), (y+1) * (3.5f) ));
+				glm::mat4 scale			= glm::scale(glm::mat4(1.0f)	, glm::vec3(0.50f, 0.50f, 0.50f));
+
+				//Rotate the teapot.
+				AIMesh* pot = GetMesh("Teapot_Rotation_0");
+				pot->SetScaleMat(scale);
+				pot->SetRotationMat(rotation);
+				pot->SetTranslationMat(translation);
+
+				m_materialMap.find(pot->GetMaterial())->second.Apply(_prog);	
+
+				glm::mat4 model = pot->GetModelMat();
+				_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
+				_prog.SetMatrix4FV("m", glm::value_ptr(model));
+				_prog.SetMatrix4FV("r", glm::value_ptr(pot->GetRotationMat()));
+				pot->Draw();
+			}
+
+
+		}
+
+	}
+
+
 }
 
 void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm::vec3 _middle, glm::vec3 _right)
@@ -694,9 +747,9 @@ void RenderScene::Render_Scene()
 											glm::vec3(  0.0f, -0.f, m_depthControls.depthB )	, 
 											glm::vec3( -1.4f, -0.f, m_depthControls.depthC )	);
 		else if(m_sceneID == 2) //Rotation
-			SceneBody_Rotation( m_shaderMap.find(shadername)->second, 8.75, 0.1f);
+			SceneBody_Rotation( m_shaderMap.find(shadername)->second, 5.5f, 0.002f);
 		else if(m_sceneID == 3) //Translation
-			SceneBody_Translation(m_shaderMap.find(shadername)->second, 1.5f	, 	10.f, 0.015f);
+			SceneBody_Translation(m_shaderMap.find(shadername)->second, 0.5f	, 	10.f, 0.010f);
 		else if(m_sceneID == 4) //Calibration
 			SceneBody_Calibration();
 		else if(m_sceneID == 5) //Decision (left or right)
