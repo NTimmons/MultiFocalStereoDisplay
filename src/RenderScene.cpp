@@ -490,8 +490,8 @@ void RenderScene::SceneBody_Translation(ShaderProgram& _prog, float _depthMin, f
 	float alpha1 = 0.5f + sin(angle + 1.5708f)/2;
 	float alpha2 = 0.5f + sin((angle/2) + (1.5708f * 2.0f))/2;
 
-	float depth = (alpha * _depthMin) + ( (1.0f - alpha) * _depthMax);
 
+	float depth = (alpha * _depthMin) + ( (1.0f - alpha) * _depthMax);
 	glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), glm::vec3(-1.4f, 0.f, depth));//
 	box->SetTranslationMat(translateLeft);
 	glm::mat4 model = box->GetModelMat();
@@ -527,7 +527,6 @@ void RenderScene::SceneBody_Static(ShaderProgram& _prog)
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	for(int x = 0; x < 8; x++)
 	{
 		for (int y = 0; y < 10; y++)
@@ -553,13 +552,8 @@ void RenderScene::SceneBody_Static(ShaderProgram& _prog)
 				_prog.SetMatrix4FV("r", glm::value_ptr(pot->GetRotationMat()));
 				pot->Draw();
 			}
-
-
 		}
-
 	}
-
-
 }
 
 void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm::vec3 _middle, glm::vec3 _right)
@@ -749,7 +743,7 @@ void RenderScene::Render_Scene()
 		else if(m_sceneID == 2) //Rotation
 			SceneBody_Rotation( m_shaderMap.find(shadername)->second, 5.5f, 0.002f);
 		else if(m_sceneID == 3) //Translation
-			SceneBody_Translation(m_shaderMap.find(shadername)->second, 0.5f	, 	10.f, 0.010f);
+			SceneBody_Translation(m_shaderMap.find(shadername)->second, 0.5f, 	10.f, 0.010f);
 		else if(m_sceneID == 4) //Calibration
 			SceneBody_Calibration();
 		else if(m_sceneID == 5) //Decision (left or right)

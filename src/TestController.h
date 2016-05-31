@@ -303,15 +303,109 @@ class TestController
 	void OutputResult(bool _answer)
 	{
 		std::ofstream output;
-		output.open("output.csv", std::ios::out | std::ios::app);
-		output << m_name << "," << 	m_active.scaleA 		<< "," << m_active.scaleB 			<< "," << m_active.scaleC << "," <<
-									m_active.depthA 		<< "," << m_active.depthB 			<< "," << m_active.depthC << "," << m_active.answer << "," << 	
-									m_active.stereoModeA	<< "," << m_active.stereoModeB		<< "," <<	
-									m_active.eyeSeperationA	<< "," << m_active.eyeSeperationB	<< "," <<	
-									m_active.renderModeA	<< "," << m_active.renderModeB 		<< "," <<
-									m_active.blendModeA 	<< "," << m_active.blendModeB 		<< "," <<
-									m_active.projModeA 		<< "," << m_active.projModeB 		<< "," << _answer << "\n";
-		output.close();
+
+		std::string BlendModesNames[6]
+		{
+			"Linear",
+			"Box",
+			"NonLinear",
+			"Near",
+			"Far",
+			"Projective"
+		};
+
+		std::string EyeSeperationModesNames[2]
+		{
+			"Separated",
+			"No_Separation"
+		};
+
+		std::string ProjectionModesNames[3]
+		{
+			"OffAxis",
+			"ToeIn",
+			"Oblique"
+		};
+
+		std::string StereoModesNames[3]
+		{
+			"MonoLeft",
+			"MonoRight",
+			"Stereo"
+		};
+
+		std::string SceneModesNames[7] = 
+		{
+			"Test",
+			"Distance",
+			"Rotation",
+			"Translation",
+			"Calibration",
+			"Decision",
+			"Static"
+		};
+
+		if( m_active.renderModeA == eScene_Test)
+		{
+			output.open("output_test.csv", std::ios::out | std::ios::app);
+			output << m_name << "," << 	m_active.scaleA 								<< "," << m_active.scaleB 								<< "," << m_active.scaleC << "," <<
+									m_active.depthA 									<< "," << m_active.depthB 								<< "," << m_active.depthC << "," << m_active.answer << "," << 	
+									StereoModesNames[m_active.stereoModeA]				<< "," << StereoModesNames[m_active.stereoModeB]		<< "," <<	
+									EyeSeperationModesNames[m_active.eyeSeperationA]	<< "," << EyeSeperationModesNames[m_active.eyeSeperationB]	<< "," <<	
+									SceneModesNames[m_active.renderModeA]				<< "," << SceneModesNames[m_active.renderModeB]			<< "," <<
+									BlendModesNames[m_active.blendModeA] 				<< "," << BlendModesNames[m_active.blendModeB] 			<< "," <<
+									ProjectionModesNames[m_active.projModeA] 			<< "," << ProjectionModesNames[m_active.projModeB] 		<< "," << _answer << "\n";
+			output.close();
+		}
+
+		else if( m_active.renderModeA == eScene_Translation)
+		{
+			output.open("output_translation.csv", std::ios::out | std::ios::app);
+			output << m_name << "," << StereoModesNames[m_active.stereoModeA]				<< "," << StereoModesNames[m_active.stereoModeB]		<< "," <<	
+									EyeSeperationModesNames[m_active.eyeSeperationA]	<< "," << EyeSeperationModesNames[m_active.eyeSeperationB]	<< "," <<	
+									BlendModesNames[m_active.blendModeA] 				<< "," << BlendModesNames[m_active.blendModeB] 			<< "," <<
+									ProjectionModesNames[m_active.projModeA] 			<< "," << ProjectionModesNames[m_active.projModeB] 		<< "," << _answer << "\n";
+			output.close();
+		}
+
+		else if( m_active.renderModeA == eScene_Rotation)
+		{
+			output.open("output_rotation.csv", std::ios::out | std::ios::app);
+			output << m_name << "," << StereoModesNames[m_active.stereoModeA]			<< "," << StereoModesNames[m_active.stereoModeB]		<< "," <<	
+									EyeSeperationModesNames[m_active.eyeSeperationA]	<< "," << EyeSeperationModesNames[m_active.eyeSeperationB]	<< "," <<	
+									BlendModesNames[m_active.blendModeA] 				<< "," << BlendModesNames[m_active.blendModeB ]			<< "," <<
+									ProjectionModesNames[m_active.projModeA] 			<< "," << ProjectionModesNames[m_active.projModeB] 		<< "," << _answer << "\n";
+			output.close();
+		}
+
+		else if( m_active.renderModeA == eScene_Static)
+		{
+			output.open("output_static.csv", std::ios::out | std::ios::app);
+			output << m_name << "," << StereoModesNames[m_active.stereoModeA]			<< "," << StereoModesNames[m_active.stereoModeB]			<< "," <<	
+									EyeSeperationModesNames[m_active.eyeSeperationA]	<< "," << EyeSeperationModesNames[m_active.eyeSeperationB]	<< "," <<	
+									BlendModesNames[m_active.blendModeA] 				<< "," << BlendModesNames[m_active.blendModeB ]				<< "," <<
+									ProjectionModesNames[m_active.projModeA] 			<< "," << ProjectionModesNames[m_active.projModeB] 			<< "," << _answer << "\n";
+			output.close();
+		}
+
+		if( m_active.renderModeA == eScene_Distance)
+		{
+			output.open("output_distance.csv", std::ios::out | std::ios::app);
+			output << m_name << "," << 	m_active.scaleA 									<< "," << m_active.scaleB 			<< "," << m_active.scaleC << "," <<
+										m_active.depthA 									<< "," << m_active.depthB 			<< "," << m_active.depthC << "," << m_active.answer << "," << 	
+										StereoModesNames[m_active.stereoModeA]				<< "," <<	
+										EyeSeperationModesNames[m_active.eyeSeperationA]	<< "," <<	
+										BlendModesNames[m_active.blendModeA] 				<< "," <<
+										ProjectionModesNames[m_active.projModeA] 			<< "," << _answer << "\n";
+			output.close();
+		}
+
+
+
+
+
+
+
 	}
 
 	void OutputCommand()
