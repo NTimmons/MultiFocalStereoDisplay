@@ -505,10 +505,11 @@ public:
 
 	//Scenes -:
 	void SceneBody_Test			(ShaderProgram& _prog);
-	void SceneBody_Distance		(ShaderProgram& _prog, glm::vec3 _left	, glm::vec3 _middle	, 	glm::vec3 _right);
+	void SceneBody_Distance		(ShaderProgram& _prog, glm::vec3 _left	, glm::vec3 _right);
 	void SceneBody_Rotation		(ShaderProgram& _prog, float _depth		, float _speed		);
 	void SceneBody_Translation	(ShaderProgram& _prog, float _depthMin	, float _depthMax	, 	float _speed);
 	void SceneBody_Calibration();
+	void SceneBody_Stop();
 	void SceneBody_Decision();
 	void SceneBody_Static(ShaderProgram& _prog);
 
@@ -601,6 +602,7 @@ public:
 	Texture						m_testTexture;
 	Texture						m_nearCalibration;
 	Texture						m_farCalibration;
+	Texture						m_stop;
 	Texture						m_decision;
 
 	//Render Settings

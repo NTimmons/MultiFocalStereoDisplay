@@ -160,7 +160,7 @@ void ScreenWriteToFile	(std::string _path, RenderScene* _RS)
 		{
 			std::stringstream ssP;
 			std::stringstream ssS;
-			unsigned int index = i;	
+			//unsigned int index = i;	
 
 			Position 	pos 	= _RS[i].m_layoutControl.GetScreenPos(0);
 			size		size 	= _RS[i].m_layoutControl.GetScreenSize(0);
@@ -206,7 +206,7 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 				float 			val0	= (float)atof(sData[2].c_str());
 				float 			val1	= (float)atof(sData[3].c_str());
 				float 			val2	= (float)atof(sData[4].c_str());
-				float 			val3	= (float)atof(sData[5].c_str());
+				//float 			val3	= (float)atof(sData[5].c_str());
 
 				/*
 				std::cerr << "Index: " << index <<
@@ -218,7 +218,7 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 				*/
 
 
-				if(index == m_id)
+				if( (int)index == m_id)
 				{
 					//std::cerr << "Type is: " << type << " \n";
 					if(type == 'P')
@@ -358,6 +358,10 @@ void RenderScene::InitialiseRenderObjects()
 	std::string img = "../Images/testimage.png";
 	m_testTexture.Init(img);
 
+	img = "../Images/stop.png";
+	m_stop.Init(img);
+
+
 	img = "../Images/nearCalib.png";
 	m_nearCalibration.Init(img);
 
@@ -412,9 +416,9 @@ void RenderScene::SceneBody_Test(ShaderProgram& _prog)
 		/*Add Nice Scene here */
 		m_materialMap.find("Test")->second.Apply(_prog);
 
-		static float angle  = 0.00f;
-		angle += 0.01f;
-		glm::mat4 rotation	= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
+		//static float angle  = 0.00f;
+		//angle += 0.01f;
+		//glm::mat4 rotation	= glm::rotate(glm::mat4(1.f), (glm::mediump_float)angle, glm::vec3(0,1,0));  
 
 		//Rotate the teapot.
 		//AIMesh* pot = GetMesh("Teapot");
@@ -437,19 +441,21 @@ void RenderScene::SceneBody_Test(ShaderProgram& _prog)
 
 void RenderScene::SceneBody_Rotation(ShaderProgram& _prog, float _depth, float _speed)
 {
+	(void)_depth;
+
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	static	float angle  = 1.5708f * 0.5f;
+	static float angle  = 1.5708f * 0.5f;
 	angle+=_speed;
 	for(int x = 0; x < 4; x++)
 	{
 		for (int y = 0; y < 4; y++)
 		{
-			float angle  = 1.5708f * 0.5f;
+			//float angle  = 1.5708f * 0.5f;
 			glm::mat4 rotation		= glm::rotate(glm::mat4(1.f)	, (glm::mediump_float)angle, glm::vec3(0,1,0));  
 			glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x-2) * 3.f, -1.625f, (y+1) * (3.5f) ));
 			glm::mat4 scale			= glm::scale(glm::mat4(1.0f)	, glm::vec3(0.50f, 0.50f, 0.50f));
@@ -529,13 +535,13 @@ void RenderScene::SceneBody_Static(ShaderProgram& _prog)
 
 	for(int x = 0; x < 8; x++)
 	{
-		for (int y = 0; y < 10; y++)
+		for (int y = 0; y < 3; y++)
 		{
 			for( int z = 0; z < 2; z++)
 			{
 				float angle  = 1.5708f * 0.5f;
 				glm::mat4 rotation		= glm::rotate(glm::mat4(1.f)	, (glm::mediump_float)angle, glm::vec3(0,1,0));  
-				glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x-4) * 1.5f,  -1.5625f + (z * 2.5f), (y+1) * (3.5f) ));
+				glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x-4) * 2.1f,  -1.5625f + (z * 2.5f), (y+1) * (3.5f) ));
 				glm::mat4 scale			= glm::scale(glm::mat4(1.0f)	, glm::vec3(0.50f, 0.50f, 0.50f));
 
 				//Rotate the teapot.
@@ -556,7 +562,7 @@ void RenderScene::SceneBody_Static(ShaderProgram& _prog)
 	}
 }
 
-void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm::vec3 _middle, glm::vec3 _right)
+void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm::vec3 _right)
 {
 		glEnable(GL_DEPTH_TEST);
 		//glEnable(GL_CULL_FACE);
@@ -565,19 +571,18 @@ void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm:
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		AIMesh* boxLeft 	= GetMesh("Box_Left_Distance_0");
-		AIMesh* boxMiddle 	= GetMesh("Box_Middle_Distance_0");
+		//AIMesh* boxMiddle 	= GetMesh("Box_Middle_Distance_0");
 		AIMesh* boxRight 	= GetMesh("Box_Far_Distance_0");
 
 		m_materialMap.find(boxLeft->GetMaterial())->second.Apply(_prog);	
 		
 		glm::mat4 scaleA = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleA, m_depthControls.scaleA, m_depthControls.scaleA) );
 		glm::mat4 scaleB = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleB, m_depthControls.scaleB, m_depthControls.scaleB) );
-		glm::mat4 scaleC = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleC, m_depthControls.scaleC, m_depthControls.scaleC) );
+		//glm::mat4 scaleC = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleC, m_depthControls.scaleC, m_depthControls.scaleC) );
 
 		glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), _left);//
 		boxLeft->SetTranslationMat(translateLeft);
-		boxLeft->SetScaleMat(glm::scale(scaleA, glm::vec3( _left.z/10.f )));
-		//boxLeft->SetScaleMat(scaleA);
+		boxLeft->SetScaleMat(glm::scale(scaleA, glm::vec3( _left.z/6.f )));
 
 		glm::mat4 model = boxLeft->GetModelMat();
 		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
@@ -585,25 +590,10 @@ void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm:
 		_prog.SetMatrix4FV("r", glm::value_ptr(boxLeft->GetRotationMat()));
 		boxLeft->Draw();
 
-
-		m_materialMap.find(boxMiddle->GetMaterial())->second.Apply(_prog);	
-		glm::mat4 translateMiddle = glm::translate(glm::mat4(1.f), _middle);//glm::vec3( 0.0f, -0.f, 6.5f ));
-		boxMiddle->SetTranslationMat(translateMiddle);
-		boxMiddle->SetScaleMat(glm::scale(scaleB, glm::vec3( _middle.z/10.f  )));
-		//boxMiddle->SetScaleMat(scaleB);
-
-		model = boxMiddle->GetModelMat();
-		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
-		_prog.SetMatrix4FV("m", glm::value_ptr(model));
-		_prog.SetMatrix4FV("r", glm::value_ptr(boxMiddle->GetRotationMat()));
-
-		boxMiddle->Draw();
-
-
-		m_materialMap.find(boxRight->GetMaterial())->second.Apply(_prog);	
+		m_materialMap.find(boxLeft->GetMaterial())->second.Apply(_prog);	
 		glm::mat4 translateRight = glm::translate(glm::mat4(1.f), _right);//glm::vec3( 1.0f, -0.f, 6.5f ));
 		boxRight->SetTranslationMat(translateRight);
-		boxRight->SetScaleMat(glm::scale(scaleC, glm::vec3( _right.z/10.f )));
+		boxRight->SetScaleMat(glm::scale(scaleB, glm::vec3( _right.z/6.f )));
 
 		model = boxRight->GetModelMat();
 		_prog.SetMatrix4FV(std::string("mvp"), glm::value_ptr(m_camera.GetMVP(model)));
@@ -635,6 +625,44 @@ void RenderScene::SceneBody_Calibration()
 	else
 	{
 		textureArray = m_farCalibration.Get() ;
+	}
+
+	ShaderProgram shad = m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second;
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureArray);
+	Position p (-1,-1,0);
+	size 	 s (2,2);
+	RenderScreenQuadAtOffset(shad, p,s);
+
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+}
+
+void RenderScene::SceneBody_Stop()
+{
+	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_CULL_FACE);
+	glClearColor(50.0, 0.0, 50.0, 0.0);
+	glClearDepth(1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glDisable(GL_CULL_FACE);
+
+	glUseProgram(m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.programID);
+
+	m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.SetUniform1UI("tex", 0);
+	m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second.SetUniform1F("testVal", 1.0f);
+
+	GLuint textureArray;
+	if(m_viewState.m_IsNear)
+	{
+		textureArray = m_stop.Get();
+	}
+	else
+	{
+		textureArray = m_stop.Get() ;
 	}
 
 	ShaderProgram shad = m_shaderMap.find(std::string("TestShader_Tex_Calibration"))->second;
@@ -737,9 +765,8 @@ void RenderScene::Render_Scene()
 			SceneBody_Test( m_shaderMap.find(shadername)->second);
 		else if(m_sceneID == 1) //Distance Test
 			SceneBody_Distance( m_shaderMap.find(shadername)->second, 
-											glm::vec3(  1.4f, -0.f, m_depthControls.depthA )	, 
-											glm::vec3(  0.0f, -0.f, m_depthControls.depthB )	, 
-											glm::vec3( -1.4f, -0.f, m_depthControls.depthC )	);
+											glm::vec3( -0.9f, -0.f, m_depthControls.depthA )	, 
+											glm::vec3( 0.9f, -0.f, m_depthControls.depthB )	);
 		else if(m_sceneID == 2) //Rotation
 			SceneBody_Rotation( m_shaderMap.find(shadername)->second, 5.5f, 0.002f);
 		else if(m_sceneID == 3) //Translation
@@ -750,6 +777,8 @@ void RenderScene::Render_Scene()
 			SceneBody_Decision();
 		else if(m_sceneID == 6) //Static
 			SceneBody_Static(m_shaderMap.find(shadername)->second);
+		else if(m_sceneID == 7) //Stop
+			SceneBody_Stop();
 
 		ClearFrameBuffers();
 }

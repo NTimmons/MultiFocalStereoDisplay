@@ -10,7 +10,8 @@ enum ContrMode
 	eMode_TIMER,
 	eMode_INPUT,
 	eMode_INPUT_DEPTH,
-	eMode_CALIBRATE
+	eMode_CALIBRATE,
+	eMode_STOP
 };
 
 enum BlendModes
@@ -52,7 +53,8 @@ enum SceneModes
 	eScene_Translation,
 	eScene_Calibration,
 	eScene_Decision,
-	eScene_Static
+	eScene_Static,
+	eScene_Stop,
 };
 
 
@@ -124,6 +126,34 @@ struct ContrEntry
 		inputMode 	= eMode_CALIBRATE;
 
 		renderModeA = eScene_Calibration;
+		blendModeA 	= 0;
+		projModeA 	= 0;
+
+		timeMs 		= 0;
+		startTime 	= 0.f;
+		renderModeB = 0;
+		blendModeB 	= 0.f;
+		projModeB 	= 0;
+
+		depthA 		= 0.f;
+		depthB 		= 0.f;
+		depthC 		= 0.f;
+		scaleA 		= 0.f;
+		scaleB 		= 0.f;
+		scaleC 		= 0.f;
+
+		stereoModeA = eStereo_Both;
+		stereoModeB = eStereo_Both;
+
+		eyeSeperationA = eEye_Sep;
+		eyeSeperationB = eEye_Sep;
+	}
+
+	void InitStop()
+	{
+		inputMode 	= eMode_STOP;
+
+		renderModeA = eScene_Stop;
 		blendModeA 	= 0;
 		projModeA 	= 0;
 
@@ -245,6 +275,19 @@ class TestController
 			}
 			return;
 		}
+		//Waiting for input to move on.
+		else if(m_active.inputMode == eMode_STOP)
+		{
+
+			if(_input == 2)
+			{
+				std::cerr << "Recieved input, ending Stop\n";
+				Pop(_time);
+			}
+			return;
+		}
+
+
 		//Waiting for positive or negative result
 		else if( m_active.inputMode == eMode_INPUT)
 		{
@@ -267,7 +310,7 @@ class TestController
 		//Waiting for positive or negative result
 		else if( m_active.inputMode == eMode_INPUT_DEPTH)
 		{
-			if(_input == 0 || _input == 1 || _input == 2)
+			if(_input == 0 || _input == 1 )
 			{
 				std::cerr << "Recieved input\n";
 				m_results.push_back( (_input == m_active.answer ? true : false) );
@@ -275,8 +318,10 @@ class TestController
 				bool answer = (_input == m_active.answer ? true : false);
 				OutputResult(answer);
 			
+				
+
 				if(_input == m_active.answer)
-					std::cerr << "Correct\n";
+					std::cerr << m_active.answer << " " << _input << "Correct\n";
 				else
 					std::cerr << "Wrong\n";
 
@@ -391,20 +436,18 @@ class TestController
 		if( m_active.renderModeA == eScene_Distance)
 		{
 			output.open("output_distance.csv", std::ios::out | std::ios::app);
-			output << m_name << "," << 	m_active.scaleA 									<< "," << m_active.scaleB 			<< "," << m_active.scaleC << "," <<
-										m_active.depthA 									<< "," << m_active.depthB 			<< "," << m_active.depthC << "," << m_active.answer << "," << 	
+	
+			int correct =_answer;
+
+			output << m_name << "," <<  m_active.depthC /*_middepth*/ 						<< "," << m_active.scaleC /*_offset*/ 		<< "," <<
+										m_active.scaleA 									<< "," << m_active.scaleB 					<< "," <<
+										m_active.depthA 									<< "," << m_active.depthB 					<< "," << m_active.answer << "," << 	
 										StereoModesNames[m_active.stereoModeA]				<< "," <<	
 										EyeSeperationModesNames[m_active.eyeSeperationA]	<< "," <<	
 										BlendModesNames[m_active.blendModeA] 				<< "," <<
-										ProjectionModesNames[m_active.projModeA] 			<< "," << _answer << "\n";
+										ProjectionModesNames[m_active.projModeA] 			<< "," << _answer << "," <<  correct << "\n";
 			output.close();
 		}
-
-
-
-
-
-
 
 	}
 
@@ -417,6 +460,10 @@ class TestController
 		else if(m_active.inputMode == eMode_CALIBRATE)
 		{
 			std::cerr << "Press '/' to end calbibration. \n";
+		}	
+		else if(m_active.inputMode == eMode_STOP)
+		{
+			std::cerr << "Press '/' to end stop. \n";
 		}			
 		else if(m_active.inputMode == eMode_INPUT)
 		{
