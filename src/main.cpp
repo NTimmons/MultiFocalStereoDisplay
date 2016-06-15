@@ -39,6 +39,19 @@
 
 #include "TestController.h"
 
+
+//RANDOM
+    std::random_device rd;
+    std::mt19937 gen(rd());
+	std::uniform_real_distribution<> dis_signbit(0,1);
+	std::uniform_real_distribution<> dis_rotation(0,3.14 * 2.0);
+    std::uniform_int_distribution<>  dis_order(0, 1);
+    std::uniform_int_distribution<>  dis_selection(0, 1);
+
+
+
+
+//Terminal controls from Stackoverflow to forward controls to multiple windows.
 struct termios orig_termios;
 
 void reset_terminal_mode()
@@ -50,11 +63,9 @@ void set_conio_terminal_mode()
 {
     struct termios new_termios;
 
-    /* take two copies - one for now, one for later */
     tcgetattr(0, &orig_termios);
     memcpy(&new_termios, &orig_termios, sizeof(new_termios));
 
-    /* register cleanup handler, and set the new terminal mode */
     atexit(reset_terminal_mode);
     cfmakeraw(&new_termios);
     tcsetattr(0, TCSANOW, &new_termios);
@@ -82,9 +93,10 @@ int getch()
         return c;
     }
 }
+///////////////////////////////////////////////////////////////////
 
 
-
+//GLUT LINUX FIX
 #ifndef _WIN32
 //http://stackoverflow.com/questions/31579243/segmentation-fault-before-main-when-using-glut-and-stdstring
 #include <pthread.h> 
@@ -120,9 +132,7 @@ struct WindowData
 	XWindowAttributes       gwa;
 };
 
-
 RenderScene RS_R;
-
 
 void keyPressCallback(int _key, RenderScene* _rs)
 {
@@ -135,10 +145,7 @@ void keyPressCallback(int _key, RenderScene* _rs)
 	}	
 }
 
-
-
 #define KEYCODE XK_Down
-
 // Function to create a keyboard event
 XKeyEvent createKeyEvent(Display *display, Window &win,
                            Window &winRoot, bool press,
@@ -334,7 +341,6 @@ void SetObliqueProjection( RenderScene* _RS, float _eyeOffSet, float _screenAspe
 		PR[3][2] 		  = pr23;
 		PR 				  = PR * mlt;
 
-		//std::cerr << "PR" << glm::to_string(PR) << "\n";
 
 		Camera camera_left;
 		camera_left.Init( lefteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	_fov, _screenAspect, near_, far_);
@@ -396,27 +402,43 @@ void AddComparison ( TestController* _TC, StereoModes _stereoA, StereoModes _ste
 	_TC->Add(input);
 }
 
+void AddComparisonComfort ( TestController* _TC, StereoModes _stereoA, StereoModes _stereoB, EyeSeperationModes _eyeSepA, EyeSeperationModes _eyeSepB, 
+					 SceneModes _scene, 
+					 BlendModes _blendA, BlendModes _blendB, ProjectionModes _projA, ProjectionModes _projB, float _displayTime)
+{
+	ContrEntry calib;
+	calib.InitCalibration();
+
+	ContrEntry twoSecondTimerA;
+	twoSecondTimerA.InitTimer	(_scene, _stereoA, _eyeSepA, _blendA, _projA, _displayTime);
+
+	ContrEntry twoSecondTimerB;
+	twoSecondTimerB.InitTimer	(_scene, _stereoB, _eyeSepB, _blendB, _projB, _displayTime);
+
+	ContrEntry input;
+	input.InitInputComfort		(_scene, _stereoA, _eyeSepA, _blendA, _projA, _scene, _stereoB, _eyeSepB, _blendB, _projB);
+
+	_TC->Add(calib);
+	_TC->Add(twoSecondTimerA);
+	_TC->Add(calib);
+	_TC->Add(twoSecondTimerB);
+	_TC->Add(input);
+}
+
 void AddDepthTest(TestController* _TC, BlendModes _blendA, StereoModes _stereoA, EyeSeperationModes _eyeSepA, float _depth, float _minOffset, float _minScale, float _maxScale)
 {
 	std::vector<int> ranges;
 
-	static unsigned int seed = 123;
-	seed++;
+	//static unsigned int seed = 123;
+	//seed++;
 
-    std::random_device rd;
-    std::mt19937 gen(seed);
-    std::uniform_real_distribution<> dis_scale(_minScale, _maxScale);
-	std::uniform_real_distribution<> dis_signbit(0,1);
-     
+    std::uniform_real_distribution<> dis_scale(_minScale, _maxScale);    
 	float scaleA 	= dis_scale(gen);
 	float scaleB 	= dis_scale(gen);
-	float scaleC 	= dis_scale(gen);
-
 	float offsetA 	= _depth - (_minOffset);
 
 	offsetA = glm::max(2.5f, offsetA);
 
-    std::uniform_int_distribution<> dis_order(0, 1);
 	int order = dis_order(gen);
 	int a,b;
 	float depth[2];
@@ -431,22 +453,29 @@ void AddDepthTest(TestController* _TC, BlendModes _blendA, StereoModes _stereoA,
 		a = 1;
 		b = 0;
 	}
-	else
-	{
-		std::cerr << "invalid depth order \n";
-	}
-
 
 	depth[a] = _depth;
 	depth[b] = offsetA;
 
-	int answer = depth[0] < depth[1] ? 0 : 1;
+	float rota = dis_rotation(gen);
+	float rotb = dis_rotation(gen);
+
+
+	int answer = 0;
+	if( std::abs(depth[0] - depth[1]) > 0.001f)
+	{
+		answer = depth[0] < depth[1] ? 0 : 1;
+	}
+	else
+	{
+		answer = dis_selection(gen);
+	}
 
 
 	std::cerr << "0:" << depth[0] << " 1:" << depth[1] << " - " << answer << ".\n";
 
 	ContrEntry dist;
-	dist.InitDistanceInput( eScene_Distance, _blendA, _stereoA, _eyeSepA, depth[0], depth[1], _depth, scaleA, scaleB, _minOffset, answer);
+	dist.InitDistanceInput( eScene_Distance, _blendA, _stereoA, _eyeSepA, depth[0], depth[1], _depth, scaleA, scaleB, _minOffset, answer, rota, rotb);
 	
 	std::cerr << "p,o >>" << depth[a] << "," << depth[b] << ".\n";
 
@@ -660,14 +689,81 @@ int main(int argc, char **argv)
 	stopc.InitStop();
 	
 	int numRepeatsForComfort = 5;
+	int numRepeatsForPerception = 5;
+
 	int order = 0;
 
 	float timeRot = 3000.f;
 	float timeTra = 3000.f;
 	float timeSta = 3000.f;
 
+	TC.Add(stopc);
+	TC.Add(stopc);
+	TC.Add(stopc);
+	
 	/*
+	//---------------------------------------------------------
+	//COMFORT TEST
 	for(int i = 0; i < numRepeatsForComfort; i++)
+	{
+		if(order == 0)
+		{
+			//Testing the blend modes for depth.
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Projective , eBlend_Near			, eProj_Oblique, eProj_Oblique, timeTra);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeTra);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeTra);
+
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Projective	, eBlend_Near			, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeRot);
+
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Projective , eBlend_Near			, eProj_Oblique, eProj_Oblique, timeSta);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeSta);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeSta);
+		}
+		else if (order == 1)
+		{
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Projective , eBlend_Near			, eProj_Oblique, eProj_Oblique, timeSta);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Projective	, eBlend_Near			, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeTra);
+
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeSta);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeTra);		
+
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Projective , eBlend_Near			, eProj_Oblique, eProj_Oblique, timeTra);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeSta);
+		}
+		else if (order == 2)
+		{
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeSta);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeTra);	
+
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Projective , eBlend_Near			, eProj_Oblique, eProj_Oblique, timeSta);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Projective	, eBlend_Near			, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeTra);
+
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Translation, eBlend_Projective , eBlend_Near			, eProj_Oblique, eProj_Oblique, timeTra);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation	, eBlend_Near	    , eBlend_Far			, eProj_Oblique, eProj_Oblique, timeRot);
+			AddComparisonComfort( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Static		, eBlend_Far		, eBlend_Projective		, eProj_Oblique, eProj_Oblique, timeSta);
+		}
+
+		order++;
+		order = (order) % 2;
+	}
+
+	TC.Add(stopc);
+	TC.Add(stopc);
+	TC.Add(stopc);
+*/
+
+
+	/*
+	//---------------------------------------------------------
+	// PERCEPTION TEST
+	for(int i = 0; i < numRepeatsForPerception; i++)
 	{
 		if(order == 0)
 		{
@@ -718,95 +814,112 @@ int main(int argc, char **argv)
 
 	}
 
-	*/
 
 	TC.Add(stopc);
+	TC.Add(stopc);
+	TC.Add(stopc);
+	*/
 
-	float minScale = 0.8f;
-	float maxScale = 1.2f;
+	float minScale = 0.95f;
+	float maxScale = 1.05f;
 
-	float o0 = 2.7f + (0.5 * maxScale);
+	float o0 = 2.7f + (0.5f * maxScale);
 	float o1 = o0 * 0.5f;
 	float o2 = o1 * 0.5f;
 	float o3 = o2 * 0.5f;
 	float o4 = o3 * 0.5f;
 	float o5 = 0.f;
 
-	float  depths[1] 	= {  8.1 + (0.5 * maxScale)	};
-	float  minOffset[6] = { o0,o3,o5,o4,o2,o1};
+	//3.225, 1.6125, 0.80625, 0.403125, 0.201562, 0
 
-/*	for(int k = 0; k < 10; k++)
-	{
-		for(int i = 0; i < 1; i++)
-		{
-			for(int os = 0; os < 6; os++)
-			{
-				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-				AddDepthTest ( &TC, eBlend_Near	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+	float  depths[1] 	= {  8.1f + (0.5f * maxScale)	};
+	float  minOffset[5] = { o0,o3,o5,o2,o1};
 
-			}
-		}
-	}
+	unsigned int seed = 123;
+    std::random_device rd;
+    std::mt19937 gen(seed);
+	std::uniform_int_distribution<> dis_int(0, 5); 
+
+	TC.Add(stopc);
+	int depthOrder = 0;
+
+	int repeat = 20;
+	//int total = repeat * 6; 
+
+	//AddComparison( &TC,  eStereo_Both, eStereo_Both , eEye_Sep, eEye_Sep, eScene_Rotation, eBlend_Projective, eBlend_Projective		, eProj_Oblique, eProj_Oblique, 5000000.f);
+	/*AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
+	AddDepthTest ( &TC, eBlend_Projective			, eStereo_Both, eEye_Sep, depths[0], o5 , minScale, maxScale);
 */
+	//AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[0], o0 , minScale, maxScale);	
+
 
 	TC.Add(stopc);
 
+	//---------------------------------------------------------
+	//DEPTH TEST
 
-
-
-	//Stereo depth testing
-	for(int rep = 0; rep < 10; rep++)
+	for(int count = 0; count < repeat; count++)
 	{
-
-		for(int i = 0; i < 1; i++)
+		for(int os = 0; os < 5; os++)
 		{
-			for(int os = 0; os < 6; os++)
-			{
-					// float _depth, float _minOffset, float _minScale, float _maxScale)
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-					AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
-			}
-		}
+			int i = 0;
 
+			if(depthOrder == 0)
+			{
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+			}
+			else if(depthOrder == 1)
+			{
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+			}
+			else if(depthOrder == 2)
+			{
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+			}
+			else if(depthOrder == 3)
+			{
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+			}
+			else if(depthOrder == 4)
+			{
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+			}
+			else if(depthOrder == 5)
+			{
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Near			, eStereo_Both, eEye_Sep, depths[i], minOffset[os] , minScale, maxScale);
+				AddDepthTest ( &TC, eBlend_Projective	, eStereo_Both, eEye_None, depths[i], minOffset[os] , minScale, maxScale);
+			}
+
+			order = dis_int(gen);			
+		}
 	}
+
 
 	TC.Add(stopc);
 
@@ -826,12 +939,6 @@ int main(int argc, char **argv)
 	typedef std::chrono::milliseconds 			ms;
 	//typedef std::chrono::duration<float> 		fsec;    	
 	auto t0 = Time::now();
-
-	unsigned int seed = 123;
-    std::random_device rd;
-    std::mt19937 gen(seed);
-
-
 
  	while(1) 
 	{
@@ -916,10 +1023,13 @@ int main(int argc, char **argv)
 		else if(ch == '/')
 			tcInput = 2;
 
-		
-	    //std::uniform_int_distribution<> dis_keyPress(0, 2);
+		//////////////////////////////////////////////////////////
+		//Uncomment to enable random selection.
+	    //std::uniform_int_distribution<> dis_keyPress(1, 2);
 		//tcInput = dis_keyPress(gen);
-	
+
+
+		//////////////////////////////////////////////////////////		
 
 		ms nw = std::chrono::duration_cast<ms>(Time::now() - t0);
 		float timenow = nw.count();
@@ -932,7 +1042,7 @@ int main(int argc, char **argv)
 			RS[i].SetBlendMode	(curActive.blendModeA);
 			RS[i].SetStereoMode	(curActive.stereoModeA);
 
-			if(curActive.inputMode == eMode_INPUT)
+			if(curActive.inputMode == eMode_INPUT || curActive.inputMode == eMode_INPUT_COMFORT)
 			{
 				RS[i].SetScene		( 5	);	
 				RS[i].SetStereoMode		(eStereo_Both	);
@@ -950,7 +1060,7 @@ int main(int argc, char **argv)
 			else if(curActive.inputMode == eMode_INPUT_DEPTH)
 			{
 				RS[i].SetScene		( 1	);	
-				RS[i].SetDepthComparison( curActive.depthA, curActive.depthB, curActive.depthC, curActive.scaleA, curActive.scaleB, curActive.scaleC);				
+				RS[i].SetDepthComparison( curActive.depthA, curActive.depthB, curActive.depthC, curActive.scaleA, curActive.scaleB, curActive.scaleC, curActive.rotA, curActive.rotB);				
 			}
 			else
 				RS[i].SetScene		(curActive.renderModeA	);	
@@ -979,7 +1089,7 @@ int main(int argc, char **argv)
 		    glXSwapBuffers(win[i].dpy, win[i].win);
 		}
 
-		usleep(10000);
+		//usleep(10000);
     }
 
 

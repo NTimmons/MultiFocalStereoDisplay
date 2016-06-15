@@ -533,16 +533,17 @@ void RenderScene::SceneBody_Static(ShaderProgram& _prog)
     glClearDepth(1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	for(int x = 0; x < 8; x++)
+	for(int x = 0; x < 1; x++)
 	{
-		for (int y = 0; y < 3; y++)
+		for (int y = 0; y < 1; y++)
 		{
-			for( int z = 0; z < 2; z++)
+			for( int z = 0; z < 1; z++)
 			{
 				float angle  = 1.5708f * 0.5f;
 				glm::mat4 rotation		= glm::rotate(glm::mat4(1.f)	, (glm::mediump_float)angle, glm::vec3(0,1,0));  
-				glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x-4) * 2.1f,  -1.5625f + (z * 2.5f), (y+1) * (3.5f) ));
-				glm::mat4 scale			= glm::scale(glm::mat4(1.0f)	, glm::vec3(0.50f, 0.50f, 0.50f));
+				//glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x-4) * 2.1f,  -1.5625f + (z * 2.5f), (y+1) * (3.5f) ));
+				glm::mat4 translation 	= glm::translate(glm::mat4(1.f)	, glm::vec3( (x) * 3.1f,  -0.5625f + (z * 2.5f), (y+1) * (7.0f) ));
+				glm::mat4 scale			= glm::scale(glm::mat4(1.0f)	, glm::vec3(1.0f, 1.0f, 1.0f));
 
 				//Rotate the teapot.
 				AIMesh* pot = GetMesh("Teapot_Rotation_0");
@@ -580,8 +581,10 @@ void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm:
 		glm::mat4 scaleB = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleB, m_depthControls.scaleB, m_depthControls.scaleB) );
 		//glm::mat4 scaleC = glm::scale(glm::mat4(1.f), glm::vec3(m_depthControls.scaleC, m_depthControls.scaleC, m_depthControls.scaleC) );
 
+
 		glm::mat4 translateLeft = glm::translate(glm::mat4(1.f), _left);//
 		boxLeft->SetTranslationMat(translateLeft);
+		boxLeft->SetRotationMat( glm::rotate(glm::mat4(1.f), (glm::mediump_float)m_depthControls.rotA, glm::vec3(0,1,0))); 
 		boxLeft->SetScaleMat(glm::scale(scaleA, glm::vec3( _left.z/6.f )));
 
 		glm::mat4 model = boxLeft->GetModelMat();
@@ -593,6 +596,7 @@ void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm:
 		m_materialMap.find(boxLeft->GetMaterial())->second.Apply(_prog);	
 		glm::mat4 translateRight = glm::translate(glm::mat4(1.f), _right);//glm::vec3( 1.0f, -0.f, 6.5f ));
 		boxRight->SetTranslationMat(translateRight);
+		boxRight->SetRotationMat( glm::rotate(glm::mat4(1.f), (glm::mediump_float)m_depthControls.rotB, glm::vec3(0,1,0))); 
 		boxRight->SetScaleMat(glm::scale(scaleB, glm::vec3( _right.z/6.f )));
 
 		model = boxRight->GetModelMat();

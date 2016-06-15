@@ -1,9 +1,9 @@
 0.0,0.0,0.0,0.0
-1.0,1.0,1.0,1.0
+0.89,0.89,0.89,1.0
 1.0,1.0,1.0,1.0
 0.0,0.0,0.0,0.0
-500.0
-200.0
-../Images/kamen-bump.png
-../Images/kamen.png
+50.0
+20.0
+../Images/spectest.png
+../Images/white.png
 ../Images/bumptest.png
