@@ -9,7 +9,6 @@
 
 #include <sstream>
 
-
 #ifndef _WIN32
 unsigned long GetTickCount()
 {
@@ -51,6 +50,16 @@ void RenderScene::TestGLError(const char* _file, int _line)
 		std::cerr << "OpenGL Error: (" << _file << ", " << _line << ")-> " << id << "\n";
 }
 
+void RenderScene::SetBlendMode(float _blendMode)
+{
+	m_blendMode = _blendMode;
+}
+
+void RenderScene::SetScene( int _sceneID)
+{
+	m_sceneID = _sceneID;
+}
+
 void RenderScene::IncrementBlendMode()
 {
 	m_blendMode += 1.0f;
@@ -72,18 +81,17 @@ bool RenderScene::LoadMaterial( std::string _file, std::string _name)
 		return false;
 	}
 
+	char 	fileTypeMask[9] = { 'v', 'v', 'v', 'v', 'f', 'f', 't', 't', 't'};
+    colour 	colArray[4];
+	int 	colIndex = 0;
 
-	char fileTypeMask[9] = { 'v', 'v', 'v', 'v', 'f', 'f', 't', 't', 't'};
-    colour colArray[4];
-	int colIndex = 0;
-
-    float floatArray[4];
-	int floatIndex = 0;
+    float 	floatArray[4];
+	int 	floatIndex = 0;
 
     Texture texArray[3];
-	int texIndex = 0;
+	int 	texIndex = 0;
 
-	int index = 0;
+	int		index = 0;
 	
 	std::string line;
 	if (file.is_open())
@@ -105,8 +113,7 @@ bool RenderScene::LoadMaterial( std::string _file, std::string _name)
 
 					colour col(r,g,b,a);
 					colArray[colIndex] = col;
-					colIndex++;
-					
+					colIndex++;				
 				}
 			}	
 			else if(fileTypeMask[index] == 'f')
@@ -133,8 +140,7 @@ bool RenderScene::LoadMaterial( std::string _file, std::string _name)
 
 		Material mat(_name, colArray[0], colArray[1], colArray[2], colArray[3], floatArray[0], floatArray[1],
 						texArray[0], texArray[1], texArray[2] );
-
-		
+	
 		m_materialMap.insert(std::make_pair(_name,  mat)  );
 
 		return true;
@@ -142,7 +148,6 @@ bool RenderScene::LoadMaterial( std::string _file, std::string _name)
 
 	return false;
 }
-
 
 void ScreenWriteToFile	(std::string _path, RenderScene* _RS)
 {
@@ -160,7 +165,6 @@ void ScreenWriteToFile	(std::string _path, RenderScene* _RS)
 		{
 			std::stringstream ssP;
 			std::stringstream ssS;
-			//unsigned int index = i;	
 
 			Position 	pos 	= _RS[i].m_layoutControl.GetScreenPos(0);
 			size		size 	= _RS[i].m_layoutControl.GetScreenSize(0);
@@ -200,27 +204,14 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 			}
 			else if (sData.size() > 0 )
 			{
-
 				unsigned int 	index 	= atoi(sData[0].c_str());
 				unsigned char 	type 	= sData[1].c_str()[0];
 				float 			val0	= (float)atof(sData[2].c_str());
 				float 			val1	= (float)atof(sData[3].c_str());
 				float 			val2	= (float)atof(sData[4].c_str());
-				//float 			val3	= (float)atof(sData[5].c_str());
-
-				/*
-				std::cerr << "Index: " << index <<
-							 " type: " << type <<
-							 " val0: " << val0 <<
-							 " val1: " << val1 <<
-							 " val2: " << val2 <<
-							 " val3: " << val3 << "\n";
-				*/
-
 
 				if( (int)index == m_id)
 				{
-					//std::cerr << "Type is: " << type << " \n";
 					if(type == 'P')
 					{	
 						Position p(val0, val1, val2);
@@ -233,11 +224,7 @@ bool RenderScene::ScreenLoadFromFile(std::string _path, ScreenLayout* _layout)
 					}
 				}
 			}
-
-			//std::cerr << "-";	
 		}
-		//std::cerr << "\n";
-		//std::cerr << "\t Closing file.\n";
 		file.close();
 		return true;
 
@@ -253,7 +240,6 @@ void RenderScene::InitialiseRenderObjects()
 	std::string configFile = "../Config/layout.data";
 	ScreenLoadFromFile(configFile, &m_layoutControl);
 
-
 	std::string path = "../Mesh/sibenik.obj";
 	AIMesh sibenik;
 
@@ -266,7 +252,6 @@ void RenderScene::InitialiseRenderObjects()
 	sibenik.SetTranslationMat( glm::translate(glm::mat4(1.f), glm::vec3(-0.f, 38.f, 0.f) ) );
 	m_meshArray.push_back(sibenik);
 
-
 	path = "../Mesh/teapot.obj";
 	AIMesh teapot;
 	teapot.Initialise(path);
@@ -275,7 +260,6 @@ void RenderScene::InitialiseRenderObjects()
 	teapot.SetScaleMat(glm::mat4(1.f));
 	teapot.SetRotationMat(glm::mat4(1.f));
 	teapot.SetTranslationMat(glm::translate(glm::mat4(1.f), glm::vec3(0.f, 3.f, 5.f)));
-	//m_meshArray.push_back(teapot);
 
 	path = "../Mesh/teapot.obj";
 	AIMesh teapotRot;
@@ -327,8 +311,7 @@ void RenderScene::InitialiseRenderObjects()
 	blob.SetName("Box_Translation_0");
 	blob.SetMaterial("Green");
 	m_meshArray.push_back(blob);
-
-		
+	
 	box.SetName("Box_NEAR_0");
 	box.SetTranslationMat	(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 5.4f + 0.5f)) );
 	m_meshArray.push_back(box);
@@ -336,7 +319,6 @@ void RenderScene::InitialiseRenderObjects()
 	box.SetName("Box_FAR_0");
 	box.SetTranslationMat	(glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 8.1f  + 0.5f)) );
 	m_meshArray.push_back(box);
-
 
 	//Box grid
 	for(int x = 0; x < 10; x++)
@@ -360,7 +342,6 @@ void RenderScene::InitialiseRenderObjects()
 
 	img = "../Images/stop.png";
 	m_stop.Init(img);
-
 
 	img = "../Images/nearCalib.png";
 	m_nearCalibration.Init(img);
@@ -609,7 +590,6 @@ void RenderScene::SceneBody_Distance(ShaderProgram& _prog, glm::vec3 _left, glm:
 void RenderScene::SceneBody_Calibration()
 {
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
 	glClearColor(50.0, 0.0, 50.0, 0.0);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -647,7 +627,6 @@ void RenderScene::SceneBody_Calibration()
 void RenderScene::SceneBody_Stop()
 {
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
 	glClearColor(50.0, 0.0, 50.0, 0.0);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -685,7 +664,6 @@ void RenderScene::SceneBody_Stop()
 void RenderScene::SceneBody_Decision()
 {
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
 	glClearColor(50.0, 0.0, 50.0, 0.0);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -764,7 +742,8 @@ void RenderScene::Render_Scene()
 		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraPos", glm::value_ptr(m_camera.GetPos()));
 		m_shaderMap.find(shadername)->second.SetUniform3FP("cameraDir", glm::value_ptr( glm::normalize( m_camera.GetDir() ) ) );
 
-		//Distance Scene	a
+
+		//TODO: Switch to read Enums instead of fixed ints.
 		if(m_sceneID == 0) 		//Test
 			SceneBody_Test( m_shaderMap.find(shadername)->second);
 		else if(m_sceneID == 1) //Distance Test
@@ -907,26 +886,6 @@ void RenderScene::RenderScreenQuadAtOffset(ShaderProgram& _shad, Position& _offs
 	_shad.SetUniform2F("scale", _size.W(), _size.H());
 	m_genericUnitQuad.Draw();
 
-}
-
-void RenderScene::InitialiseScreenPositions()
-{
-/*
-	m_screenArray[0].m_pos = Position(0.f     , 100.f, 0.f); 
-	m_screenArray[1].m_pos = Position(200.f   , 100.f, 0.f);
-	m_screenArray[2].m_pos = Position(400.f   , 100.f, 0.f);
-	m_screenArray[3].m_pos = Position(600.f   , 100.f, 0.f);
-
-	m_screenArray[0].m_size = size(100.f, 100.0f);
-	m_screenArray[1].m_size = size(100.f, 100.0f);
-	m_screenArray[2].m_size = size(100.f, 100.0f);
-	m_screenArray[3].m_size = size(100.f, 100.0f);
-
-	m_screenArray[0].m_colour = colour(1.f, 0.f, 0.f, 1.f);
-	m_screenArray[1].m_colour = colour(0.f, 1.f, 0.f, 1.f);
-	m_screenArray[2].m_colour = colour(0.f, 0.f, 1.f, 1.f);
-	m_screenArray[3].m_colour = colour(1.f, 1.f, 0.f, 1.f);
-*/
 }
 
 void RenderScene::RenderQuad(Position& _pos, size& _size, colour& _col)

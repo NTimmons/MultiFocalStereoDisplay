@@ -147,9 +147,7 @@ void keyPressCallback(int _key, RenderScene* _rs)
 
 #define KEYCODE XK_Down
 // Function to create a keyboard event
-XKeyEvent createKeyEvent(Display *display, Window &win,
-                           Window &winRoot, bool press,
-                           int keycode, int modifiers)
+XKeyEvent createKeyEvent(Display *display, Window &win, Window &winRoot, bool press, int keycode, int modifiers)
 {
    XKeyEvent event;
 
