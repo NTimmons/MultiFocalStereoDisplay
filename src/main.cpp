@@ -593,18 +593,11 @@ int main(int argc, char **argv)
 
 		std::cerr << "About to load shaders..." << std::endl;
 
-		std::string vert = "../Shaders/vert.glsl";
-		std::string frag = "../Shaders/frag.glsl";
-		std::string name = "TestShader";
+		std::string vert = "../Shaders/vert_tex.glsl";
+		std::string frag = "../Shaders/frag_tex.glsl";
+		std::string name = "TestShader_Tex";
 		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
 		bool pass = RS[i].CreateShaderProgramObject( vert, frag, name );
-		if(!pass) return -1;
-
-		vert = "../Shaders/vert_tex.glsl";
-		frag = "../Shaders/frag_tex.glsl";
-		name = "TestShader_Tex";
-		std::cerr << "Calling CreateShaderProgramObject..." << std::endl;
-		pass = RS[i].CreateShaderProgramObject( vert, frag, name );
 		if(!pass) return -1;
 
 		vert = "../Shaders/vert_tex.glsl";
