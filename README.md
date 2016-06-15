@@ -4,6 +4,7 @@ A tool for rendering a scene across four displays in a multi-focal stereo setup.
 
 ##Building
 Use the premake file to generate the build files for your system using the provided .bat or .sh files.
+If running on Linux run './LinuxBuild/makeRun.sh' to build and immediately run the program.
 
 
 ##Running
@@ -18,6 +19,8 @@ For example:
 This function adds a Comfort Comparison test to the Test Controller 'TC'. Which is comparing the projective blend to the nearest blend and shows each scene in order for one second. Each type of comparison or test that can be added outputs its results to its own .csv when ran.
 
 An example of a number of these tests being construct can be found in .src/TestSetup.Example to help guide you through the construction process.
+
+The three inputs used in the default screen are ',', '.' and '/' but these can be changed easily in '·/src/main.cpp'
 
 ##Screen Setup
 This code relies on the X11 Window controller being ran with multiple heads and the screen in positions 1-4 being the four screens of the multi-focal display.  
