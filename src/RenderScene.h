@@ -183,7 +183,6 @@ public:
 	}
 
 	//Screen Control
-	void InitialiseScreenPositions();
 	void HandleInput( unsigned char _key);
 
 	bool ScreenLoadFromFile	(std::string _path, ScreenLayout* _screen);

@@ -49,8 +49,6 @@
     std::uniform_int_distribution<>  dis_selection(0, 1);
 
 
-
-
 //Terminal controls from Stackoverflow to forward controls to multiple windows.
 struct termios orig_termios;
 
@@ -186,13 +184,8 @@ unsigned long GetTickCount()
 
 void draw(RenderScene* _rs)
 {
-	
-	//glutSetWindow(windowL);
-	//std::cout << "Drawing Left.\n";
 	_rs->Render();
-	//glutPostRedisplay();
 }
-
 
 void InitialiseWindow( WindowData* _win, int _window, RenderScene* _RS)
 {
@@ -228,6 +221,7 @@ void SetOffAxisProjection(RenderScene* _RS, float _eyeOffSet, float _aspect, flo
 	//Reset Camera
 	glm::vec3 lefteye  		= glm::vec3( -_eyeOffSet	, 0.f, 0.f	);
 	glm::vec3 righteye 		= glm::vec3(  _eyeOffSet	, 0.f, 0.f	);
+
 	//Parallel
 	glm::vec3 convergePoint = glm::vec3(  0.f		, 0.f, 100000.f);
 
@@ -238,30 +232,12 @@ void SetOffAxisProjection(RenderScene* _RS, float _eyeOffSet, float _aspect, flo
 	camera_right.Init( righteye, convergePoint, glm::vec3(0.f, 1.f, 0.f),	_fov, _aspect, _near, _far); 
 
 	float wd2       = 1.0f * tan(_fov/4);
-//	float ndfl      = _near / _far;
-
 	float bottom    = - wd2 - (_eyeOffSet * 0.5f);
 	float top   	=   wd2 + (_eyeOffSet * 0.5f);
 
 	//right eye
 	float righteye_left 	= -(wd2 * _aspect) - _eyeOffSet;// *  _aspect;
 	float righteye_right 	=  (wd2 * _aspect);// * _aspect;
-
-/*
-	float width 			= righteye_right - righteye_left;
-	float height 			= top - bottom;
-
-
-	std::cerr << "left: " << righteye_left << "\n";
-	std::cerr << "right: " << righteye_right << "\n";
-	std::cerr << "top: " << top << "\n";
-	std::cerr << "bottom: " << top << "\n";
-	std::cerr << "width: " << width << "\n";
-	std::cerr << "height: " << height << "\n";
-	std::cerr << "w/h: " << width/height << "\n";
-	std::cerr << "aspect: " << _aspect << "\n";
-	std::cerr << "eyeOffset: " << _eyeOffSet << "\n";
-*/
 
 	float lefteye_left  = -(wd2 * _aspect);
 	float lefteye_right =  (wd2 * _aspect) + _eyeOffSet * _aspect;
@@ -367,7 +343,6 @@ void SetObliqueProjection( RenderScene* _RS, float _eyeOffSet, float _screenAspe
 	}
 }
 
-
 void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index, RenderScene* _pRS)
 {
 	for(int i = 0; i < 4; i++)
@@ -375,7 +350,6 @@ void SetLight( glm::vec3 _pos, glm::vec3 _colour, float _scale, int _index, Rend
 		_pRS[i].SetLight(_pos, _colour, _scale, _index);
 	}
 }
-
 
 void AddComparison ( TestController* _TC, StereoModes _stereoA, StereoModes _stereoB, EyeSeperationModes _eyeSepA, EyeSeperationModes _eyeSepB, 
 					 SceneModes _scene, 
@@ -427,9 +401,6 @@ void AddDepthTest(TestController* _TC, BlendModes _blendA, StereoModes _stereoA,
 {
 	std::vector<int> ranges;
 
-	//static unsigned int seed = 123;
-	//seed++;
-
     std::uniform_real_distribution<> dis_scale(_minScale, _maxScale);    
 	float scaleA 	= dis_scale(gen);
 	float scaleB 	= dis_scale(gen);
@@ -468,7 +439,6 @@ void AddDepthTest(TestController* _TC, BlendModes _blendA, StereoModes _stereoA,
 	{
 		answer = dis_selection(gen);
 	}
-
 
 	std::cerr << "0:" << depth[0] << " 1:" << depth[1] << " - " << answer << ".\n";
 
@@ -575,11 +545,6 @@ int main(int argc, char **argv)
 	glm::vec3 screen4Black (0.437321230188809f, 0.432466666666667f, 0.800857106179404f);
 
 
-	//screen1Mat = glm::transpose(screen1Mat);
-	//screen2Mat = glm::transpose(screen2Mat);
-	//screen3Mat = glm::transpose(screen3Mat);
-	//screen4Mat = glm::transpose(screen4Mat);
-
 	RS[0].SetXYZtoRGBMat(screen1Mat);
 	RS[1].SetXYZtoRGBMat(screen2Mat);
 	RS[2].SetXYZtoRGBMat(screen3Mat);
@@ -600,7 +565,6 @@ int main(int argc, char **argv)
 		SetLight(glm::vec3( (i-4) * 20.0, 0.0, 0.0), glm::vec3(40.0), 15.f, i, &RS[0]);
 	}	
 
-	//SetLight(glm::vec3( 1.0f, -1.0f, -1.0f), glm::vec3(40.0), 15.f, 0, &RS[0]);
 	SetLight(glm::vec3( -0.0f,  1.f, 1.0f), glm::vec3(20.f, 20.f, 20.f), 15.f, 0, &RS[0]);
 	SetLight(glm::vec3( -0.0f,  0.f, 1.0f), glm::vec3(0.f, 20.f, 20.f), 15.f, 0, &RS[0]);
 
@@ -623,7 +587,6 @@ int main(int argc, char **argv)
 
 
 	//Data loading for Scenes
-
 	for(unsigned int i = 0; i < 4; i++)
 	{
    	    glXMakeCurrent( win[i].dpy, win[i].win, win[i].glc );
@@ -829,7 +792,6 @@ int main(int argc, char **argv)
 	float o5 = 0.f;
 
 	//3.225, 1.6125, 0.80625, 0.403125, 0.201562, 0
-
 	float  depths[1] 	= {  8.1f + (0.5f * maxScale)	};
 	float  minOffset[5] = { o0,o3,o5,o2,o1};
 
@@ -928,14 +890,17 @@ int main(int argc, char **argv)
 
 	TC.Start(name);
 
-	SetObliqueProjection( &RS[0],  eyePos, screenAspect, fov );
 
+
+	// Main loop/////////////////////////////////////////
+	//---------------------------------------------------
+	//---------------------------------------------------
+	//---------------------------------------------------
 	std::cerr << " Starting main loop\n";
+	SetObliqueProjection( &RS[0],  eyePos, screenAspect, fov );
 	int activeInput = -1;
-
     typedef std::chrono::high_resolution_clock 	Time;
-	typedef std::chrono::milliseconds 			ms;
-	//typedef std::chrono::duration<float> 		fsec;    	
+	typedef std::chrono::milliseconds 			ms;  	
 	auto t0 = Time::now();
 
  	while(1) 
@@ -974,7 +939,6 @@ int main(int argc, char **argv)
 				activeInput = 3;
 			else if (ch == 'x')
 			{		
-				//Off-axis
 				SetOffAxisProjection(&RS[0],  eyePos, aspect, fov, near, far);
 			}
 			else if (ch == 'c')
@@ -1010,7 +974,10 @@ int main(int argc, char **argv)
 		}	
 
 		reset_terminal_mode();
-		//////////////////////////
+
+
+		//Handle Test Configuration
+		////////////////////////////
 
 		int tcInput = -1;
 
@@ -1020,14 +987,6 @@ int main(int argc, char **argv)
 			tcInput = 1;
 		else if(ch == '/')
 			tcInput = 2;
-
-		//////////////////////////////////////////////////////////
-		//Uncomment to enable random selection.
-	    //std::uniform_int_distribution<> dis_keyPress(1, 2);
-		//tcInput = dis_keyPress(gen);
-
-
-		//////////////////////////////////////////////////////////		
 
 		ms nw = std::chrono::duration_cast<ms>(Time::now() - t0);
 		float timenow = nw.count();
@@ -1062,10 +1021,8 @@ int main(int argc, char **argv)
 			}
 			else
 				RS[i].SetScene		(curActive.renderModeA	);	
-
-			
+		
 			float seperation = curActive.eyeSeperationA == eEye_Sep ? eyePos : 0.f;
-
 
 			if(curActive.projModeA == 0)
 				SetOffAxisProjection(&RS[0],  seperation, aspect, fov, near, far);
@@ -1076,8 +1033,9 @@ int main(int argc, char **argv)
 
 		}
 			
-		//////////////////////////
 
+		//Draw all contexts///////
+		//////////////////////////
 		for(unsigned int i = 0; i < 4; i++)
 		{
 	   	    glXMakeCurrent( win[i].dpy, win[i].win, win[i].glc );
@@ -1087,10 +1045,12 @@ int main(int argc, char **argv)
 		    glXSwapBuffers(win[i].dpy, win[i].win);
 		}
 
+		//Optional Sleep to limit render/input speed.
 		//usleep(10000);
     }
 
 
+	//Shutdown.
 	for(unsigned int i = 0; i < 4; i++)
 	{
 		//Shutdown

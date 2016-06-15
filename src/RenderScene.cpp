@@ -382,8 +382,6 @@ void RenderScene::Initialise()
 	m_SizeY = 1536;
 
 	glViewport(0,0,1,1);
-
-	InitialiseScreenPositions();
 }
 
 void RenderScene::SceneBody_Test(ShaderProgram& _prog)
