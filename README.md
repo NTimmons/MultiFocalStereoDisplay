@@ -45,5 +45,6 @@ There is a calibration file stored in Config which stores the current placement 
 
 
 
-
+##TODO
+The render code is very quickly written. Needs tidying and sorting to be not terribly inefficient.
 
